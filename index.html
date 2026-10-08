@@ -186,6 +186,22 @@
         </div>
     </header>
 
+    <!-- Alert Banner Container for Failed Updates -->
+    <div id="data-alert-banner" class="hidden max-w-7xl mx-auto w-full px-4 pt-3">
+        <div class="bg-amber-950/90 border border-amber-500/70 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-amber-200 text-xs shadow-lg backdrop-blur-md">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-amber-900/80 rounded-xl text-amber-400 border border-amber-600/50 flex-shrink-0">
+                    <i class="fa-solid fa-triangle-exclamation text-base animate-pulse"></i>
+                </div>
+                <div>
+                    <span class="font-bold uppercase tracking-wider text-amber-400 block sm:inline">Data Sync Warning:</span>
+                    <span id="data-alert-text" class="text-slate-200 ml-0 sm:ml-1">Live climate telemetry could not be updated from NOAA/BoM endpoints. Data has not been updated.</span>
+                </div>
+            </div>
+            <span id="data-alert-time" class="font-mono text-[11px] text-amber-300/80 bg-amber-950/80 px-2.5 py-1 rounded-lg border border-amber-800/60 self-start sm:self-auto">Attempted: --</span>
+        </div>
+    </div>
+
     <!-- Teleconnection Header Banner -->
     <section class="max-w-7xl mx-auto w-full px-4 pt-4 pb-2">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -430,20 +446,16 @@
             voronoiLayerGroup: null,
             activeSort: 'anomaly',
             modalChartInstance: null,
-            // Fallback dataset used if live backend server is unreachable
-            zones: [
-                { id: "ZONE01", en: "Chao Phraya River Basin", basin: "Central Plains & Delta", lat: 14.20, lon: 100.50, mjo_effect: 38.5, enso_effect: -12.0, iod_effect: 0.0, risk: "High Flood", mechanics: "MJO Phase 4 directly aligns with the South Asian monsoon trough over Central Thailand, injecting massive equatorial vapor that completely overrides El Niño's weak upper-level subsidence." },
-                { id: "ZONE02", en: "Ping River Headwaters", basin: "Northern Highlands (Chiang Mai)", lat: 18.79, lon: 98.98, mjo_effect: 30.0, enso_effect: -11.8, iod_effect: 0.0, risk: "Moderate Flood", mechanics: "Highland topography amplifies incoming moisture carried by MJO-induced westerly winds, increasing mountain stream discharge and reservoir inflow." },
-                { id: "ZONE03", en: "Mun-Chi River Confluence", basin: "Northeast Plateau (Ubon)", lat: 15.23, lon: 104.85, mjo_effect: 42.0, enso_effect: -13.6, iod_effect: 0.0, risk: "Severe Flood", mechanics: "MJO Phase 4 creates an atmospheric corridor drawing moisture across the Mekong Basin, compounding runoff in Eastern Isan." },
-                { id: "ZONE04", en: "Andaman Monsoon Coast", basin: "South Coast (Phuket / Phang Nga)", lat: 8.20, lon: 98.30, mjo_effect: 48.0, enso_effect: -13.8, iod_effect: 0.0, risk: "High Surge", mechanics: "Direct oceanic exposure to westerly monsoon squalls triggered by active MJO convective center over Indian Ocean / Maritime Continent." },
-                { id: "ZONE05", en: "Eastern Seaboard Coastal Strip", basin: "Rayong & Chonburi Marine", lat: 12.80, lon: 101.25, mjo_effect: 34.0, enso_effect: -11.2, iod_effect: 0.0, risk: "Moderate Flood", mechanics: "Coastal convergence lines form as moist Bay of Bengal air mass collides with local daytime thermal gradients." },
-                { id: "ZONE06", en: "Nan & Sirikit Reservoir Catchment", basin: "Upper North Catchment", lat: 17.62, lon: 100.09, mjo_effect: 32.5, enso_effect: -12.5, iod_effect: 0.0, risk: "Moderate Flood", mechanics: "Enhanced monsoonal troughing drives steady stratiform rain over northern watershed dams." }
-            ]
+            zones: []
         };
 
-        // NEW: Live API / JSON Data Fetching Function
+        // Fetch Live JSON Data and handle update failure alerts explicitly
         async function fetchLiveData(endpointUrl = 'data.json') {
             const icon = document.getElementById('refresh-icon');
+            const alertBanner = document.getElementById('data-alert-banner');
+            const alertText = document.getElementById('data-alert-text');
+            const alertTime = document.getElementById('data-alert-time');
+
             if (icon) icon.classList.add('fa-spin');
 
             try {
@@ -452,6 +464,18 @@
                 
                 const liveData = await response.json();
 
+                // Explicit Check: Did the backend report an unfulfilled update / fetch error?
+                if (liveData.is_live === false || liveData.status === "FETCH_FAILED") {
+                    if (alertBanner) alertBanner.classList.remove('hidden');
+                    if (alertText) alertText.innerText = liveData.error_message || 'Live climate telemetry could not be updated. Data has not been refreshed.';
+                    if (alertTime) alertTime.innerText = `Attempted: ${liveData.updated_at_utc ? new Date(liveData.updated_at_utc).toLocaleTimeString() : 'N/A'}`;
+                    console.warn('Backend reported telemetry fetch failure:', liveData.error_message);
+                    return;
+                }
+
+                // If fetch succeeded and is_live is true, ensure warning banner is hidden
+                if (alertBanner) alertBanner.classList.add('hidden');
+
                 if (liveData.zones && Array.isArray(liveData.zones)) {
                     APP_STATE.zones = liveData.zones;
                 }
@@ -459,9 +483,15 @@
                 // Update dynamic DOM elements if backend supplies index values
                 if (liveData.teleconnections) {
                     const tc = liveData.teleconnections;
-                    if (tc.enso) document.getElementById('kpi-enso-val').innerText = `${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)} °C`;
-                    if (tc.iod) document.getElementById('kpi-iod-val').innerText = `${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)} °C`;
-                    if (tc.mjo_phase) document.getElementById('kpi-mjo-title').innerText = `MJO Phase ${tc.mjo_phase}`;
+                    if (tc.enso !== null && tc.enso !== undefined) {
+                        document.getElementById('kpi-enso-val').innerText = `${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)} °C`;
+                    }
+                    if (tc.iod !== null && tc.iod !== undefined) {
+                        document.getElementById('kpi-iod-val').innerText = `${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)} °C`;
+                    }
+                    if (tc.mjo_phase !== null && tc.mjo_phase !== undefined) {
+                        document.getElementById('kpi-mjo-title').innerText = `MJO Phase ${tc.mjo_phase}`;
+                    }
                 }
 
                 processZoneData();
@@ -469,7 +499,10 @@
                 buildVoronoiLayer();
                 console.log('Live climate telemetry dynamic sync successful.');
             } catch (error) {
-                console.warn('Backend endpoint unavailable. Operating on baseline offline climate dataset:', error.message);
+                if (alertBanner) alertBanner.classList.remove('hidden');
+                if (alertText) alertText.innerText = 'Unable to connect to live telemetry pipeline. Data has not been updated.';
+                if (alertTime) alertTime.innerText = `Checked: ${new Date().toLocaleTimeString()}`;
+                console.warn('Backend endpoint unreachable:', error.message);
             } finally {
                 if (icon) setTimeout(() => icon.classList.remove('fa-spin'), 600);
             }
@@ -493,8 +526,7 @@
                 const absVal = Math.abs(normalized);
                 const r = Math.round(50 * (1 - absVal));
                 const g = Math.round(150 * (1 - absVal) + 80 * absVal);
-                const b = 246;
-                return `rgb(${r}, ${g}, ${b})`;
+                return `rgb(${r}, ${g}, 246)`;
             }
         }
 
@@ -651,6 +683,11 @@
             const container = document.getElementById('station-list');
             let filtered = [...APP_STATE.zones];
 
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-xs text-amber-400">Data unavailable. Live telemetry failed to load.</div>`;
+                return;
+            }
+
             if (APP_STATE.activeSort === 'anomaly') {
                 filtered.sort((a, b) => b.net_anomaly - a.net_anomaly);
             } else if (APP_STATE.activeSort === 'risk') {
@@ -792,11 +829,9 @@
         }, 1000);
 
         window.onload = function() {
-            processZoneData();
             initMap();
-            renderZoneList();
             initListeners();
-            // Automatically attempt live sync on load with offline fallback
+            // Automatically attempt live sync on load
             fetchLiveData();
         };
     </script>
