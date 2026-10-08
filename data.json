@@ -1,0 +1,8 @@
+{
+  "is_live": false,
+  "status": "FETCH_FAILED",
+  "error_message": "Failed to fetch live climate telemetry from NOAA/BoM servers. Data has not been updated.",
+  "updated_at_utc": "2026-10-08T14:03:30.656048+00:00",
+  "teleconnections": null,
+  "zones": []
+}
