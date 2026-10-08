@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thailand Monsoon Teleconnections & Risk Network</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#131e32',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Turf.js for Voronoi calculation -->
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080d1a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .leaflet-container {
+            background: #0b1120 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(10px);
+            color: #f8fafc !important;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px !important;
+        }
+
+        .leaflet-popup-content {
+            margin: 12px 16px !important;
+        }
+
+        .hex-badge {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            font-weight: 700;
+            font-size: 11px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .hex-badge:hover {
+            transform: scale(1.15);
+            z-index: 999;
+        }
+
+        .monsoon-gradient-bar {
+            background: linear-gradient(to right, #ea580c, #f59e0b, #64748b, #0284c7, #2563eb);
+        }
+
+        .pixel-cell {
+            transition: opacity 0.2s;
+        }
+        .pixel-cell:hover {
+            stroke: #ffffff;
+            stroke-width: 1px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="glass-panel sticky top-0 z-50 border-b border-slate-800/80 px-4 py-3 lg:px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl shadow-lg shadow-cyan-500/20 text-white">
+                        <i class="fa-solid fa-cloud-showers-heavy text-xl animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                            CLIMATE TELECONNECTIONS
+                            <span id="active-nodes-pill" class="text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Active Dynamics Synthesis</span>
+                        </h1>
+                        <p id="teleconnection-status-bar" class="text-xs text-slate-400 flex items-center gap-2 font-mono">
+                            <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                            <span id="teleconnection-text">ENSO: +0.60°C (El Niño) | IOD: -0.30°C (Neutral IOD) | MJO: Phase 4 (Amp 1.3)</span>
+                        </p>
+                    </div>
+                </div>
+
+                <button id="mobile-toggle-btn" class="md:hidden p-2 text-slate-300 hover:text-white bg-slate-800 rounded-lg">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Layer Controls -->
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
+                    <button id="view-pixels" class="view-btn px-3 py-1.5 rounded-lg font-medium bg-cyan-500 text-slate-950 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-border-all"></i> SST Gradients
+                    </button>
+                    <button id="view-mjo" class="view-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-bars-staggered"></i> MJO Band
+                    </button>
+                    <button id="view-voronoi" class="view-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-draw-polygon"></i> Impact Zones
+                    </button>
+                </div>
+
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-300">
+                    <i class="fa-regular fa-clock text-cyan-400"></i>
+                    <span id="ict-clock" class="font-mono">--:--:-- ICT</span>
+                </div>
+                
+                <button id="refresh-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-700/70 text-xs font-medium flex items-center gap-2 transition">
+                    <i id="refresh-icon" class="fa-solid fa-rotate text-cyan-400"></i>
+                    <span>Sync Teleconnections</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Teleconnection Header Banner -->
+    <section class="max-w-7xl mx-auto w-full px-4 pt-4 pb-2">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            
+            <!-- KPI 1: Thailand Monsoon Forecast -->
+            <div class="glass-card p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-cyan-400">
+                <div>
+                    <p class="text-xs text-slate-300 font-medium">Thailand Monsoon Forecast</p>
+                    <div class="flex items-baseline gap-1.5 mt-1">
+                        <h3 id="kpi-net-impact" class="text-2xl font-extrabold text-cyan-400">+22.4%</h3>
+                        <span id="kpi-net-label" class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">(WETTER)</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">High Flood Risk Index</p>
+                </div>
+                <div class="p-3 bg-cyan-950/70 rounded-2xl text-cyan-400 border border-cyan-800/50 flex items-center justify-center w-12 h-12">
+                    <i class="fa-solid fa-cloud-showers-heavy text-xl"></i>
+                </div>
+            </div>
+
+            <!-- KPI 2: Dominant Driver (MJO) -->
+            <div class="glass-card p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-purple-400">
+                <div>
+                    <p class="text-xs text-slate-300 font-medium">Dominant Driver</p>
+                    <h3 id="kpi-mjo-title" class="text-2xl font-extrabold text-purple-200 mt-1">MJO Phase 4</h3>
+                    <p id="kpi-mjo-desc" class="text-xs text-purple-300 font-medium mt-1">+35% Convective Forcing</p>
+                </div>
+                <div class="p-3 bg-purple-950/70 rounded-2xl text-purple-300 border border-purple-800/50 flex items-center justify-center w-12 h-12">
+                    <i class="fa-solid fa-bolt text-xl"></i>
+                </div>
+            </div>
+
+            <!-- KPI 3: ENSO Pacific Signal -->
+            <div class="glass-card p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-amber-500">
+                <div>
+                    <p class="text-xs text-slate-300 font-medium">ENSO Pacific Signal</p>
+                    <div class="flex items-baseline gap-1.5 mt-1">
+                        <h3 id="kpi-enso-val" class="text-2xl font-extrabold text-amber-400">+0.60 °C</h3>
+                        <span id="kpi-enso-state" class="text-xs font-semibold text-amber-400 uppercase tracking-wider">(El Niño)</span>
+                    </div>
+                    <p id="kpi-enso-desc" class="text-xs text-amber-500 font-medium mt-1">-12.6% Drying Counterwave</p>
+                </div>
+                <div class="p-3 bg-amber-950/70 rounded-2xl text-amber-400 border border-amber-800/50 flex items-center justify-center w-12 h-12">
+                    <i class="fa-solid fa-sun text-xl"></i>
+                </div>
+            </div>
+
+            <!-- KPI 4: Indian Ocean Dipole -->
+            <div class="glass-card p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-teal-400">
+                <div>
+                    <p class="text-xs text-slate-300 font-medium">Indian Ocean Dipole</p>
+                    <div class="flex items-baseline gap-1.5 mt-1">
+                        <h3 id="kpi-iod-val" class="text-2xl font-extrabold text-teal-300">-0.30 °C</h3>
+                        <span id="kpi-iod-state" class="text-xs font-semibold text-teal-300 uppercase tracking-wider">(Neutral)</span>
+                    </div>
+                    <p id="kpi-iod-desc" class="text-xs text-teal-400 font-medium mt-1">Steady Baseline Vapor</p>
+                </div>
+                <div class="p-3 bg-teal-950/70 rounded-2xl text-teal-300 border border-teal-800/50 flex items-center justify-center w-12 h-12">
+                    <i class="fa-solid fa-wind text-xl"></i>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Forecast Impact Slider Legend Bar -->
+    <section class="max-w-7xl mx-auto w-full px-4 py-2">
+        <div class="glass-panel p-4 rounded-2xl border border-slate-800/80 shadow-lg space-y-3">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-cyan-400"></i>
+                    Thailand Monsoon Rainfall Impact Forecast
+                </h3>
+                <span id="kpi-vector-summary" class="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/80 px-3 py-1 rounded-lg border border-cyan-800/60">
+                    Net Teleconnection Vector: +22.4% (WETTER)
+                </span>
+            </div>
+
+            <!-- Interactive Visual Gauge -->
+            <div class="relative pt-6 pb-2">
+                <!-- Pointer Marker -->
+                <div id="gauge-pointer" class="absolute top-0 left-[68.6%] -translate-x-1/2 flex flex-col items-center transition-all duration-500">
+                    <span id="gauge-pointer-label" class="text-[11px] font-bold font-mono text-cyan-300 bg-cyan-900/90 px-2 py-0.5 rounded border border-cyan-400 shadow-md whitespace-nowrap">
+                        +22.4% (WETTER)
+                    </span>
+                    <i class="fa-solid fa-caret-down text-cyan-400 text-sm -mt-1"></i>
+                </div>
+
+                <!-- Gradient Bar Track -->
+                <div class="h-4 w-full rounded-full monsoon-gradient-bar border border-slate-700/50 shadow-inner relative overflow-hidden">
+                    <div class="absolute inset-y-0 left-[50%] w-0.5 bg-white/70"></div> <!-- Baseline 0% -->
+                </div>
+
+                <!-- Ticks and Labels -->
+                <div class="flex justify-between text-[11px] font-mono text-slate-400 mt-1">
+                    <span class="text-orange-400 font-semibold">-60% (Drought Risk)</span>
+                    <span class="text-slate-300">0% (Historical Normal)</span>
+                    <span class="text-blue-400 font-semibold">+60% (High Flood Risk)</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Main Dashboard Workspace -->
+    <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[600px]">
+        
+        <!-- Left Sidebar: Regional Teleconnection Breakdown -->
+        <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl transition-all">
+            
+            <div class="p-3.5 border-b border-slate-800/80 bg-slate-900/80 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-earth-asia text-cyan-400"></i>
+                        Oceanic Drivers & Teleconnections
+                    </h2>
+                </div>
+
+                <!-- Drivers Overview Cards in Sidebar -->
+                <div class="space-y-2 text-xs">
+                    <div class="p-2.5 rounded-xl bg-purple-950/40 border border-purple-800/40 space-y-1">
+                        <div class="flex items-center justify-between font-bold text-purple-300">
+                            <span>MJO (Madden-Julian Oscillation)</span>
+                            <span id="side-mjo-phase" class="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 border border-purple-700">Phase 4</span>
+                        </div>
+                        <p id="side-mjo-text" class="text-slate-300 text-[11px]">Active convective envelope over Maritime Continent (100°E–125°E). Amplitude: 1.3. Enhances westerly monsoon flows toward Indochina.</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/40 space-y-1">
+                        <div class="flex items-center justify-between font-bold text-amber-300">
+                            <span>ENSO (Niño 3.4 Region)</span>
+                            <span id="side-enso-val" class="text-[10px] px-2 py-0.5 rounded bg-amber-900/60 border border-amber-700">+0.60°C</span>
+                        </div>
+                        <p id="side-enso-text" class="text-slate-300 text-[11px]">Weak El Niño conditions in Equatorial Pacific. Thermal expansion mapped in red-to-blue gradient grid (190°E to 220°E / 170°W to 140°W).</p>
+                    </div>
+
+                    <div class="p-2.5 rounded-xl bg-teal-950/40 border border-teal-800/40 space-y-1">
+                        <div class="flex items-center justify-between font-bold text-teal-300">
+                            <span>IOD (Indian Ocean Dipole)</span>
+                            <span id="side-iod-val" class="text-[10px] px-2 py-0.5 rounded bg-teal-900/60 border border-teal-700">-0.30°C</span>
+                        </div>
+                        <p id="side-iod-text" class="text-slate-300 text-[11px]">Neutral-to-slight negative dipole state. Gradient pixels mapped across Western (50°E-75°E) & Eastern (90°E-105°E) Indian Ocean.</p>
+                    </div>
+                </div>
+
+                <!-- Metric Sorting Tabs -->
+                <div class="flex items-center gap-1 bg-slate-950/50 p-1 rounded-xl border border-slate-800/60 text-xs mt-2">
+                    <button id="sort-anomaly" class="sort-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-cyan-400 transition">Sort % Anomaly</button>
+                    <button id="sort-risk" class="sort-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition">Flood Risk</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Zone List -->
+            <div id="station-list" class="flex-1 overflow-y-auto p-2 space-y-1.5 max-h-[320px] md:max-h-none">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Mathematical Vector Synthesis Footnote -->
+            <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/90 text-[10px] font-mono text-slate-400 space-y-1">
+                <p class="text-slate-300 font-bold">Vector Formula Mechanics:</p>
+                <p id="vector-formula-text" class="text-cyan-400">Net Delta = MJO (+35.0%) + ENSO (-12.6%) + IOD (0.0%) = +22.4%</p>
+            </div>
+        </aside>
+
+        <!-- Right Section: Interactive Leaflet Map with Image Overlay -->
+        <section class="flex-1 flex flex-col glass-panel rounded-2xl overflow-hidden border border-slate-800/80 relative min-h-[480px]">
+            <div id="map" class="w-full h-full min-h-[480px] z-10"></div>
+        </section>
+
+    </main>
+
+    <!-- Zone Teleconnection Detail Modal -->
+    <div id="station-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all opacity-0">
+        <div class="glass-panel bg-slate-900/95 border border-slate-700/80 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4 relative" id="modal-card">
+            
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl bg-slate-800/80 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-start gap-3">
+                <div class="p-3 rounded-xl bg-cyan-600/20 text-cyan-400 border border-cyan-500/30">
+                    <i class="fa-solid fa-diagram-project text-2xl"></i>
+                </div>
+                <div>
+                    <h3 id="modal-station-name" class="text-lg font-bold text-white">--</h3>
+                    <p id="modal-district-name" class="text-xs text-slate-400">-- Basin Teleconnections</p>
+                    <p id="modal-coords" class="text-[11px] font-mono text-slate-500 mt-0.5">Lat: --, Lon: --</p>
+                </div>
+            </div>
+
+            <!-- Teleconnection Vector Drivers -->
+            <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                <div class="bg-slate-950/60 p-2.5 rounded-xl border border-purple-900/40">
+                    <p class="text-[10px] text-purple-400 font-semibold uppercase">MJO Phase 4</p>
+                    <p id="modal-val-mjo" class="text-base font-bold text-purple-300 mt-0.5">+0.0%</p>
+                    <p class="text-[9px] text-slate-500">Convective Surge</p>
+                </div>
+                <div class="bg-slate-950/60 p-2.5 rounded-xl border border-amber-900/40">
+                    <p class="text-[10px] text-amber-400 font-semibold uppercase">ENSO (+0.6°C)</p>
+                    <p id="modal-val-enso" class="text-base font-bold text-amber-400 mt-0.5">-0.0%</p>
+                    <p class="text-[9px] text-slate-500">El Niño Drying</p>
+                </div>
+                <div class="bg-slate-950/60 p-2.5 rounded-xl border border-teal-900/40">
+                    <p class="text-[10px] text-teal-400 font-semibold uppercase">IOD (-0.3°C)</p>
+                    <p id="modal-val-iod" class="text-base font-bold text-teal-300 mt-0.5">+0.0%</p>
+                    <p class="text-[9px] text-slate-500">Neutral Drift</p>
+                </div>
+            </div>
+
+            <!-- Physical Mechanics Explanation Box -->
+            <div id="modal-tei-status-box" class="p-3.5 rounded-xl border text-xs space-y-1.5 bg-slate-950/80 border-slate-800">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-400 font-semibold">Net Regional Forecast:</span>
+                    <strong id="modal-val-net" class="text-sm font-mono text-cyan-400 font-bold">+0.0%</strong>
+                </div>
+                <p id="modal-mechanics-text" class="text-slate-300 text-[11px] leading-relaxed">
+                    --
+                </p>
+            </div>
+
+            <!-- Trend Chart -->
+            <div class="space-y-1">
+                <h4 class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                    <span>30-Day Rainfall Trend vs. Baseline</span>
+                    <span class="text-[10px] text-slate-500 font-mono">Climatological Norm</span>
+                </h4>
+                <div class="h-36 w-full bg-slate-950/50 p-2 rounded-xl border border-slate-800">
+                    <canvas id="modalChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        const APP_STATE = {
+            map: null,
+            pixelLayerGroup: null,
+            mjoLayerGroup: null,
+            voronoiLayerGroup: null,
+            activeSort: 'anomaly',
+            modalChartInstance: null,
+            // Fallback dataset used if live backend server is unreachable
+            zones: [
+                { id: "ZONE01", en: "Chao Phraya River Basin", basin: "Central Plains & Delta", lat: 14.20, lon: 100.50, mjo_effect: 38.5, enso_effect: -12.0, iod_effect: 0.0, risk: "High Flood", mechanics: "MJO Phase 4 directly aligns with the South Asian monsoon trough over Central Thailand, injecting massive equatorial vapor that completely overrides El Niño's weak upper-level subsidence." },
+                { id: "ZONE02", en: "Ping River Headwaters", basin: "Northern Highlands (Chiang Mai)", lat: 18.79, lon: 98.98, mjo_effect: 30.0, enso_effect: -11.8, iod_effect: 0.0, risk: "Moderate Flood", mechanics: "Highland topography amplifies incoming moisture carried by MJO-induced westerly winds, increasing mountain stream discharge and reservoir inflow." },
+                { id: "ZONE03", en: "Mun-Chi River Confluence", basin: "Northeast Plateau (Ubon)", lat: 15.23, lon: 104.85, mjo_effect: 42.0, enso_effect: -13.6, iod_effect: 0.0, risk: "Severe Flood", mechanics: "MJO Phase 4 creates an atmospheric corridor drawing moisture across the Mekong Basin, compounding runoff in Eastern Isan." },
+                { id: "ZONE04", en: "Andaman Monsoon Coast", basin: "South Coast (Phuket / Phang Nga)", lat: 8.20, lon: 98.30, mjo_effect: 48.0, enso_effect: -13.8, iod_effect: 0.0, risk: "High Surge", mechanics: "Direct oceanic exposure to westerly monsoon squalls triggered by active MJO convective center over Indian Ocean / Maritime Continent." },
+                { id: "ZONE05", en: "Eastern Seaboard Coastal Strip", basin: "Rayong & Chonburi Marine", lat: 12.80, lon: 101.25, mjo_effect: 34.0, enso_effect: -11.2, iod_effect: 0.0, risk: "Moderate Flood", mechanics: "Coastal convergence lines form as moist Bay of Bengal air mass collides with local daytime thermal gradients." },
+                { id: "ZONE06", en: "Nan & Sirikit Reservoir Catchment", basin: "Upper North Catchment", lat: 17.62, lon: 100.09, mjo_effect: 32.5, enso_effect: -12.5, iod_effect: 0.0, risk: "Moderate Flood", mechanics: "Enhanced monsoonal troughing drives steady stratiform rain over northern watershed dams." }
+            ]
+        };
+
+        // NEW: Live API / JSON Data Fetching Function
+        async function fetchLiveData(endpointUrl = 'data.json') {
+            const icon = document.getElementById('refresh-icon');
+            if (icon) icon.classList.add('fa-spin');
+
+            try {
+                const response = await fetch(endpointUrl, { cache: 'no-cache' });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                
+                const liveData = await response.json();
+
+                if (liveData.zones && Array.isArray(liveData.zones)) {
+                    APP_STATE.zones = liveData.zones;
+                }
+
+                // Update dynamic DOM elements if backend supplies index values
+                if (liveData.teleconnections) {
+                    const tc = liveData.teleconnections;
+                    if (tc.enso) document.getElementById('kpi-enso-val').innerText = `${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)} °C`;
+                    if (tc.iod) document.getElementById('kpi-iod-val').innerText = `${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)} °C`;
+                    if (tc.mjo_phase) document.getElementById('kpi-mjo-title').innerText = `MJO Phase ${tc.mjo_phase}`;
+                }
+
+                processZoneData();
+                renderZoneList();
+                buildVoronoiLayer();
+                console.log('Live climate telemetry dynamic sync successful.');
+            } catch (error) {
+                console.warn('Backend endpoint unavailable. Operating on baseline offline climate dataset:', error.message);
+            } finally {
+                if (icon) setTimeout(() => icon.classList.remove('fa-spin'), 600);
+            }
+        }
+
+        function processZoneData() {
+            APP_STATE.zones.forEach(z => {
+                z.net_anomaly = Number((z.mjo_effect + z.enso_effect + z.iod_effect).toFixed(1));
+            });
+        }
+
+        // Color interpolation function: Red (hotter/positive anomaly) to Blue (colder/negative anomaly)
+        function getTempGradientColor(val) {
+            const normalized = Math.max(-1, Math.min(1, val));
+            if (normalized >= 0) {
+                const r = 239;
+                const g = Math.round(100 * (1 - normalized));
+                const b = Math.round(50 * (1 - normalized));
+                return `rgb(${r}, ${g}, ${b})`;
+            } else {
+                const absVal = Math.abs(normalized);
+                const r = Math.round(50 * (1 - absVal));
+                const g = Math.round(150 * (1 - absVal) + 80 * absVal);
+                const b = 246;
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+        }
+
+        function initMap() {
+            const mapImageBounds = [[-48.1074, 36.9141], [64.6991, 247.8516]];
+
+            APP_STATE.map = L.map('map', {
+                zoomControl: true,
+                attributionControl: false,
+                maxBounds: mapImageBounds,
+                maxBoundsViscosity: 0.8
+            });
+
+            APP_STATE.map.fitBounds(mapImageBounds);
+
+            L.imageOverlay('IOD_ENSO_map.png', mapImageBounds).addTo(APP_STATE.map);
+
+            APP_STATE.pixelLayerGroup = L.layerGroup().addTo(APP_STATE.map);
+            APP_STATE.mjoLayerGroup = L.layerGroup().addTo(APP_STATE.map);
+            APP_STATE.voronoiLayerGroup = L.layerGroup().addTo(APP_STATE.map);
+
+            renderOceanicPixelGradients();
+            renderMJOVerticalBand();
+            buildVoronoiLayer();
+        }
+
+        function renderOceanicPixelGradients() {
+            APP_STATE.pixelLayerGroup.clearLayers();
+
+            const gridStep = 2.5;
+
+            // 1. IOD West Basin: 50.0°E to 75.0°E (-10°N to 10°N) -> Neutral / Cool Anomaly (-0.30°C)
+            for (let lat = -10; lat <= 10; lat += gridStep) {
+                for (let lon = 50.0; lon <= 75.0; lon += gridStep) {
+                    const distFromCenter = Math.sqrt(Math.pow((lat - 0) / 10, 2) + Math.pow((lon - 62.5) / 12.5, 2));
+                    const tempVal = -0.3 * (1 - distFromCenter * 0.4);
+                    const color = getTempGradientColor(tempVal);
+
+                    const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.65,
+                        weight: 0.5,
+                        className: 'pixel-cell'
+                    });
+                    pixel.bindPopup(`<b>IOD West Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: ${tempVal.toFixed(2)}°C`);
+                    APP_STATE.pixelLayerGroup.addLayer(pixel);
+                }
+            }
+
+            // 2. IOD East Basin: 90.0°E to 105.0°E (-10°N to 0°N) -> Slight Warm Anomaly (+0.25°C)
+            for (let lat = -10; lat <= 0; lat += gridStep) {
+                for (let lon = 90.0; lon <= 105.0; lon += gridStep) {
+                    const tempVal = 0.25;
+                    const color = getTempGradientColor(tempVal);
+
+                    const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.65,
+                        weight: 0.5,
+                        className: 'pixel-cell'
+                    });
+                    pixel.bindPopup(`<b>IOD East Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: +${tempVal.toFixed(2)}°C`);
+                    APP_STATE.pixelLayerGroup.addLayer(pixel);
+                }
+            }
+
+            // 3. ENSO Pacific Region (170.0°W to 140.0°W Normalized to 190.0°E to 220.0°E via +360° Offset)
+            for (let lat = -8; lat <= 8; lat += gridStep) {
+                for (let lon = 190.0; lon <= 220.0; lon += gridStep) {
+                    const latFactor = Math.cos((lat / 10) * (Math.PI / 2));
+                    const lonFactor = 1 - Math.abs(lon - 205.0) / 15.0;
+                    const tempVal = 0.60 * latFactor * Math.max(0.2, lonFactor);
+                    const color = getTempGradientColor(tempVal);
+
+                    const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.7,
+                        weight: 0.5,
+                        className: 'pixel-cell'
+                    });
+                    
+                    const stdLonLabel = `${(360.0 - lon).toFixed(1)}°W`;
+                    pixel.bindPopup(`<b>ENSO Niño 3.4 Pixel</b><br>Lat: ${lat}°, Lon: ${stdLonLabel} (${lon.toFixed(1)}°E)<br>SST Warmth: +${tempVal.toFixed(2)}°C (El Niño)`);
+                    APP_STATE.pixelLayerGroup.addLayer(pixel);
+                }
+            }
+        }
+
+        function renderMJOVerticalBand() {
+            APP_STATE.mjoLayerGroup.clearLayers();
+
+            const mjoLonStart = 100.0;
+            const mjoLonEnd = 125.0;
+            const mjoLatMin = -48.1074;
+            const mjoLatMax = 64.6991;
+
+            const mjoBand = L.polygon([
+                [mjoLatMin, mjoLonStart],
+                [mjoLatMax, mjoLonStart],
+                [mjoLatMax, mjoLonEnd],
+                [mjoLatMin, mjoLonEnd]
+            ], {
+                color: '#a855f7',
+                fillColor: '#9333ea',
+                fillOpacity: 0.28,
+                weight: 2,
+                dashArray: '6, 6'
+            });
+
+            mjoBand.bindPopup(`
+                <div class="space-y-1">
+                    <h4 class="font-bold text-sm text-purple-300">Madden-Julian Oscillation (MJO)</h4>
+                    <p class="text-xs text-slate-300"><b>Current Phase:</b> Phase 4 (Maritime Continent)</p>
+                    <p class="text-xs text-slate-300"><b>Longitude Span:</b> 100.0°E to 125.0°E</p>
+                    <p class="text-xs text-slate-300"><b>Amplitude:</b> 1.3 (Active Convective Wave)</p>
+                    <p class="text-[11px] text-purple-300 mt-1">Enhances monsoonal moisture flux toward Thailand (+35% forcing).</p>
+                </div>
+            `);
+
+            APP_STATE.mjoLayerGroup.addLayer(mjoBand);
+        }
+
+        function buildVoronoiLayer() {
+            APP_STATE.voronoiLayerGroup.clearLayers();
+            
+            APP_STATE.zones.forEach(z => {
+                const marker = L.circleMarker([z.lat, z.lon], {
+                    radius: 7,
+                    fillColor: '#38bdf8',
+                    color: '#ffffff',
+                    weight: 2,
+                    fillOpacity: 0.9
+                });
+
+                marker.bindPopup(`
+                    <div class="space-y-2 min-w-[200px]">
+                        <h4 class="font-bold text-sm text-white">${z.en}</h4>
+                        <p class="text-xs text-slate-400">${z.basin}</p>
+                        <div class="text-xs text-cyan-300 font-mono font-bold">Net Forecast: +${z.net_anomaly}%</div>
+                        <button onclick="openModal('${z.id}')" class="w-full mt-1 py-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-lg transition">
+                            View Analysis
+                        </button>
+                    </div>
+                `);
+
+                APP_STATE.voronoiLayerGroup.addLayer(marker);
+            });
+        }
+
+        function renderZoneList() {
+            const container = document.getElementById('station-list');
+            let filtered = [...APP_STATE.zones];
+
+            if (APP_STATE.activeSort === 'anomaly') {
+                filtered.sort((a, b) => b.net_anomaly - a.net_anomaly);
+            } else if (APP_STATE.activeSort === 'risk') {
+                filtered.sort((a, b) => a.risk.localeCompare(b.risk));
+            }
+
+            container.innerHTML = filtered.map((z, rank) => {
+                return `
+                    <div onclick="openModal('${z.id}')" 
+                         class="glass-card hover:bg-slate-800/80 p-2.5 rounded-xl border border-slate-800/80 cursor-pointer transition flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xs font-mono text-slate-500 w-4 font-bold">${rank + 1}</span>
+                            <div>
+                                <h4 class="text-xs font-semibold text-slate-200">${z.en}</h4>
+                                <p class="text-[10px] text-slate-400">${z.basin}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-cyan-400 font-mono">+${z.net_anomaly}%</span>
+                            <span class="text-[10px] block font-mono text-purple-300 font-semibold">${z.risk}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openModal(id) {
+            const z = APP_STATE.zones.find(s => s.id === id);
+            if (!z) return;
+
+            document.getElementById('modal-station-name').innerText = z.en;
+            document.getElementById('modal-district-name').innerText = `${z.basin} Teleconnections`;
+            document.getElementById('modal-coords').innerText = `Lat: ${z.lat.toFixed(2)}, Lon: ${z.lon.toFixed(2)}`;
+
+            document.getElementById('modal-val-mjo').innerText = `+${z.mjo_effect}%`;
+            document.getElementById('modal-val-enso').innerText = `${z.enso_effect}%`;
+            document.getElementById('modal-val-iod').innerText = `${z.iod_effect}%`;
+            document.getElementById('modal-val-net').innerText = `+${z.net_anomaly}% (WETTER)`;
+
+            document.getElementById('modal-mechanics-text').innerText = z.mechanics;
+
+            renderModalChart(z);
+
+            const modal = document.getElementById('station-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('station-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 250);
+        }
+
+        function renderModalChart(z) {
+            const ctx = document.getElementById('modalChart').getContext('2d');
+            if (APP_STATE.modalChartInstance) {
+                APP_STATE.modalChartInstance.destroy();
+            }
+
+            const days = ['Day 1', 'Day 5', 'Day 10', 'Day 15', 'Day 20', 'Day 25', 'Day 30'];
+            const baseline = [100, 100, 100, 100, 100, 100, 100];
+            const netForecast = [
+                100 + z.net_anomaly * 0.4,
+                100 + z.net_anomaly * 0.7,
+                100 + z.net_anomaly * 1.2,
+                100 + z.net_anomaly * 1.0,
+                100 + z.net_anomaly * 0.6,
+                100 + z.net_anomaly * 0.3,
+                100 + z.net_anomaly * 0.1
+            ];
+
+            APP_STATE.modalChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [
+                        {
+                            label: 'Teleconnection Forecast (mm index)',
+                            data: netForecast,
+                            borderColor: '#38bdf8',
+                            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                            fill: true,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 3
+                        },
+                        {
+                            label: 'Historical Baseline',
+                            data: baseline,
+                            borderColor: '#64748b',
+                            borderDash: [4, 4],
+                            borderWidth: 1.5,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } },
+                    scales: {
+                        x: { ticks: { color: '#64748b', font: { size: 9 } } },
+                        y: { ticks: { color: '#64748b', font: { size: 9 } } }
+                    }
+                }
+            });
+        }
+
+        function initListeners() {
+            document.getElementById('sort-anomaly').addEventListener('click', (e) => switchSort('anomaly', e.target));
+            document.getElementById('sort-risk').addEventListener('click', (e) => switchSort('risk', e.target));
+
+            document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+            document.getElementById('refresh-btn').addEventListener('click', () => fetchLiveData());
+
+            document.getElementById('mobile-toggle-btn').addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar-panel');
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        function switchSort(sortKey, target) {
+            APP_STATE.activeSort = sortKey;
+            document.querySelectorAll('.sort-tab').forEach(b => {
+                b.className = 'sort-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition';
+            });
+            target.className = 'sort-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-cyan-400 transition';
+            renderZoneList();
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('ict-clock').innerText = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Bangkok', hour12: false }) + ' ICT';
+        }, 1000);
+
+        window.onload = function() {
+            processZoneData();
+            initMap();
+            renderZoneList();
+            initListeners();
+            // Automatically attempt live sync on load with offline fallback
+            fetchLiveData();
+        };
+    </script>
+</body>
+</html>
