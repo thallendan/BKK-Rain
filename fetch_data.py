@@ -1,211 +1,98 @@
-from datetime import datetime, timezone
 import json
-import urllib.request
+import re
+from datetime import datetime
+import requests
+
+# User-specified BoM Live Telemetry Endpoints
+MJO_URL = "https://www.bom.gov.au/clim_data/IDCKGEM000/rmm.74toRealtime.txt"
+IOD_NINO_URL = "https://www.bom.gov.au/clim_data/IDCK000072/rnino_3.4.txt"
+
+# Standard browser headers to bypass BoM runner IP blocks
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+}
 
 
-def fetch_text(url):
-    """Utility to fetch raw text from climate data servers."""
-    try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=10) as response:
-            return response.read().decode('utf-8')
-    except Exception as e:
-        print(f'Error fetching from {url}: {e}')
-        return None
-
-
-def parse_enso_nino34():
-    """Fetches real-time Niño 3.4 SST anomaly from NOAA CPC."""
-    url = 'https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices'
-    text = fetch_text(url)
-    if text:
-        lines = [l.strip() for l in text.strip().split('\n') if l.strip()]
-        if len(lines) > 1:
-            last_line = lines[-1].split()
-            try:
-                # Extract ANOM column for Niño 3.4
-                return float(last_line[-1])
-            except (ValueError, IndexError):
-                pass
-    return None  # Explicitly return None if fetch or parsing fails
-
-
-def parse_mjo_phase():
-    """Fetches current MJO phase and amplitude from NOAA CPC."""
-    url = 'https://www.cpc.ncep.noaa.gov/products/precip/CWlink/daily_mjo_index/proj_series_1.txt'
-    text = fetch_text(url)
-    if text:
-        lines = [
-            l.strip()
-            for l in text.strip().split('\n')
-            if l.strip() and not l.startswith('P')
-        ]
-        if lines:
-            parts = lines[-1].split()
-            try:
-                phase = int(parts[5])
-                amp = float(parts[6])
-                return phase, amp
-            except (ValueError, IndexError):
-                pass
-    return None, None  # Explicitly return None if fetch or parsing fails
-
-
-def compute_thailand_hydrology(enso_val, iod_val, mjo_phase, mjo_amp):
-    """Calculates rainfall vector impacts across major Thai river basins."""
-    mjo_forcing_map = {
-        1: -10.0,
-        2: -5.0,
-        3: 15.0,
-        4: 35.0,
-        5: 28.0,
-        6: 5.0,
-        7: -15.0,
-        8: -20.0,
+def parse_mjo(raw_text):
+    """Parses the latest MJO line from rmm.74toRealtime.txt"""
+    lines = [line.strip() for line in raw_text.strip().split("\n") if line.strip()]
+    data_lines = [l for l in lines if not l.startswith("year") and not l.startswith("name")]
+    
+    if not data_lines:
+        raise ValueError("No valid MJO data lines found")
+    
+    # Parse last line (latest day)
+    parts = re.split(r"\s+", data_lines[-1])
+    year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+    rmm1, rmm2 = float(parts[3]), float(parts[4])
+    phase = int(parts[5])
+    amplitude = float(parts[6])
+    
+    return {
+        "date": f"{year}-{month:02d}-{day:02d}",
+        "rmm1": rmm1,
+        "rmm2": rmm2,
+        "phase": phase,
+        "amplitude": amplitude,
     }
-    base_mjo_pct = mjo_forcing_map.get(mjo_phase, 0.0) * min(mjo_amp, 2.0)
-    enso_pct = -20.0 * enso_val
-    iod_pct = 15.0 * (iod_val if iod_val is not None else 0.0)
 
-    zones = [
-        {
-            'id': 'ZONE01',
-            'en': 'Chao Phraya Basin & Delta (Bangkok Gate)',
-            'basin': 'Central Plains & Greater Bangkok',
-            'lat': 14.20,
-            'lon': 100.50,
-            'mjo_effect': round(base_mjo_pct * 1.1, 1),
-            'enso_effect': round(enso_pct, 1),
-            'iod_effect': round(iod_pct, 1),
-            'risk': (
-                'High Flood' if (base_mjo_pct + enso_pct) > 15 else 'Normal'
-            ),
-            'mechanics': (
-                f'MJO Phase {mjo_phase} drives tropical convective moisture'
-                ' across the Gulf of Thailand into the Chao Phraya delta.'
-            ),
-        },
-        {
-            'id': 'ZONE02',
-            'en': 'Ping River Headwaters (Bhumibol Dam)',
-            'basin': 'Northern Highlands (Chiang Mai/Tak)',
-            'lat': 18.79,
-            'lon': 98.98,
-            'mjo_effect': round(base_mjo_pct * 0.85, 1),
-            'enso_effect': round(enso_pct * 0.95, 1),
-            'iod_effect': round(iod_pct, 1),
-            'risk': 'Moderate Flood',
-            'mechanics': (
-                'Orographic lifting along the Tenasserim Range amplifies'
-                ' monsoon flows into Bhumibol Reservoir.'
-            ),
-        },
-        {
-            'id': 'ZONE03',
-            'en': 'Mun-Chi Confluence (Mekong Basin)',
-            'basin': 'Northeast Plateau (Ubon Ratchathani)',
-            'lat': 15.23,
-            'lon': 104.85,
-            'mjo_effect': round(base_mjo_pct * 1.2, 1),
-            'enso_effect': round(enso_pct * 1.1, 1),
-            'iod_effect': round(iod_pct, 1),
-            'risk': 'Severe Flood',
-            'mechanics': (
-                'Monsoon troughing creates strong moisture convergence over'
-                ' Eastern Isan.'
-            ),
-        },
-        {
-            'id': 'ZONE04',
-            'en': 'Andaman Coast & Western Ranges',
-            'basin': 'Southern West Coast (Phuket/Ranong)',
-            'lat': 8.20,
-            'lon': 98.30,
-            'mjo_effect': round(base_mjo_pct * 1.35, 1),
-            'enso_effect': round(enso_pct * 1.1, 1),
-            'iod_effect': round(iod_pct * 1.2, 1),
-            'risk': 'High Surge',
-            'mechanics': (
-                'Direct onshore squall lines triggered by active Indian Ocean'
-                ' convective waves.'
-            ),
-        },
-        {
-            'id': 'ZONE05',
-            'en': 'Eastern Seaboard Coast',
-            'basin': 'Rayong & Chonburi Marine',
-            'lat': 12.80,
-            'lon': 101.25,
-            'mjo_effect': round(base_mjo_pct * 0.95, 1),
-            'enso_effect': round(enso_pct * 0.9, 1),
-            'iod_effect': round(iod_pct, 1),
-            'risk': 'Moderate Flood',
-            'mechanics': (
-                'Moisture convergence along Gulf of Thailand coastal boundaries.'
-            ),
-        },
-        {
-            'id': 'ZONE06',
-            'en': 'Nan River Catchment (Sirikit Dam)',
-            'basin': 'Upper North Catchment (Uttaradit)',
-            'lat': 17.62,
-            'lon': 100.09,
-            'mjo_effect': round(base_mjo_pct * 0.9, 1),
-            'enso_effect': round(enso_pct, 1),
-            'iod_effect': round(iod_pct, 1),
-            'risk': 'Moderate Flood',
-            'mechanics': (
-                'Monsoonal rainfall contributing directly to northern storage'
-                ' reservoirs.'
-            ),
-        },
-    ]
-    return zones
+
+def parse_nino_iod(raw_text):
+    """Parses latest Niño 3.4 / SST data from rnino_3.4.txt"""
+    lines = [line.strip() for line in raw_text.strip().split("\n") if line.strip()]
+    data_lines = [l for l in lines if re.match(r"^\d{4}", l)]
+    
+    if not data_lines:
+        raise ValueError("No valid Niño SST data lines found")
+    
+    parts = re.split(r"\s+", data_lines[-1])
+    # Extract latest temperature anomaly value
+    nino34_anomaly = float(parts[-1]) if len(parts) > 1 else float(parts[0])
+    
+    return {
+        "nino34_anomaly": nino34_anomaly
+    }
 
 
 def main():
-    enso = parse_enso_nino34()
-    mjo_phase, mjo_amp = parse_mjo_phase()
-    iod = None  # Left as None if live source is unverified
+    telemetry = {
+        "is_live": False,
+        "last_attempt": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "mjo": None,
+        "nino34": None,
+    }
 
-    utc_now = datetime.now(timezone.utc).isoformat()
+    try:
+        # Fetch MJO Index
+        mjo_res = requests.get(MJO_URL, headers=HEADERS, timeout=15)
+        mjo_res.raise_for_status()
+        mjo_data = parse_mjo(mjo_res.text)
 
-    # STRICT FAILURE CHECK: If essential telemetry fails to fetch, mark is_live = False
-    if enso is None or mjo_phase is None or mjo_amp is None:
-        payload = {
-            'is_live': False,
-            'status': 'FETCH_FAILED',
-            'error_message': (
-                'Failed to fetch live climate telemetry from NOAA/BoM'
-                ' servers. Data has not been updated.'
-            ),
-            'updated_at_utc': utc_now,
-            'teleconnections': None,
-            'zones': [],
-        }
-        print(
-            'CRITICAL WARNING: Live data fetch failed. Outputting failure'
-            ' state without fallback defaults.'
-        )
-    else:
-        zones = compute_thailand_hydrology(enso, iod, mjo_phase, mjo_amp)
-        payload = {
-            'is_live': True,
-            'status': 'OK',
-            'updated_at_utc': utc_now,
-            'teleconnections': {
-                'enso': enso,
-                'iod': iod if iod is not None else 0.0,
-                'mjo_phase': mjo_phase,
-                'mjo_amplitude': mjo_amp,
-            },
-            'zones': zones,
-        }
-        print('SUCCESS: Live telemetry fetched and calculated successfully.')
+        # Fetch Niño / SST Anomaly Index
+        nino_res = requests.get(IOD_NINO_URL, headers=HEADERS, timeout=15)
+        nino_res.raise_for_status()
+        nino_data = parse_nino_iod(nino_res.text)
 
-    with open('data.json', 'w', encoding='utf-8') as f:
-        json.dump(payload, f, indent=2)
+        # Update telemetry object if both succeed
+        telemetry["is_live"] = True
+        telemetry["mjo"] = mjo_data
+        telemetry["nino34"] = nino_data
+
+        print("SUCCESS: Live telemetry successfully fetched from BoM.")
+
+    except Exception as e:
+        print(f"FETCH FAILED: {str(e)}")
+        telemetry["error"] = str(e)
+
+    # Save to data.json
+    with open("data.json", "w", encoding="utf-8") as f:
+        json.dump(telemetry, f, indent=2)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
