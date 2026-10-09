@@ -148,7 +148,7 @@
                         </h1>
                         <p id="teleconnection-status-bar" class="text-xs text-slate-400 flex items-center gap-2 font-mono">
                             <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                            <span id="teleconnection-text">ENSO: +0.60°C (El Niño) | IOD: -0.30°C (Neutral IOD) | MJO: Phase 4 (Amp 1.3)</span>
+                            <span id="teleconnection-text">ENSO: -- | IOD: -- | MJO: --</span>
                         </p>
                     </div>
                 </div>
@@ -211,10 +211,10 @@
                 <div>
                     <p class="text-xs text-slate-300 font-medium">Thailand Monsoon Forecast</p>
                     <div class="flex items-baseline gap-1.5 mt-1">
-                        <h3 id="kpi-net-impact" class="text-2xl font-extrabold text-cyan-400">+22.4%</h3>
-                        <span id="kpi-net-label" class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">(WETTER)</span>
+                        <h3 id="kpi-net-impact" class="text-2xl font-extrabold text-cyan-400">--%</h3>
+                        <span id="kpi-net-label" class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">(--)</span>
                     </div>
-                    <p class="text-xs text-slate-400 mt-1">High Flood Risk Index</p>
+                    <p class="text-xs text-slate-400 mt-1">Chao Phraya Flood Index</p>
                 </div>
                 <div class="p-3 bg-cyan-950/70 rounded-2xl text-cyan-400 border border-cyan-800/50 flex items-center justify-center w-12 h-12">
                     <i class="fa-solid fa-cloud-showers-heavy text-xl"></i>
@@ -225,8 +225,8 @@
             <div class="glass-card p-4 rounded-2xl flex items-center justify-between border-l-4 border-l-purple-400">
                 <div>
                     <p class="text-xs text-slate-300 font-medium">Dominant Driver</p>
-                    <h3 id="kpi-mjo-title" class="text-2xl font-extrabold text-purple-200 mt-1">MJO Phase 4</h3>
-                    <p id="kpi-mjo-desc" class="text-xs text-purple-300 font-medium mt-1">+35% Convective Forcing</p>
+                    <h3 id="kpi-mjo-title" class="text-2xl font-extrabold text-purple-200 mt-1">MJO Phase --</h3>
+                    <p id="kpi-mjo-desc" class="text-xs text-purple-300 font-medium mt-1">Amp: --</p>
                 </div>
                 <div class="p-3 bg-purple-950/70 rounded-2xl text-purple-300 border border-purple-800/50 flex items-center justify-center w-12 h-12">
                     <i class="fa-solid fa-bolt text-xl"></i>
@@ -238,10 +238,10 @@
                 <div>
                     <p class="text-xs text-slate-300 font-medium">ENSO Pacific Signal</p>
                     <div class="flex items-baseline gap-1.5 mt-1">
-                        <h3 id="kpi-enso-val" class="text-2xl font-extrabold text-amber-400">+0.60 °C</h3>
-                        <span id="kpi-enso-state" class="text-xs font-semibold text-amber-400 uppercase tracking-wider">(El Niño)</span>
+                        <h3 id="kpi-enso-val" class="text-2xl font-extrabold text-amber-400">-- °C</h3>
+                        <span id="kpi-enso-state" class="text-xs font-semibold text-amber-400 uppercase tracking-wider">(--)</span>
                     </div>
-                    <p id="kpi-enso-desc" class="text-xs text-amber-500 font-medium mt-1">-12.6% Drying Counterwave</p>
+                    <p id="kpi-enso-desc" class="text-xs text-amber-500 font-medium mt-1">Pacific Anomaly</p>
                 </div>
                 <div class="p-3 bg-amber-950/70 rounded-2xl text-amber-400 border border-amber-800/50 flex items-center justify-center w-12 h-12">
                     <i class="fa-solid fa-sun text-xl"></i>
@@ -253,10 +253,10 @@
                 <div>
                     <p class="text-xs text-slate-300 font-medium">Indian Ocean Dipole</p>
                     <div class="flex items-baseline gap-1.5 mt-1">
-                        <h3 id="kpi-iod-val" class="text-2xl font-extrabold text-teal-300">-0.30 °C</h3>
-                        <span id="kpi-iod-state" class="text-xs font-semibold text-teal-300 uppercase tracking-wider">(Neutral)</span>
+                        <h3 id="kpi-iod-val" class="text-2xl font-extrabold text-teal-300">-- °C</h3>
+                        <span id="kpi-iod-state" class="text-xs font-semibold text-teal-300 uppercase tracking-wider">(--)</span>
                     </div>
-                    <p id="kpi-iod-desc" class="text-xs text-teal-400 font-medium mt-1">Steady Baseline Vapor</p>
+                    <p id="kpi-iod-desc" class="text-xs text-teal-400 font-medium mt-1">DMI Anomaly</p>
                 </div>
                 <div class="p-3 bg-teal-950/70 rounded-2xl text-teal-300 border border-teal-800/50 flex items-center justify-center w-12 h-12">
                     <i class="fa-solid fa-wind text-xl"></i>
@@ -276,16 +276,16 @@
                     Thailand Monsoon Rainfall Impact Forecast
                 </h3>
                 <span id="kpi-vector-summary" class="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/80 px-3 py-1 rounded-lg border border-cyan-800/60">
-                    Net Teleconnection Vector: +22.4% (WETTER)
+                    Net Teleconnection Vector: --%
                 </span>
             </div>
 
             <!-- Interactive Visual Gauge -->
             <div class="relative pt-6 pb-2">
                 <!-- Pointer Marker -->
-                <div id="gauge-pointer" class="absolute top-0 left-[68.6%] -translate-x-1/2 flex flex-col items-center transition-all duration-500">
+                <div id="gauge-pointer" class="absolute top-0 left-[50%] -translate-x-1/2 flex flex-col items-center transition-all duration-500">
                     <span id="gauge-pointer-label" class="text-[11px] font-bold font-mono text-cyan-300 bg-cyan-900/90 px-2 py-0.5 rounded border border-cyan-400 shadow-md whitespace-nowrap">
-                        +22.4% (WETTER)
+                        --%
                     </span>
                     <i class="fa-solid fa-caret-down text-cyan-400 text-sm -mt-1"></i>
                 </div>
@@ -325,25 +325,25 @@
                     <div class="p-2.5 rounded-xl bg-purple-950/40 border border-purple-800/40 space-y-1">
                         <div class="flex items-center justify-between font-bold text-purple-300">
                             <span>MJO (Madden-Julian Oscillation)</span>
-                            <span id="side-mjo-phase" class="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 border border-purple-700">Phase 4</span>
+                            <span id="side-mjo-phase" class="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 border border-purple-700">Phase --</span>
                         </div>
-                        <p id="side-mjo-text" class="text-slate-300 text-[11px]">Active convective envelope over Maritime Continent (100°E–125°E). Amplitude: 1.3. Enhances westerly monsoon flows toward Indochina.</p>
+                        <p id="side-mjo-text" class="text-slate-300 text-[11px]">Active convective wave tracking across the Indian Ocean / Maritime Continent.</p>
                     </div>
 
                     <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/40 space-y-1">
                         <div class="flex items-center justify-between font-bold text-amber-300">
                             <span>ENSO (Niño 3.4 Region)</span>
-                            <span id="side-enso-val" class="text-[10px] px-2 py-0.5 rounded bg-amber-900/60 border border-amber-700">+0.60°C</span>
+                            <span id="side-enso-val" class="text-[10px] px-2 py-0.5 rounded bg-amber-900/60 border border-amber-700">--°C</span>
                         </div>
-                        <p id="side-enso-text" class="text-slate-300 text-[11px]">Weak El Niño conditions in Equatorial Pacific. Thermal expansion mapped in red-to-blue gradient grid (190°E to 220°E / 170°W to 140°W).</p>
+                        <p id="side-enso-text" class="text-slate-300 text-[11px]">Sea surface temperature anomalies in Equatorial Pacific (Niño 3.4 region).</p>
                     </div>
 
                     <div class="p-2.5 rounded-xl bg-teal-950/40 border border-teal-800/40 space-y-1">
                         <div class="flex items-center justify-between font-bold text-teal-300">
                             <span>IOD (Indian Ocean Dipole)</span>
-                            <span id="side-iod-val" class="text-[10px] px-2 py-0.5 rounded bg-teal-900/60 border border-teal-700">-0.30°C</span>
+                            <span id="side-iod-val" class="text-[10px] px-2 py-0.5 rounded bg-teal-900/60 border border-teal-700">--°C</span>
                         </div>
-                        <p id="side-iod-text" class="text-slate-300 text-[11px]">Neutral-to-slight negative dipole state. Gradient pixels mapped across Western (50°E-75°E) & Eastern (90°E-105°E) Indian Ocean.</p>
+                        <p id="side-iod-text" class="text-slate-300 text-[11px]">Dipole Mode Index (DMI) sea surface temperature gradient across Indian Ocean.</p>
                     </div>
                 </div>
 
@@ -362,7 +362,7 @@
             <!-- Mathematical Vector Synthesis Footnote -->
             <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/90 text-[10px] font-mono text-slate-400 space-y-1">
                 <p class="text-slate-300 font-bold">Vector Formula Mechanics:</p>
-                <p id="vector-formula-text" class="text-cyan-400">Net Delta = MJO (+35.0%) + ENSO (-12.6%) + IOD (0.0%) = +22.4%</p>
+                <p id="vector-formula-text" class="text-cyan-400">Net Delta = MJO + ENSO + IOD</p>
             </div>
         </aside>
 
@@ -396,19 +396,19 @@
             <!-- Teleconnection Vector Drivers -->
             <div class="grid grid-cols-3 gap-2 text-center pt-1">
                 <div class="bg-slate-950/60 p-2.5 rounded-xl border border-purple-900/40">
-                    <p class="text-[10px] text-purple-400 font-semibold uppercase">MJO Phase 4</p>
+                    <p class="text-[10px] text-purple-400 font-semibold uppercase">MJO Effect</p>
                     <p id="modal-val-mjo" class="text-base font-bold text-purple-300 mt-0.5">+0.0%</p>
                     <p class="text-[9px] text-slate-500">Convective Surge</p>
                 </div>
                 <div class="bg-slate-950/60 p-2.5 rounded-xl border border-amber-900/40">
-                    <p class="text-[10px] text-amber-400 font-semibold uppercase">ENSO (+0.6°C)</p>
+                    <p class="text-[10px] text-amber-400 font-semibold uppercase">ENSO Effect</p>
                     <p id="modal-val-enso" class="text-base font-bold text-amber-400 mt-0.5">-0.0%</p>
-                    <p class="text-[9px] text-slate-500">El Niño Drying</p>
+                    <p class="text-[9px] text-slate-500">Pacific Forcing</p>
                 </div>
                 <div class="bg-slate-950/60 p-2.5 rounded-xl border border-teal-900/40">
-                    <p class="text-[10px] text-teal-400 font-semibold uppercase">IOD (-0.3°C)</p>
+                    <p class="text-[10px] text-teal-400 font-semibold uppercase">IOD Effect</p>
                     <p id="modal-val-iod" class="text-base font-bold text-teal-300 mt-0.5">+0.0%</p>
-                    <p class="text-[9px] text-slate-500">Neutral Drift</p>
+                    <p class="text-[9px] text-slate-500">DMI Forcing</p>
                 </div>
             </div>
 
@@ -483,15 +483,57 @@
                 // Update dynamic DOM elements if backend supplies index values
                 if (liveData.teleconnections) {
                     const tc = liveData.teleconnections;
+
+                    // ENSO Display Logic
                     if (tc.enso !== null && tc.enso !== undefined) {
-                        document.getElementById('kpi-enso-val').innerText = `${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)} °C`;
+                        const ensoStr = `${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)} °C`;
+                        const ensoState = tc.enso >= 0.5 ? 'El Niño' : (tc.enso <= -0.5 ? 'La Niña' : 'Neutral');
+                        document.getElementById('kpi-enso-val').innerText = ensoStr;
+                        document.getElementById('kpi-enso-state').innerText = `(${ensoState})`;
+                        document.getElementById('side-enso-val').innerText = ensoStr;
                     }
+
+                    // IOD Display Logic
                     if (tc.iod !== null && tc.iod !== undefined) {
-                        document.getElementById('kpi-iod-val').innerText = `${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)} °C`;
+                        const iodStr = `${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)} °C`;
+                        const iodState = tc.iod >= 0.4 ? '+IOD' : (tc.iod <= -0.4 ? '-IOD' : 'Neutral');
+                        document.getElementById('kpi-iod-val').innerText = iodStr;
+                        document.getElementById('kpi-iod-state').innerText = `(${iodState})`;
+                        document.getElementById('side-iod-val').innerText = iodStr;
                     }
+
+                    // MJO Display Logic
                     if (tc.mjo_phase !== null && tc.mjo_phase !== undefined) {
                         document.getElementById('kpi-mjo-title').innerText = `MJO Phase ${tc.mjo_phase}`;
+                        document.getElementById('kpi-mjo-desc').innerText = `Amp: ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(2) : '--'}`;
+                        document.getElementById('side-mjo-phase').innerText = `Phase ${tc.mjo_phase}`;
                     }
+
+                    // Top Bar Summary Text
+                    const topBarText = `ENSO: ${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)}°C | IOD: ${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)}°C | MJO: Phase ${tc.mjo_phase} (Amp ${tc.mjo_amplitude.toFixed(1)})`;
+                    document.getElementById('teleconnection-text').innerText = topBarText;
+                }
+
+                // Calculate Net Impact from Zone 01 (Chao Phraya / Bangkok Gate)
+                if (APP_STATE.zones.length > 0) {
+                    const bkkZone = APP_STATE.zones.find(z => z.id === 'ZONE01') || APP_STATE.zones[0];
+                    const netVal = bkkZone.net_anomaly;
+                    const netStr = `${netVal >= 0 ? '+' : ''}${netVal.toFixed(1)}%`;
+                    const netState = netVal >= 0 ? 'WETTER' : 'DRYER';
+
+                    document.getElementById('kpi-net-impact').innerText = netStr;
+                    document.getElementById('kpi-net-label').innerText = `(${netState})`;
+                    document.getElementById('kpi-vector-summary').innerText = `Net Teleconnection Vector: ${netStr} (${netState})`;
+                    
+                    // Update visual gauge pointer position (-60% to +60% scale mapping to 0% - 100% left)
+                    const normalizedPct = Math.max(0, Math.min(100, ((netVal + 60) / 120) * 100));
+                    const gaugePointer = document.getElementById('gauge-pointer');
+                    const gaugeLabel = document.getElementById('gauge-pointer-label');
+                    if (gaugePointer) gaugePointer.style.left = `${normalizedPct}%`;
+                    if (gaugeLabel) gaugeLabel.innerText = `${netStr} (${netState})`;
+
+                    // Update sidebar formula mechanics line
+                    document.getElementById('vector-formula-text').innerText = `Net Delta = MJO (${bkkZone.mjo_effect >= 0 ? '+' : ''}${bkkZone.mjo_effect}%) + ENSO (${bkkZone.enso_effect >= 0 ? '+' : ''}${bkkZone.enso_effect}%) + IOD (${bkkZone.iod_effect >= 0 ? '+' : ''}${bkkZone.iod_effect}%) = ${netStr}`;
                 }
 
                 processZoneData();
@@ -558,7 +600,7 @@
 
             const gridStep = 2.5;
 
-            // 1. IOD West Basin: 50.0°E to 75.0°E (-10°N to 10°N) -> Neutral / Cool Anomaly (-0.30°C)
+            // 1. IOD West Basin: 50.0°E to 75.0°E (-10°N to 10°N)
             for (let lat = -10; lat <= 10; lat += gridStep) {
                 for (let lon = 50.0; lon <= 75.0; lon += gridStep) {
                     const distFromCenter = Math.sqrt(Math.pow((lat - 0) / 10, 2) + Math.pow((lon - 62.5) / 12.5, 2));
@@ -577,7 +619,7 @@
                 }
             }
 
-            // 2. IOD East Basin: 90.0°E to 105.0°E (-10°N to 0°N) -> Slight Warm Anomaly (+0.25°C)
+            // 2. IOD East Basin: 90.0°E to 105.0°E (-10°N to 0°N)
             for (let lat = -10; lat <= 0; lat += gridStep) {
                 for (let lon = 90.0; lon <= 105.0; lon += gridStep) {
                     const tempVal = 0.25;
@@ -595,7 +637,7 @@
                 }
             }
 
-            // 3. ENSO Pacific Region (170.0°W to 140.0°W Normalized to 190.0°E to 220.0°E via +360° Offset)
+            // 3. ENSO Pacific Region (170.0°W to 140.0°W Normalized to 190.0°E to 220.0°E)
             for (let lat = -8; lat <= 8; lat += gridStep) {
                 for (let lon = 190.0; lon <= 220.0; lon += gridStep) {
                     const latFactor = Math.cos((lat / 10) * (Math.PI / 2));
@@ -612,7 +654,7 @@
                     });
                     
                     const stdLonLabel = `${(360.0 - lon).toFixed(1)}°W`;
-                    pixel.bindPopup(`<b>ENSO Niño 3.4 Pixel</b><br>Lat: ${lat}°, Lon: ${stdLonLabel} (${lon.toFixed(1)}°E)<br>SST Warmth: +${tempVal.toFixed(2)}°C (El Niño)`);
+                    pixel.bindPopup(`<b>ENSO Niño 3.4 Pixel</b><br>Lat: ${lat}°, Lon: ${stdLonLabel} (${lon.toFixed(1)}°E)<br>SST Warmth: +${tempVal.toFixed(2)}°C`);
                     APP_STATE.pixelLayerGroup.addLayer(pixel);
                 }
             }
@@ -642,10 +684,8 @@
             mjoBand.bindPopup(`
                 <div class="space-y-1">
                     <h4 class="font-bold text-sm text-purple-300">Madden-Julian Oscillation (MJO)</h4>
-                    <p class="text-xs text-slate-300"><b>Current Phase:</b> Phase 4 (Maritime Continent)</p>
                     <p class="text-xs text-slate-300"><b>Longitude Span:</b> 100.0°E to 125.0°E</p>
-                    <p class="text-xs text-slate-300"><b>Amplitude:</b> 1.3 (Active Convective Wave)</p>
-                    <p class="text-[11px] text-purple-300 mt-1">Enhances monsoonal moisture flux toward Thailand (+35% forcing).</p>
+                    <p class="text-[11px] text-purple-300 mt-1">Enhances monsoonal moisture flux toward Indochina Peninsula & Greater Bangkok.</p>
                 </div>
             `);
 
@@ -668,7 +708,7 @@
                     <div class="space-y-2 min-w-[200px]">
                         <h4 class="font-bold text-sm text-white">${z.en}</h4>
                         <p class="text-xs text-slate-400">${z.basin}</p>
-                        <div class="text-xs text-cyan-300 font-mono font-bold">Net Forecast: +${z.net_anomaly}%</div>
+                        <div class="text-xs text-cyan-300 font-mono font-bold">Net Forecast: ${z.net_anomaly >= 0 ? '+' : ''}${z.net_anomaly}%</div>
                         <button onclick="openModal('${z.id}')" class="w-full mt-1 py-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-lg transition">
                             View Analysis
                         </button>
@@ -706,7 +746,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <span class="text-xs font-bold text-cyan-400 font-mono">+${z.net_anomaly}%</span>
+                            <span class="text-xs font-bold text-cyan-400 font-mono">${z.net_anomaly >= 0 ? '+' : ''}${z.net_anomaly}%</span>
                             <span class="text-[10px] block font-mono text-purple-300 font-semibold">${z.risk}</span>
                         </div>
                     </div>
@@ -722,10 +762,10 @@
             document.getElementById('modal-district-name').innerText = `${z.basin} Teleconnections`;
             document.getElementById('modal-coords').innerText = `Lat: ${z.lat.toFixed(2)}, Lon: ${z.lon.toFixed(2)}`;
 
-            document.getElementById('modal-val-mjo').innerText = `+${z.mjo_effect}%`;
-            document.getElementById('modal-val-enso').innerText = `${z.enso_effect}%`;
-            document.getElementById('modal-val-iod').innerText = `${z.iod_effect}%`;
-            document.getElementById('modal-val-net').innerText = `+${z.net_anomaly}% (WETTER)`;
+            document.getElementById('modal-val-mjo').innerText = `${z.mjo_effect >= 0 ? '+' : ''}${z.mjo_effect}%`;
+            document.getElementById('modal-val-enso').innerText = `${z.enso_effect >= 0 ? '+' : ''}${z.enso_effect}%`;
+            document.getElementById('modal-val-iod').innerText = `${z.iod_effect >= 0 ? '+' : ''}${z.iod_effect}%`;
+            document.getElementById('modal-val-net').innerText = `${z.net_anomaly >= 0 ? '+' : ''}${z.net_anomaly}% (${z.net_anomaly >= 0 ? 'WETTER' : 'DRYER'})`;
 
             document.getElementById('modal-mechanics-text').innerText = z.mechanics;
 
