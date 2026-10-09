@@ -95,38 +95,25 @@
             margin: 12px 16px !important;
         }
 
-        .hex-badge {
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            font-weight: 700;
-            font-size: 11px;
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .hex-badge:hover {
-            transform: scale(1.15);
-            z-index: 999;
-        }
-
         .monsoon-gradient-bar {
             background: linear-gradient(to right, #ea580c, #f59e0b, #64748b, #0284c7, #2563eb);
         }
 
-        .pixel-cell {
-            transition: opacity 0.2s;
+        /* Animated Teleconnection Vector Flow Lines */
+        @keyframes dash-flow {
+            to {
+                stroke-dashoffset: -200;
+            }
         }
-        .pixel-cell:hover {
-            stroke: #ffffff;
-            stroke-width: 1px;
-            cursor: pointer;
+        .teleconnection-arc {
+            stroke-dasharray: 8, 8;
+            animation: dash-flow 12s linear infinite;
+        }
+
+        /* Soft Thermal Heat Plume Filter */
+        .heat-plume {
+            filter: blur(14px);
+            transition: all 0.5s ease-in-out;
         }
     </style>
 </head>
@@ -553,22 +540,6 @@
             });
         }
 
-        // Color interpolation function: Red (hotter/positive anomaly) to Blue (colder/negative anomaly)
-        function getTempGradientColor(val) {
-            const normalized = Math.max(-1, Math.min(1, val));
-            if (normalized >= 0) {
-                const r = 239;
-                const g = Math.round(100 * (1 - normalized));
-                const b = Math.round(50 * (1 - normalized));
-                return `rgb(${r}, ${g}, ${b})`;
-            } else {
-                const absVal = Math.abs(normalized);
-                const r = Math.round(50 * (1 - absVal));
-                const g = Math.round(150 * (1 - absVal) + 80 * absVal);
-                return `rgb(${r}, ${g}, 246)`;
-            }
-        }
-
         function initMap() {
             const mapImageBounds = [[-48.1074, 36.9141], [64.6991, 247.8516]];
 
@@ -587,76 +558,148 @@
             APP_STATE.mjoLayerGroup = L.layerGroup().addTo(APP_STATE.map);
             APP_STATE.voronoiLayerGroup = L.layerGroup().addTo(APP_STATE.map);
 
-            // Initial render call with defaults (overwritten once fetchLiveData resolves)
+            // Initial render call with defaults
             renderOceanicPixelGradients(0.95, 0.15);
             renderMJOVerticalBand(7, 0.13);
             buildVoronoiLayer();
         }
 
-        // Dynamically renders ENSO & IOD SST pixel gradients on Leaflet map
+        // Helper function: Computes points along a smooth quadratic Bezier curve
+        function createArcPoints(startLat, startLon, endLat, endLon, bend = 0.22, numPoints = 35) {
+            const midLat = (startLat + endLat) / 2;
+            const midLon = (startLon + endLon) / 2;
+            const dLat = endLat - startLat;
+            const dLon = endLon - startLon;
+
+            // Perpendicular control point offset
+            const ctrlLat = midLat + dLon * bend;
+            const ctrlLon = midLon - dLat * bend;
+
+            const curvePoints = [];
+            for (let i = 0; i <= numPoints; i++) {
+                const t = i / numPoints;
+                const lat = (1 - t) * (1 - t) * startLat + 2 * (1 - t) * t * ctrlLat + t * t * endLat;
+                const lon = (1 - t) * (1 - t) * startLon + 2 * (1 - t) * t * ctrlLon + t * t * endLon;
+                curvePoints.push([lat, lon]);
+            }
+            return curvePoints;
+        }
+
+        // Renders Option A (Fluid Thermal Heat Plumes) & Option B (Animated Teleconnection Vector Arcs)
         function renderOceanicPixelGradients(ensoVal = 0.95, iodVal = 0.15) {
             APP_STATE.pixelLayerGroup.clearLayers();
 
-            const gridStep = 2.5;
+            const bkkLat = 14.2;
+            const bkkLon = 100.5;
 
-            // 1. IOD West Basin: 50.0°E to 75.0°E (-10°N to 10°N)
-            for (let lat = -10; lat <= 10; lat += gridStep) {
-                for (let lon = 50.0; lon <= 75.0; lon += gridStep) {
-                    const distFromCenter = Math.sqrt(Math.pow((lat - 0) / 10, 2) + Math.pow((lon - 62.5) / 12.5, 2));
-                    const tempVal = iodVal * (1 - distFromCenter * 0.4);
-                    const color = getTempGradientColor(tempVal);
+            // --- 1. ENSO PACIFIC DRIVER (Niño 3.4 Region ~0°N, 205°E / 155°W) ---
+            const ensoLat = 0.0;
+            const ensoLon = 205.0;
+            const ensoColor = ensoVal >= 0 ? '#f97316' : '#38bdf8'; // Warm Orange for El Niño, Cool Blue for La Niña
+            const ensoLabel = ensoVal >= 0.5 ? 'El Niño' : (ensoVal <= -0.5 ? 'La Niña' : 'Neutral');
 
-                    const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
-                        color: color,
-                        fillColor: color,
-                        fillOpacity: 0.65,
-                        weight: 0.5,
-                        className: 'pixel-cell'
-                    });
-                    pixel.bindPopup(`<b>IOD West Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: ${tempVal >= 0 ? '+' : ''}${tempVal.toFixed(2)}°C`);
-                    APP_STATE.pixelLayerGroup.addLayer(pixel);
-                }
-            }
+            // Option A: Smooth Layered Radial Heat Plume
+            const ensoPlumeRadii = [1800000, 1200000, 600000]; // Meters
+            ensoPlumeRadii.forEach((radius, idx) => {
+                const opacity = (0.12 + (idx * 0.10)) * Math.min(1.2, Math.abs(ensoVal));
+                const circle = L.circle([ensoLat, ensoLon], {
+                    radius: radius,
+                    color: 'transparent',
+                    fillColor: ensoColor,
+                    fillOpacity: opacity,
+                    className: 'heat-plume'
+                });
+                APP_STATE.pixelLayerGroup.addLayer(circle);
+            });
 
-            // 2. IOD East Basin: 90.0°E to 105.0°E (-10°N to 0°N)
-            for (let lat = -10; lat <= 0; lat += gridStep) {
-                for (let lon = 90.0; lon <= 105.0; lon += gridStep) {
-                    const tempVal = -iodVal * 0.5;
-                    const color = getTempGradientColor(tempVal);
+            // Center Marker Badge for ENSO
+            const ensoCenterMarker = L.circleMarker([ensoLat, ensoLon], {
+                radius: 9,
+                fillColor: ensoColor,
+                color: '#ffffff',
+                weight: 2,
+                fillOpacity: 0.95
+            });
+            ensoCenterMarker.bindPopup(`
+                <div class="space-y-1">
+                    <h4 class="font-bold text-sm text-amber-300">Niño 3.4 Pacific Plume</h4>
+                    <p class="text-xs text-slate-300"><b>SST Anomaly:</b> ${ensoVal >= 0 ? '+' : ''}${ensoVal.toFixed(2)} °C</p>
+                    <p class="text-xs text-slate-300"><b>State:</b> ${ensoLabel}</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Drives equatorial atmospheric Walker Circulation shifts across the Pacific Basin.</p>
+                </div>
+            `);
+            APP_STATE.pixelLayerGroup.addLayer(ensoCenterMarker);
 
-                    const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
-                        color: color,
-                        fillColor: color,
-                        fillOpacity: 0.65,
-                        weight: 0.5,
-                        className: 'pixel-cell'
-                    });
-                    pixel.bindPopup(`<b>IOD East Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: ${tempVal >= 0 ? '+' : ''}${tempVal.toFixed(2)}°C`);
-                    APP_STATE.pixelLayerGroup.addLayer(pixel);
-                }
-            }
+            // Option B: Pacific Teleconnection Vector Arc to Bangkok
+            const pacificArcPoints = createArcPoints(ensoLat, ensoLon, bkkLat, bkkLon, 0.28);
+            const pacificArc = L.polyline(pacificArcPoints, {
+                color: ensoColor,
+                weight: 2.5,
+                opacity: 0.8,
+                className: 'teleconnection-arc'
+            });
+            pacificArc.bindPopup(`
+                <div class="space-y-1">
+                    <h4 class="font-bold text-sm text-amber-300">Pacific Teleconnection Vector</h4>
+                    <p class="text-xs text-slate-300"><b>Pacific Forcing on Bangkok:</b> ${ensoVal >= 0 ? 'Suppressing (-19.0% Monsoon rain)' : 'Enhancing (+19.0% Monsoon rain)'}</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Upper-level atmospheric wave path connecting Equatorial Pacific ocean heat to Chao Phraya basin dynamics.</p>
+                </div>
+            `);
+            APP_STATE.pixelLayerGroup.addLayer(pacificArc);
 
-            // 3. ENSO Pacific Region (170.0°W to 140.0°W Normalized to 190.0°E to 220.0°E)
-            for (let lat = -8; lat <= 8; lat += gridStep) {
-                for (let lon = 190.0; lon <= 220.0; lon += gridStep) {
-                    const latFactor = Math.cos((lat / 10) * (Math.PI / 2));
-                    const lonFactor = 1 - Math.abs(lon - 205.0) / 15.0;
-                    const tempVal = ensoVal * latFactor * Math.max(0.2, lonFactor);
-                    const color = getTempGradientColor(tempVal);
 
-                    const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
-                        color: color,
-                        fillColor: color,
-                        fillOpacity: 0.7,
-                        weight: 0.5,
-                        className: 'pixel-cell'
-                    });
-                    
-                    const stdLonLabel = `${(360.0 - lon).toFixed(1)}°W`;
-                    pixel.bindPopup(`<b>ENSO Niño 3.4 Pixel</b><br>Lat: ${lat}°, Lon: ${stdLonLabel} (${lon.toFixed(1)}°E)<br>SST Warmth: ${tempVal >= 0 ? '+' : ''}${tempVal.toFixed(2)}°C`);
-                    APP_STATE.pixelLayerGroup.addLayer(pixel);
-                }
-            }
+            // --- 2. IOD WEST INDIAN OCEAN DRIVER (~0°N, 62.5°E) ---
+            const iodWestLat = 0.0;
+            const iodWestLon = 62.5;
+            const iodWestColor = iodVal >= 0 ? '#38bdf8' : '#f97316';
+
+            // Option A: Smooth Layered Radial Heat Plume (West IOD)
+            const iodPlumeRadii = [1200000, 600000];
+            iodPlumeRadii.forEach((radius, idx) => {
+                const opacity = (0.12 + (idx * 0.12)) * Math.min(1.2, Math.abs(iodVal));
+                const circle = L.circle([iodWestLat, iodWestLon], {
+                    radius: radius,
+                    color: 'transparent',
+                    fillColor: iodWestColor,
+                    fillOpacity: opacity,
+                    className: 'heat-plume'
+                });
+                APP_STATE.pixelLayerGroup.addLayer(circle);
+            });
+
+            // Center Marker Badge for IOD West
+            const iodCenterMarker = L.circleMarker([iodWestLat, iodWestLon], {
+                radius: 8,
+                fillColor: iodWestColor,
+                color: '#ffffff',
+                weight: 2,
+                fillOpacity: 0.95
+            });
+            iodCenterMarker.bindPopup(`
+                <div class="space-y-1">
+                    <h4 class="font-bold text-sm text-teal-300">Western Indian Ocean Dipole Plume</h4>
+                    <p class="text-xs text-slate-300"><b>DMI Anomaly:</b> ${iodVal >= 0 ? '+' : ''}${iodVal.toFixed(2)} °C</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Modulates monsoonal moisture flux across the Bay of Bengal into Indochina.</p>
+                </div>
+            `);
+            APP_STATE.pixelLayerGroup.addLayer(iodCenterMarker);
+
+            // Option B: Indian Ocean Teleconnection Vector Arc to Bangkok
+            const indianArcPoints = createArcPoints(iodWestLat, iodWestLon, bkkLat, bkkLon, -0.22);
+            const indianArc = L.polyline(indianArcPoints, {
+                color: iodWestColor,
+                weight: 2.5,
+                opacity: 0.8,
+                className: 'teleconnection-arc'
+            });
+            indianArc.bindPopup(`
+                <div class="space-y-1">
+                    <h4 class="font-bold text-sm text-teal-300">Indian Ocean Teleconnection Vector</h4>
+                    <p class="text-xs text-slate-300"><b>IOD Forcing on Bangkok:</b> ${iodVal >= 0 ? '+2.2% Moisture surge' : '-2.2% Dry anomaly'}</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Cross-equatorial atmospheric moisture pipeline originating from the Western Indian Ocean.</p>
+                </div>
+            `);
+            APP_STATE.pixelLayerGroup.addLayer(indianArc);
         }
 
         // Dynamically positions MJO vertical band over longitudes based on Live Phase (1-8) & Amplitude
