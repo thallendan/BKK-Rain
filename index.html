@@ -136,7 +136,7 @@
     <header class="glass-panel sticky top-0 z-50 border-b border-slate-800/80 px-4 py-3 lg:px-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between w-full md:w-auto">
                 <div class="flex items-center space-x-3">
                     <div class="p-2.5 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl shadow-lg shadow-cyan-500/20 text-white">
                         <i class="fa-solid fa-cloud-showers-heavy text-xl animate-pulse"></i>
@@ -158,20 +158,8 @@
                 </button>
             </div>
 
-            <!-- Layer Controls -->
+            <!-- Controls Section (Clutter-free: buttons removed) -->
             <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
-                    <button id="view-pixels" class="view-btn px-3 py-1.5 rounded-lg font-medium bg-cyan-500 text-slate-950 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-border-all"></i> SST Gradients
-                    </button>
-                    <button id="view-mjo" class="view-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-bars-staggered"></i> MJO Band
-                    </button>
-                    <button id="view-voronoi" class="view-btn px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-draw-polygon"></i> Impact Zones
-                    </button>
-                </div>
-
                 <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-300">
                     <i class="fa-regular fa-clock text-cyan-400"></i>
                     <span id="ict-clock" class="font-mono">--:--:-- ICT</span>
@@ -446,7 +434,8 @@
             voronoiLayerGroup: null,
             activeSort: 'anomaly',
             modalChartInstance: null,
-            zones: []
+            zones: [],
+            teleconnections: null
         };
 
         // Fetch Live JSON Data and handle update failure alerts explicitly
@@ -473,17 +462,14 @@
                     return;
                 }
 
-                // Ingest zones and calculate net_anomaly for all zones FIRST
+                // Ingest zones and calculate net_anomaly FIRST
                 if (liveData.zones && Array.isArray(liveData.zones)) {
                     APP_STATE.zones = liveData.zones;
-                    processZoneData(); // Compute net_anomaly for each zone object before reading properties
+                    processZoneData();
                 }
 
-                // If fetch succeeded and is_live is true, hide warning banner
-                if (alertBanner) alertBanner.classList.add('hidden');
-
-                // Update dynamic DOM elements if backend supplies index values
                 if (liveData.teleconnections) {
+                    APP_STATE.teleconnections = liveData.teleconnections;
                     const tc = liveData.teleconnections;
 
                     // ENSO Display Logic
@@ -516,6 +502,9 @@
                     document.getElementById('teleconnection-text').innerText = topBarText;
                 }
 
+                // If fetch succeeded and is_live is true, hide warning banner
+                if (alertBanner) alertBanner.classList.add('hidden');
+
                 // Calculate Net Impact from Zone 01 (Chao Phraya / Bangkok Gate)
                 if (APP_STATE.zones.length > 0) {
                     const bkkZone = APP_STATE.zones.find(z => z.id === 'ZONE01') || APP_STATE.zones[0];
@@ -540,6 +529,13 @@
 
                 renderZoneList();
                 buildVoronoiLayer();
+
+                // Re-render Leaflet Map Graphics using Live Data Payload
+                if (APP_STATE.teleconnections) {
+                    renderOceanicPixelGradients(APP_STATE.teleconnections.enso, APP_STATE.teleconnections.iod);
+                    renderMJOVerticalBand(APP_STATE.teleconnections.mjo_phase, APP_STATE.teleconnections.mjo_amplitude);
+                }
+
                 console.log('Live climate telemetry dynamic sync successful.');
             } catch (error) {
                 console.error('JS parsing runtime error:', error);
@@ -591,12 +587,14 @@
             APP_STATE.mjoLayerGroup = L.layerGroup().addTo(APP_STATE.map);
             APP_STATE.voronoiLayerGroup = L.layerGroup().addTo(APP_STATE.map);
 
-            renderOceanicPixelGradients();
-            renderMJOVerticalBand();
+            // Initial render call with defaults (overwritten once fetchLiveData resolves)
+            renderOceanicPixelGradients(0.95, 0.15);
+            renderMJOVerticalBand(7, 0.13);
             buildVoronoiLayer();
         }
 
-        function renderOceanicPixelGradients() {
+        // Dynamically renders ENSO & IOD SST pixel gradients on Leaflet map
+        function renderOceanicPixelGradients(ensoVal = 0.95, iodVal = 0.15) {
             APP_STATE.pixelLayerGroup.clearLayers();
 
             const gridStep = 2.5;
@@ -605,7 +603,7 @@
             for (let lat = -10; lat <= 10; lat += gridStep) {
                 for (let lon = 50.0; lon <= 75.0; lon += gridStep) {
                     const distFromCenter = Math.sqrt(Math.pow((lat - 0) / 10, 2) + Math.pow((lon - 62.5) / 12.5, 2));
-                    const tempVal = -0.3 * (1 - distFromCenter * 0.4);
+                    const tempVal = iodVal * (1 - distFromCenter * 0.4);
                     const color = getTempGradientColor(tempVal);
 
                     const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
@@ -615,7 +613,7 @@
                         weight: 0.5,
                         className: 'pixel-cell'
                     });
-                    pixel.bindPopup(`<b>IOD West Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: ${tempVal.toFixed(2)}°C`);
+                    pixel.bindPopup(`<b>IOD West Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: ${tempVal >= 0 ? '+' : ''}${tempVal.toFixed(2)}°C`);
                     APP_STATE.pixelLayerGroup.addLayer(pixel);
                 }
             }
@@ -623,7 +621,7 @@
             // 2. IOD East Basin: 90.0°E to 105.0°E (-10°N to 0°N)
             for (let lat = -10; lat <= 0; lat += gridStep) {
                 for (let lon = 90.0; lon <= 105.0; lon += gridStep) {
-                    const tempVal = 0.25;
+                    const tempVal = -iodVal * 0.5;
                     const color = getTempGradientColor(tempVal);
 
                     const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
@@ -633,7 +631,7 @@
                         weight: 0.5,
                         className: 'pixel-cell'
                     });
-                    pixel.bindPopup(`<b>IOD East Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: +${tempVal.toFixed(2)}°C`);
+                    pixel.bindPopup(`<b>IOD East Basin Pixel</b><br>Lat: ${lat}°, Lon: ${lon.toFixed(1)}°E<br>SST Anomaly: ${tempVal >= 0 ? '+' : ''}${tempVal.toFixed(2)}°C`);
                     APP_STATE.pixelLayerGroup.addLayer(pixel);
                 }
             }
@@ -643,7 +641,7 @@
                 for (let lon = 190.0; lon <= 220.0; lon += gridStep) {
                     const latFactor = Math.cos((lat / 10) * (Math.PI / 2));
                     const lonFactor = 1 - Math.abs(lon - 205.0) / 15.0;
-                    const tempVal = 0.60 * latFactor * Math.max(0.2, lonFactor);
+                    const tempVal = ensoVal * latFactor * Math.max(0.2, lonFactor);
                     const color = getTempGradientColor(tempVal);
 
                     const pixel = L.rectangle([[lat, lon], [lat + gridStep, lon + gridStep]], {
@@ -655,19 +653,36 @@
                     });
                     
                     const stdLonLabel = `${(360.0 - lon).toFixed(1)}°W`;
-                    pixel.bindPopup(`<b>ENSO Niño 3.4 Pixel</b><br>Lat: ${lat}°, Lon: ${stdLonLabel} (${lon.toFixed(1)}°E)<br>SST Warmth: +${tempVal.toFixed(2)}°C`);
+                    pixel.bindPopup(`<b>ENSO Niño 3.4 Pixel</b><br>Lat: ${lat}°, Lon: ${stdLonLabel} (${lon.toFixed(1)}°E)<br>SST Warmth: ${tempVal >= 0 ? '+' : ''}${tempVal.toFixed(2)}°C`);
                     APP_STATE.pixelLayerGroup.addLayer(pixel);
                 }
             }
         }
 
-        function renderMJOVerticalBand() {
+        // Dynamically positions MJO vertical band over longitudes based on Live Phase (1-8) & Amplitude
+        function renderMJOVerticalBand(phase = 7, amp = 0.13) {
             APP_STATE.mjoLayerGroup.clearLayers();
 
-            const mjoLonStart = 100.0;
-            const mjoLonEnd = 125.0;
+            // Longitude mapping for MJO Phase 1-8
+            const mjoPhaseLonMap = {
+                1: [60.0, 80.0],     # Western Indian Ocean
+                2: [80.0, 100.0],    # Indian Ocean
+                3: [90.0, 110.0],    # Bay of Bengal / West Maritime Continent
+                4: [100.0, 125.0],   # Maritime Continent (Thailand Peak Forcing)
+                5: [120.0, 140.0],   # Maritime Continent / West Pacific
+                6: [140.0, 160.0],   # Western Pacific
+                7: [150.0, 170.0],   # Western/Central Pacific
+                8: [170.0, 190.0]    # Central Pacific / Western Hemisphere
+            };
+
+            const bounds = mjoPhaseLonMap[phase] || [150.0, 170.0];
+            const mjoLonStart = bounds[0];
+            const mjoLonEnd = bounds[1];
             const mjoLatMin = -48.1074;
             const mjoLatMax = 64.6991;
+
+            // Scale fill opacity based on wave amplitude
+            const opacity = Math.max(0.12, Math.min(0.45, amp * 0.25));
 
             const mjoBand = L.polygon([
                 [mjoLatMin, mjoLonStart],
@@ -677,7 +692,7 @@
             ], {
                 color: '#a855f7',
                 fillColor: '#9333ea',
-                fillOpacity: 0.28,
+                fillOpacity: opacity,
                 weight: 2,
                 dashArray: '6, 6'
             });
@@ -685,8 +700,10 @@
             mjoBand.bindPopup(`
                 <div class="space-y-1">
                     <h4 class="font-bold text-sm text-purple-300">Madden-Julian Oscillation (MJO)</h4>
-                    <p class="text-xs text-slate-300"><b>Longitude Span:</b> 100.0°E to 125.0°E</p>
-                    <p class="text-[11px] text-purple-300 mt-1">Enhances monsoonal moisture flux toward Indochina Peninsula & Greater Bangkok.</p>
+                    <p class="text-xs text-slate-300"><b>Current Live Phase:</b> Phase ${phase}</p>
+                    <p class="text-xs text-slate-300"><b>Wave Amplitude:</b> ${amp ? amp.toFixed(2) : '--'}</p>
+                    <p class="text-xs text-slate-300"><b>Longitude Span:</b> ${mjoLonStart.toFixed(1)}°E to ${mjoLonEnd.toFixed(1)}°E</p>
+                    <p class="text-[11px] text-purple-300 mt-1">${phase === 4 || phase === 5 ? 'Enhances monsoonal moisture flux toward Thailand.' : 'Convective core positioned away from Indochina peninsula.'}</p>
                 </div>
             `);
 
