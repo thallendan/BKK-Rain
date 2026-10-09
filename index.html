@@ -473,12 +473,14 @@
                     return;
                 }
 
-                // If fetch succeeded and is_live is true, ensure warning banner is hidden
-                if (alertBanner) alertBanner.classList.add('hidden');
-
+                // Ingest zones and calculate net_anomaly for all zones FIRST
                 if (liveData.zones && Array.isArray(liveData.zones)) {
                     APP_STATE.zones = liveData.zones;
+                    processZoneData(); // Compute net_anomaly for each zone object before reading properties
                 }
+
+                // If fetch succeeded and is_live is true, hide warning banner
+                if (alertBanner) alertBanner.classList.add('hidden');
 
                 // Update dynamic DOM elements if backend supplies index values
                 if (liveData.teleconnections) {
@@ -510,14 +512,14 @@
                     }
 
                     // Top Bar Summary Text
-                    const topBarText = `ENSO: ${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)}°C | IOD: ${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)}°C | MJO: Phase ${tc.mjo_phase} (Amp ${tc.mjo_amplitude.toFixed(1)})`;
+                    const topBarText = `ENSO: ${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)}°C | IOD: ${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)}°C | MJO: Phase ${tc.mjo_phase} (Amp ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(1) : '--'})`;
                     document.getElementById('teleconnection-text').innerText = topBarText;
                 }
 
                 // Calculate Net Impact from Zone 01 (Chao Phraya / Bangkok Gate)
                 if (APP_STATE.zones.length > 0) {
                     const bkkZone = APP_STATE.zones.find(z => z.id === 'ZONE01') || APP_STATE.zones[0];
-                    const netVal = bkkZone.net_anomaly;
+                    const netVal = (bkkZone && bkkZone.net_anomaly !== undefined) ? bkkZone.net_anomaly : 0;
                     const netStr = `${netVal >= 0 ? '+' : ''}${netVal.toFixed(1)}%`;
                     const netState = netVal >= 0 ? 'WETTER' : 'DRYER';
 
@@ -536,15 +538,14 @@
                     document.getElementById('vector-formula-text').innerText = `Net Delta = MJO (${bkkZone.mjo_effect >= 0 ? '+' : ''}${bkkZone.mjo_effect}%) + ENSO (${bkkZone.enso_effect >= 0 ? '+' : ''}${bkkZone.enso_effect}%) + IOD (${bkkZone.iod_effect >= 0 ? '+' : ''}${bkkZone.iod_effect}%) = ${netStr}`;
                 }
 
-                processZoneData();
                 renderZoneList();
                 buildVoronoiLayer();
                 console.log('Live climate telemetry dynamic sync successful.');
             } catch (error) {
+                console.error('JS parsing runtime error:', error);
                 if (alertBanner) alertBanner.classList.remove('hidden');
                 if (alertText) alertText.innerText = 'Unable to connect to live telemetry pipeline. Data has not been updated.';
                 if (alertTime) alertTime.innerText = `Checked: ${new Date().toLocaleTimeString()}`;
-                console.warn('Backend endpoint unreachable:', error.message);
             } finally {
                 if (icon) setTimeout(() => icon.classList.remove('fa-spin'), 600);
             }
