@@ -1,8 +1,85 @@
 {
-  "is_live": false,
-  "status": "FETCH_FAILED",
-  "error_message": "Failed to fetch live climate telemetry from NOAA/BoM servers. Data has not been updated.",
-  "updated_at_utc": "2026-10-08T14:03:30.656048+00:00",
-  "teleconnections": null,
-  "zones": []
+  "is_live": true,
+  "status": "OK",
+  "updated_at_utc": "2026-10-09T13:54:21.188960+00:00",
+  "teleconnections": {
+    "enso": 0.95,
+    "iod": 0.146,
+    "mjo_phase": 7,
+    "mjo_amplitude": 0.12849849
+  },
+  "zones": [
+    {
+      "id": "ZONE01",
+      "en": "Chao Phraya Basin & Delta (Bangkok Gate)",
+      "basin": "Central Plains & Greater Bangkok",
+      "lat": 14.2,
+      "lon": 100.5,
+      "mjo_effect": -2.1,
+      "enso_effect": -19.0,
+      "iod_effect": 2.2,
+      "risk": "Normal",
+      "mechanics": "MJO Phase 7 drives tropical convective moisture across the Gulf of Thailand into the Chao Phraya delta."
+    },
+    {
+      "id": "ZONE02",
+      "en": "Ping River Headwaters (Bhumibol Dam)",
+      "basin": "Northern Highlands (Chiang Mai/Tak)",
+      "lat": 18.79,
+      "lon": 98.98,
+      "mjo_effect": -1.6,
+      "enso_effect": -18.1,
+      "iod_effect": 2.2,
+      "risk": "Moderate Flood",
+      "mechanics": "Orographic lifting along the Tenasserim Range amplifies monsoon flows into Bhumibol Reservoir."
+    },
+    {
+      "id": "ZONE03",
+      "en": "Mun-Chi Confluence (Mekong Basin)",
+      "basin": "Northeast Plateau (Ubon Ratchathani)",
+      "lat": 15.23,
+      "lon": 104.85,
+      "mjo_effect": -2.3,
+      "enso_effect": -20.9,
+      "iod_effect": 2.2,
+      "risk": "Severe Flood",
+      "mechanics": "Monsoon troughing creates strong moisture convergence over Eastern Isan."
+    },
+    {
+      "id": "ZONE04",
+      "en": "Andaman Coast & Western Ranges",
+      "basin": "Southern West Coast (Phuket/Ranong)",
+      "lat": 8.2,
+      "lon": 98.3,
+      "mjo_effect": -2.6,
+      "enso_effect": -20.9,
+      "iod_effect": 2.6,
+      "risk": "High Surge",
+      "mechanics": "Direct onshore squall lines triggered by active Indian Ocean convective waves."
+    },
+    {
+      "id": "ZONE05",
+      "en": "Eastern Seaboard Coast",
+      "basin": "Rayong & Chonburi Marine",
+      "lat": 12.8,
+      "lon": 101.25,
+      "mjo_effect": -1.8,
+      "enso_effect": -17.1,
+      "iod_effect": 2.2,
+      "risk": "Moderate Flood",
+      "mechanics": "Moisture convergence along Gulf of Thailand coastal boundaries."
+    },
+    {
+      "id": "ZONE06",
+      "en": "Nan River Catchment (Sirikit Dam)",
+      "basin": "Upper North Catchment (Uttaradit)",
+      "lat": 17.62,
+      "lon": 100.09,
+      "mjo_effect": -1.7,
+      "enso_effect": -19.0,
+      "iod_effect": 2.2,
+      "risk": "Moderate Flood",
+      "mechanics": "Monsoonal rainfall contributing directly to northern storage reservoirs."
+    }
+  ]
 }
