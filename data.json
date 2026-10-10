@@ -1,7 +1,7 @@
 {
   "is_live": true,
   "status": "OK",
-  "updated_at_utc": "2026-10-10T06:20:06.259839+00:00",
+  "updated_at_utc": "2026-10-10T07:53:42.176378+00:00",
   "teleconnections": {
     "enso": 0.95,
     "iod": 0.146,
@@ -13,17 +13,17 @@
       "name": "Bhumibol Dam (Ping River)",
       "province": "Tak Province",
       "capacity_mcm": 13462,
-      "current_storage_pct": 61.9,
+      "current_storage_pct": 69.0,
       "status": "MODERATE"
     },
     "sirikit": {
       "name": "Sirikit Dam (Nan River)",
       "province": "Uttaradit Province",
       "capacity_mcm": 9510,
-      "current_storage_pct": 67.6,
+      "current_storage_pct": 69.0,
       "status": "MODERATE"
     },
-    "combined_chao_phraya_storage_pct": 64.3
+    "combined_chao_phraya_storage_pct": 69.0
   },
   "paknam_gauge": {
     "station_name": "Pak Nam Fort Gauge",
