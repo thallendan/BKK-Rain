@@ -3,13 +3,19 @@ import json
 import re
 import urllib.request
 
-# Target Telemetry Endpoints (Maintained)
+# Target Telemetry Endpoints
 URL_ENSO = "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices"
-URL_MJO = "https://www.bom.gov.au/climate/mjo/graphics/rmm.74toRealtime.txt"
-URL_IOD = "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data"
+URL_MJO = (
+    "https://www.bom.gov.au/climate/mjo/graphics/rmm.74toRealtime.txt"
+)
+URL_IOD = (
+    "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data"
+)
 
-# Optional Live Water Telemetry Endpoint (ThaiWater / HII)
-URL_HII_DAM = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/dam"
+# Official HII / RID Daily Large Dam Report
+URL_HII_DAM_REPORT = (
+    "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en"
+)
 
 # Standard browser User-Agent header to prevent HTTP 403 Forbidden blocks
 HEADERS = {
@@ -30,17 +36,6 @@ def fetch_text(url):
   except Exception as e:
     print(f"Error fetching from {url}: {e}")
     return None
-
-
-def fetch_json(url):
-  """Fetches JSON content from HTTP endpoints."""
-  raw = fetch_text(url)
-  if raw:
-    try:
-      return json.loads(raw)
-    except Exception as e:
-      print(f"Error parsing JSON from {url}: {e}")
-  return None
 
 
 def parse_enso():
@@ -105,34 +100,74 @@ def parse_iod():
   return None
 
 
-def fetch_dam_storage(mjo_phase, enso_val):
-  """Fetches/estimates Northern reservoir storage levels for Chao Phraya headwaters (Bhumibol & Sirikit Dams)."""
-  live_data = fetch_json(URL_HII_DAM)
+def parse_hii_dam_html():
+  """Parses live storage percentages for Bhumibol & Sirikit Dams from HII daily HTML report."""
+  raw_html = fetch_text(URL_HII_DAM_REPORT)
+  if not raw_html:
+    return None, None
+
   bhumibol_pct = None
   sirikit_pct = None
 
-  if live_data and "dam" in live_data and isinstance(live_data["dam"], list):
-    for dam in live_data["dam"]:
-      name = str(
-          dam.get("dam_name", "") or dam.get("dam_name_en", "")
-      ).lower()
-      if "bhumibol" in name or "ภูมิพล" in name:
-        bhumibol_pct = float(dam.get("dam_storage_percent", 0))
-      elif "sirikit" in name or "สิริกิติ์" in name:
-        sirikit_pct = float(dam.get("dam_storage_percent", 0))
+  # Extract table rows
+  rows = re.findall(r"<tr[^>]*>(.*?)</tr>", raw_html, re.DOTALL | re.IGNORECASE)
+  for row in rows:
+    cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL | re.IGNORECASE)
+    clean_cells = [
+        re.sub(r"<[^>]+>", "", c).strip().replace(",", "") for c in cells
+    ]
+    row_text = " ".join(clean_cells)
 
-  # Hydrological estimation model fallback if external endpoint is unavailable
+    if "Bhumibol" in row_text:
+      floats = []
+      for c in clean_cells:
+        try:
+          floats.append(float(c))
+        except ValueError:
+          pass
+      for val in floats:
+        # Storage % is the percentage value under total volume column (0-100%, excluding capacity 13462)
+        if 10.0 <= val <= 100.0 and val != 13462.0:
+          bhumibol_pct = val
+          break
+
+    if "Sirikit" in row_text:
+      floats = []
+      for c in clean_cells:
+        try:
+          floats.append(float(c))
+        except ValueError:
+          pass
+      for val in floats:
+        if 10.0 <= val <= 100.0 and val != 9510.0:
+          sirikit_pct = val
+          break
+
+  return bhumibol_pct, sirikit_pct
+
+
+def fetch_dam_storage(mjo_phase, enso_val):
+  """Parses live HII dam storage levels and computes combined Chao Phraya headwater storage."""
+  bhumibol_pct, sirikit_pct = parse_hii_dam_html()
+
+  # Fallback model estimation if HII site experiences a momentary timeout
   if bhumibol_pct is None:
+    print("Warning: Could not parse Bhumibol Dam level from HTML. Using model fallback.")
     base_bhumibol = 68.5
     adj = (15.0 if mjo_phase in [4, 5] else -5.0) - (12.0 * enso_val)
     bhumibol_pct = round(max(30.0, min(98.0, base_bhumibol + adj * 0.4)), 1)
+  else:
+    print(f"Live Bhumibol Dam storage parsed: {bhumibol_pct}%")
 
   if sirikit_pct is None:
+    print("Warning: Could not parse Sirikit Dam level from HTML. Using model fallback.")
     base_sirikit = 74.2
     adj = (15.0 if mjo_phase in [4, 5] else -5.0) - (12.0 * enso_val)
     sirikit_pct = round(max(30.0, min(98.0, base_sirikit + adj * 0.4)), 1)
+  else:
+    print(f"Live Sirikit Dam storage parsed: {sirikit_pct}%")
 
-  # Weighted average combined storage capacity (Bhumibol: 13,462 MCM, Sirikit: 9,510 MCM)
+  # Combined capacity-weighted average (Bhumibol: 13,462 MCM, Sirikit: 9,510 MCM)
   combined_pct = round(
       (bhumibol_pct * 13462 + sirikit_pct * 9510) / (13462 + 9510), 1
   )
@@ -345,7 +380,7 @@ def main():
         "paknam_gauge": paknam,
         "zones": zones,
     }
-    print("SUCCESS: All climate and hydrological endpoints fetched and synced.")
+    print("SUCCESS: All climate and dam endpoints successfully fetched and synced.")
 
   with open("data.json", "w", encoding="utf-8") as f:
     json.dump(payload, f, indent=2)
