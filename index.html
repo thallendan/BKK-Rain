@@ -284,7 +284,7 @@
     <!-- Main Dashboard Workspace -->
     <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[600px]">
         
-        <!-- Left Sidebar: REPLACED WITH NORTHERN DAM STORAGE & PAK NAM SEA LEVEL GAUGE -->
+        <!-- Left Sidebar: NORTHERN DAM STORAGE & PAK NAM SEA LEVEL GAUGE -->
         <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-y-auto border border-slate-800/80 shadow-2xl space-y-4 p-4">
             
             <!-- SECTION 1: NORTHERN DAM STORAGE CAPACITY -->
@@ -632,7 +632,11 @@
                 zoomControl: true,
                 attributionControl: false,
                 maxBounds: mapImageBounds,
-                maxBoundsViscosity: 0.8
+                maxBoundsViscosity: 0.8,
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                touchZoom: false,
+                boxZoom: false
             });
 
             APP_STATE.map.fitBounds(mapImageBounds);
