@@ -170,7 +170,7 @@
                 </div>
                 <div>
                     <span class="font-bold uppercase tracking-wider text-amber-400 block sm:inline">Data Sync Warning:</span>
-                    <span id="data-alert-text" class="text-slate-200 ml-0 sm:ml-1">Live climate telemetry could not be updated from NOAA/BoM endpoints. Data has not been updated.</span>
+                    <span id="data-alert-text" class="text-slate-200 ml-0 sm:ml-1">Live climate telemetry could not be updated from endpoints. Data has not been updated.</span>
                 </div>
             </div>
             <span id="data-alert-time" class="font-mono text-[11px] text-amber-300/80 bg-amber-950/80 px-2.5 py-1 rounded-lg border border-amber-800/60 self-start sm:self-auto">Attempted: --</span>
@@ -284,61 +284,118 @@
     <!-- Main Dashboard Workspace -->
     <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[600px]">
         
-        <!-- Left Sidebar: Regional Teleconnection Breakdown -->
-        <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl transition-all">
+        <!-- Left Sidebar: REPLACED WITH NORTHERN DAM STORAGE & PAK NAM SEA LEVEL GAUGE -->
+        <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-y-auto border border-slate-800/80 shadow-2xl space-y-4 p-4">
             
-            <div class="p-3.5 border-b border-slate-800/80 bg-slate-900/80 space-y-2.5">
+            <!-- SECTION 1: NORTHERN DAM STORAGE CAPACITY -->
+            <div class="space-y-3 border-b border-slate-800/80 pb-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-earth-asia text-cyan-400"></i>
-                        Oceanic Drivers & Teleconnections
+                        <i class="fa-solid fa-water text-cyan-400"></i>
+                        Upper Chao Phraya Dams
                     </h2>
+                    <span id="dam-combined-badge" class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                        Combined: --%
+                    </span>
+                </div>
+                <p class="text-[11px] text-slate-400">
+                    Northern upstream reservoir retention levels feeding the Chao Phraya River basin.
+                </p>
+
+                <!-- Bhumibol Dam Card -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200">Bhumibol Dam</h3>
+                            <p class="text-[10px] text-slate-400">Ping River (Tak Province)</p>
+                        </div>
+                        <span id="dam-bhumibol-status" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-950/80 text-blue-400 border border-blue-800/60">
+                            --%
+                        </span>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                        <div id="dam-bhumibol-bar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-700" style="width: 0%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                        <span>Capacity: 13,462 MCM</span>
+                        <span id="dam-bhumibol-val" class="font-bold text-slate-200">--% Storage</span>
+                    </div>
                 </div>
 
-                <!-- Drivers Overview Cards in Sidebar -->
-                <div class="space-y-2 text-xs">
-                    <div class="p-2.5 rounded-xl bg-purple-950/40 border border-purple-800/40 space-y-1">
-                        <div class="flex items-center justify-between font-bold text-purple-300">
-                            <span>MJO (Madden-Julian Oscillation)</span>
-                            <span id="side-mjo-phase" class="text-[10px] px-2 py-0.5 rounded bg-purple-900/60 border border-purple-700">Phase --</span>
+                <!-- Sirikit Dam Card -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200">Sirikit Dam</h3>
+                            <p class="text-[10px] text-slate-400">Nan River (Uttaradit Province)</p>
                         </div>
-                        <p id="side-mjo-text" class="text-slate-300 text-[11px]">Active convective wave tracking across the Indian Ocean / Maritime Continent.</p>
+                        <span id="dam-sirikit-status" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-800/60">
+                            --%
+                        </span>
                     </div>
-
-                    <div class="p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/40 space-y-1">
-                        <div class="flex items-center justify-between font-bold text-amber-300">
-                            <span>ENSO (Niño 3.4 Region)</span>
-                            <span id="side-enso-val" class="text-[10px] px-2 py-0.5 rounded bg-amber-900/60 border border-amber-700">--°C</span>
-                        </div>
-                        <p id="side-enso-text" class="text-slate-300 text-[11px]">Sea surface temperature anomalies in Equatorial Pacific (Niño 3.4 region).</p>
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                        <div id="dam-sirikit-bar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700" style="width: 0%;"></div>
                     </div>
-
-                    <div class="p-2.5 rounded-xl bg-teal-950/40 border border-teal-800/40 space-y-1">
-                        <div class="flex items-center justify-between font-bold text-teal-300">
-                            <span>IOD (Indian Ocean Dipole)</span>
-                            <span id="side-iod-val" class="text-[10px] px-2 py-0.5 rounded bg-teal-900/60 border border-teal-700">--°C</span>
-                        </div>
-                        <p id="side-iod-text" class="text-slate-300 text-[11px]">Dipole Mode Index (DMI) sea surface temperature gradient across Indian Ocean.</p>
+                    <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                        <span>Capacity: 9,510 MCM</span>
+                        <span id="dam-sirikit-val" class="font-bold text-slate-200">--% Storage</span>
                     </div>
-                </div>
-
-                <!-- Metric Sorting Tabs -->
-                <div class="flex items-center gap-1 bg-slate-950/50 p-1 rounded-xl border border-slate-800/60 text-xs mt-2">
-                    <button id="sort-anomaly" class="sort-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-cyan-400 transition">Sort % Anomaly</button>
-                    <button id="sort-risk" class="sort-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition">Flood Risk</button>
                 </div>
             </div>
 
-            <!-- Scrollable Zone List -->
-            <div id="station-list" class="flex-1 overflow-y-auto p-2 space-y-1.5 max-h-[320px] md:max-h-none">
-                <!-- Dynamically populated -->
+            <!-- SECTION 2: PAK NAM GULF SEA LEVEL ELEVATION GAUGE -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-gauge-high text-teal-400"></i>
+                        Pak Nam Gulf Tide Gauge
+                    </h2>
+                    <span id="paknam-risk-badge" class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30">
+                        SURGE: --
+                    </span>
+                </div>
+                <p class="text-[11px] text-slate-400">
+                    Real-time coastal water level at the Chao Phraya River estuary (Samut Prakan).
+                </p>
+
+                <!-- Gauge Main Stat Card -->
+                <div class="glass-card p-3.5 rounded-xl border border-slate-800/80 space-y-3">
+                    <div class="flex items-baseline justify-between border-b border-slate-800/60 pb-2">
+                        <div>
+                            <p class="text-[10px] text-slate-400 uppercase font-semibold">Current Sea Level</p>
+                            <h3 id="paknam-msl-val" class="text-2xl font-extrabold text-teal-300 font-mono mt-0.5">+0.00 m</h3>
+                            <p class="text-[10px] text-slate-400">Above Mean Sea Level (MSL)</p>
+                        </div>
+                        <div class="text-right">
+                            <span id="paknam-tide-state" class="text-xs font-bold text-teal-400 block">--</span>
+                            <span class="text-[10px] font-mono text-slate-500">Estuary Station</span>
+                        </div>
+                    </div>
+
+                    <!-- Flood Wall Threshold Clearance -->
+                    <div class="space-y-1.5 pt-1">
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-slate-300 font-medium">BKK Flood Wall Buffer (1.80m Limit):</span>
+                            <span id="paknam-buffer-val" class="font-mono font-bold text-cyan-400">-- m</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                            <div id="paknam-buffer-bar" class="h-full bg-gradient-to-r from-teal-400 to-amber-500 rounded-full transition-all duration-700" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hydrological Context Footnote -->
+                <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-[10px] text-slate-400 space-y-1 leading-relaxed">
+                    <p class="text-slate-300 font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info text-cyan-400"></i>
+                        Estuary Backflow Risk
+                    </p>
+                    <p>High Gulf tides combined with upstream dam discharges impede Bangkok's urban canal (*Khlong*) drainage pumps, raising flash flood risk in Sukhumvit & Silom.</p>
+                </div>
             </div>
 
-            <!-- Mathematical Vector Synthesis Footnote -->
-            <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/90 text-[10px] font-mono text-slate-400 space-y-1">
-                <p class="text-slate-300 font-bold">Vector Formula Mechanics:</p>
-                <p id="vector-formula-text" class="text-cyan-400">Net Delta = MJO + ENSO + IOD</p>
-            </div>
         </aside>
 
         <!-- Right Section: Interactive Leaflet Map with Image Overlay -->
@@ -419,10 +476,11 @@
             pixelLayerGroup: null,
             mjoLayerGroup: null,
             voronoiLayerGroup: null,
-            activeSort: 'anomaly',
             modalChartInstance: null,
             zones: [],
-            teleconnections: null
+            teleconnections: null,
+            dams: null,
+            paknam_gauge: null
         };
 
         // Fetch Live JSON Data and handle update failure alerts explicitly
@@ -440,16 +498,14 @@
                 
                 const liveData = await response.json();
 
-                // Explicit Check: Did the backend report an unfulfilled update / fetch error?
                 if (liveData.is_live === false || liveData.status === "FETCH_FAILED") {
                     if (alertBanner) alertBanner.classList.remove('hidden');
-                    if (alertText) alertText.innerText = liveData.error_message || 'Live climate telemetry could not be updated. Data has not been refreshed.';
+                    if (alertText) alertText.innerText = liveData.error_message || 'Live telemetry could not be updated. Data has not been refreshed.';
                     if (alertTime) alertTime.innerText = `Attempted: ${liveData.updated_at_utc ? new Date(liveData.updated_at_utc).toLocaleTimeString() : 'N/A'}`;
                     console.warn('Backend reported telemetry fetch failure:', liveData.error_message);
                     return;
                 }
 
-                // Ingest zones and calculate net_anomaly FIRST
                 if (liveData.zones && Array.isArray(liveData.zones)) {
                     APP_STATE.zones = liveData.zones;
                     processZoneData();
@@ -459,40 +515,75 @@
                     APP_STATE.teleconnections = liveData.teleconnections;
                     const tc = liveData.teleconnections;
 
-                    // ENSO Display Logic
+                    // ENSO Display
                     if (tc.enso !== null && tc.enso !== undefined) {
                         const ensoStr = `${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)} °C`;
                         const ensoState = tc.enso >= 0.5 ? 'El Niño' : (tc.enso <= -0.5 ? 'La Niña' : 'Neutral');
                         document.getElementById('kpi-enso-val').innerText = ensoStr;
                         document.getElementById('kpi-enso-state').innerText = `(${ensoState})`;
-                        document.getElementById('side-enso-val').innerText = ensoStr;
                     }
 
-                    // IOD Display Logic
+                    // IOD Display
                     if (tc.iod !== null && tc.iod !== undefined) {
                         const iodStr = `${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)} °C`;
                         const iodState = tc.iod >= 0.4 ? '+IOD' : (tc.iod <= -0.4 ? '-IOD' : 'Neutral');
                         document.getElementById('kpi-iod-val').innerText = iodStr;
                         document.getElementById('kpi-iod-state').innerText = `(${iodState})`;
-                        document.getElementById('side-iod-val').innerText = iodStr;
                     }
 
-                    // MJO Display Logic
+                    // MJO Display
                     if (tc.mjo_phase !== null && tc.mjo_phase !== undefined) {
                         document.getElementById('kpi-mjo-title').innerText = `MJO Phase ${tc.mjo_phase}`;
                         document.getElementById('kpi-mjo-desc').innerText = `Amp: ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(2) : '--'}`;
-                        document.getElementById('side-mjo-phase').innerText = `Phase ${tc.mjo_phase}`;
                     }
 
-                    // Top Bar Summary Text
                     const topBarText = `ENSO: ${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)}°C | IOD: ${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)}°C | MJO: Phase ${tc.mjo_phase} (Amp ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(1) : '--'})`;
                     document.getElementById('teleconnection-text').innerText = topBarText;
                 }
 
-                // If fetch succeeded and is_live is true, hide warning banner
+                // --- POPULATE NORTHERN DAMS TELEMETRY ---
+                if (liveData.dams) {
+                    APP_STATE.dams = liveData.dams;
+                    const dams = liveData.dams;
+
+                    // Combined Badge
+                    document.getElementById('dam-combined-badge').innerText = `Combined: ${dams.combined_chao_phraya_storage_pct}%`;
+
+                    // Bhumibol Dam
+                    if (dams.bhumibol) {
+                        const bPct = dams.bhumibol.current_storage_pct;
+                        document.getElementById('dam-bhumibol-val').innerText = `${bPct}% Storage`;
+                        document.getElementById('dam-bhumibol-status').innerText = dams.bhumibol.status;
+                        document.getElementById('dam-bhumibol-bar').style.width = `${Math.min(100, bPct)}%`;
+                    }
+
+                    // Sirikit Dam
+                    if (dams.sirikit) {
+                        const sPct = dams.sirikit.current_storage_pct;
+                        document.getElementById('dam-sirikit-val').innerText = `${sPct}% Storage`;
+                        document.getElementById('dam-sirikit-status').innerText = dams.sirikit.status;
+                        document.getElementById('dam-sirikit-bar').style.width = `${Math.min(100, sPct)}%`;
+                    }
+                }
+
+                // --- POPULATE PAK NAM SEA LEVEL ELEVATION GAUGE ---
+                if (liveData.paknam_gauge) {
+                    APP_STATE.paknam_gauge = liveData.paknam_gauge;
+                    const pak = liveData.paknam_gauge;
+
+                    document.getElementById('paknam-msl-val').innerText = `+${pak.water_level_msl.toFixed(2)} m`;
+                    document.getElementById('paknam-tide-state').innerText = pak.tide_state;
+                    document.getElementById('paknam-risk-badge').innerText = `SURGE: ${pak.surge_risk}`;
+                    document.getElementById('paknam-buffer-val').innerText = `${pak.buffer_remaining_meters.toFixed(2)} m remaining`;
+
+                    // Buffer Clearance Percentage (1.80m threshold)
+                    const fillPct = Math.min(100, (pak.water_level_msl / pak.flood_wall_threshold_msl) * 100);
+                    document.getElementById('paknam-buffer-bar').style.width = `${fillPct}%`;
+                }
+
                 if (alertBanner) alertBanner.classList.add('hidden');
 
-                // Calculate Net Impact from Zone 01 (Chao Phraya / Bangkok Gate)
+                // Calculate Net Impact from Zone 01
                 if (APP_STATE.zones.length > 0) {
                     const bkkZone = APP_STATE.zones.find(z => z.id === 'ZONE01') || APP_STATE.zones[0];
                     const netVal = (bkkZone && bkkZone.net_anomaly !== undefined) ? bkkZone.net_anomaly : 0;
@@ -503,27 +594,21 @@
                     document.getElementById('kpi-net-label').innerText = `(${netState})`;
                     document.getElementById('kpi-vector-summary').innerText = `Net Teleconnection Vector: ${netStr} (${netState})`;
                     
-                    // Update visual gauge pointer position (-60% to +60% scale mapping to 0% - 100% left)
                     const normalizedPct = Math.max(0, Math.min(100, ((netVal + 60) / 120) * 100));
                     const gaugePointer = document.getElementById('gauge-pointer');
                     const gaugeLabel = document.getElementById('gauge-pointer-label');
                     if (gaugePointer) gaugePointer.style.left = `${normalizedPct}%`;
                     if (gaugeLabel) gaugeLabel.innerText = `${netStr} (${netState})`;
-
-                    // Update sidebar formula mechanics line
-                    document.getElementById('vector-formula-text').innerText = `Net Delta = MJO (${bkkZone.mjo_effect >= 0 ? '+' : ''}${bkkZone.mjo_effect}%) + ENSO (${bkkZone.enso_effect >= 0 ? '+' : ''}${bkkZone.enso_effect}%) + IOD (${bkkZone.iod_effect >= 0 ? '+' : ''}${bkkZone.iod_effect}%) = ${netStr}`;
                 }
 
-                renderZoneList();
                 buildVoronoiLayer();
 
-                // Re-render Leaflet Map Graphics using Live Data Payload
                 if (APP_STATE.teleconnections) {
                     renderOceanicPixelGradients(APP_STATE.teleconnections.enso, APP_STATE.teleconnections.iod);
                     renderMJOVerticalBand(APP_STATE.teleconnections.mjo_phase, APP_STATE.teleconnections.mjo_amplitude);
                 }
 
-                console.log('Live climate telemetry dynamic sync successful.');
+                console.log('Live climate & water telemetry sync successful.');
             } catch (error) {
                 console.error('JS parsing runtime error:', error);
                 if (alertBanner) alertBanner.classList.remove('hidden');
@@ -558,20 +643,17 @@
             APP_STATE.mjoLayerGroup = L.layerGroup().addTo(APP_STATE.map);
             APP_STATE.voronoiLayerGroup = L.layerGroup().addTo(APP_STATE.map);
 
-            // Initial render call with defaults
             renderOceanicPixelGradients(0.95, 0.15);
             renderMJOVerticalBand(7, 0.13);
             buildVoronoiLayer();
         }
 
-        // Helper function: Computes points along a smooth quadratic Bezier curve
         function createArcPoints(startLat, startLon, endLat, endLon, bend = 0.22, numPoints = 35) {
             const midLat = (startLat + endLat) / 2;
             const midLon = (startLon + endLon) / 2;
             const dLat = endLat - startLat;
             const dLon = endLon - startLon;
 
-            // Perpendicular control point offset
             const ctrlLat = midLat + dLon * bend;
             const ctrlLon = midLon - dLat * bend;
 
@@ -585,21 +667,19 @@
             return curvePoints;
         }
 
-        // Renders Option A (Fluid Thermal Heat Plumes) & Option B (Animated Teleconnection Vector Arcs)
         function renderOceanicPixelGradients(ensoVal = 0.95, iodVal = 0.15) {
             APP_STATE.pixelLayerGroup.clearLayers();
 
             const bkkLat = 14.2;
             const bkkLon = 100.5;
 
-            // --- 1. ENSO PACIFIC DRIVER (Niño 3.4 Region ~0°N, 205°E / 155°W) ---
+            // ENSO PACIFIC DRIVER
             const ensoLat = 0.0;
             const ensoLon = 205.0;
-            const ensoColor = ensoVal >= 0 ? '#f97316' : '#38bdf8'; // Warm Orange for El Niño, Cool Blue for La Niña
+            const ensoColor = ensoVal >= 0 ? '#f97316' : '#38bdf8';
             const ensoLabel = ensoVal >= 0.5 ? 'El Niño' : (ensoVal <= -0.5 ? 'La Niña' : 'Neutral');
 
-            // Option A: Smooth Layered Radial Heat Plume
-            const ensoPlumeRadii = [1800000, 1200000, 600000]; // Meters
+            const ensoPlumeRadii = [1800000, 1200000, 600000];
             ensoPlumeRadii.forEach((radius, idx) => {
                 const opacity = (0.12 + (idx * 0.10)) * Math.min(1.2, Math.abs(ensoVal));
                 const circle = L.circle([ensoLat, ensoLon], {
@@ -612,7 +692,6 @@
                 APP_STATE.pixelLayerGroup.addLayer(circle);
             });
 
-            // Center Marker Badge for ENSO
             const ensoCenterMarker = L.circleMarker([ensoLat, ensoLon], {
                 radius: 9,
                 fillColor: ensoColor,
@@ -625,12 +704,10 @@
                     <h4 class="font-bold text-sm text-amber-300">Niño 3.4 Pacific Plume</h4>
                     <p class="text-xs text-slate-300"><b>SST Anomaly:</b> ${ensoVal >= 0 ? '+' : ''}${ensoVal.toFixed(2)} °C</p>
                     <p class="text-xs text-slate-300"><b>State:</b> ${ensoLabel}</p>
-                    <p class="text-[11px] text-slate-400 mt-1">Drives equatorial atmospheric Walker Circulation shifts across the Pacific Basin.</p>
                 </div>
             `);
             APP_STATE.pixelLayerGroup.addLayer(ensoCenterMarker);
 
-            // Option B: Pacific Teleconnection Vector Arc to Bangkok
             const pacificArcPoints = createArcPoints(ensoLat, ensoLon, bkkLat, bkkLon, 0.28);
             const pacificArc = L.polyline(pacificArcPoints, {
                 color: ensoColor,
@@ -638,22 +715,13 @@
                 opacity: 0.8,
                 className: 'teleconnection-arc'
             });
-            pacificArc.bindPopup(`
-                <div class="space-y-1">
-                    <h4 class="font-bold text-sm text-amber-300">Pacific Teleconnection Vector</h4>
-                    <p class="text-xs text-slate-300"><b>Pacific Forcing on Bangkok:</b> ${ensoVal >= 0 ? 'Suppressing (-19.0% Monsoon rain)' : 'Enhancing (+19.0% Monsoon rain)'}</p>
-                    <p class="text-[11px] text-slate-400 mt-1">Upper-level atmospheric wave path connecting Equatorial Pacific ocean heat to Chao Phraya basin dynamics.</p>
-                </div>
-            `);
             APP_STATE.pixelLayerGroup.addLayer(pacificArc);
 
-
-            // --- 2. IOD WEST INDIAN OCEAN DRIVER (~0°N, 62.5°E) ---
+            // IOD WEST INDIAN OCEAN DRIVER
             const iodWestLat = 0.0;
             const iodWestLon = 62.5;
             const iodWestColor = iodVal >= 0 ? '#38bdf8' : '#f97316';
 
-            // Option A: Smooth Layered Radial Heat Plume (West IOD)
             const iodPlumeRadii = [1200000, 600000];
             iodPlumeRadii.forEach((radius, idx) => {
                 const opacity = (0.12 + (idx * 0.12)) * Math.min(1.2, Math.abs(iodVal));
@@ -667,7 +735,6 @@
                 APP_STATE.pixelLayerGroup.addLayer(circle);
             });
 
-            // Center Marker Badge for IOD West
             const iodCenterMarker = L.circleMarker([iodWestLat, iodWestLon], {
                 radius: 8,
                 fillColor: iodWestColor,
@@ -675,16 +742,8 @@
                 weight: 2,
                 fillOpacity: 0.95
             });
-            iodCenterMarker.bindPopup(`
-                <div class="space-y-1">
-                    <h4 class="font-bold text-sm text-teal-300">Western Indian Ocean Dipole Plume</h4>
-                    <p class="text-xs text-slate-300"><b>DMI Anomaly:</b> ${iodVal >= 0 ? '+' : ''}${iodVal.toFixed(2)} °C</p>
-                    <p class="text-[11px] text-slate-400 mt-1">Modulates monsoonal moisture flux across the Bay of Bengal into Indochina.</p>
-                </div>
-            `);
             APP_STATE.pixelLayerGroup.addLayer(iodCenterMarker);
 
-            // Option B: Indian Ocean Teleconnection Vector Arc to Bangkok
             const indianArcPoints = createArcPoints(iodWestLat, iodWestLon, bkkLat, bkkLon, -0.22);
             const indianArc = L.polyline(indianArcPoints, {
                 color: iodWestColor,
@@ -692,30 +751,21 @@
                 opacity: 0.8,
                 className: 'teleconnection-arc'
             });
-            indianArc.bindPopup(`
-                <div class="space-y-1">
-                    <h4 class="font-bold text-sm text-teal-300">Indian Ocean Teleconnection Vector</h4>
-                    <p class="text-xs text-slate-300"><b>IOD Forcing on Bangkok:</b> ${iodVal >= 0 ? '+2.2% Moisture surge' : '-2.2% Dry anomaly'}</p>
-                    <p class="text-[11px] text-slate-400 mt-1">Cross-equatorial atmospheric moisture pipeline originating from the Western Indian Ocean.</p>
-                </div>
-            `);
             APP_STATE.pixelLayerGroup.addLayer(indianArc);
         }
 
-        // Dynamically positions MJO vertical band over longitudes based on Live Phase (1-8) & Amplitude
         function renderMJOVerticalBand(phase = 7, amp = 0.13) {
             APP_STATE.mjoLayerGroup.clearLayers();
 
-            // Longitude mapping for MJO Phase 1-8
             const mjoPhaseLonMap = {
-                1: [60.0, 80.0],     // Western Indian Ocean
-                2: [80.0, 100.0],    // Indian Ocean
-                3: [90.0, 110.0],    // Bay of Bengal / West Maritime Continent
-                4: [100.0, 125.0],   // Maritime Continent (Thailand Peak Forcing)
-                5: [120.0, 140.0],   // Maritime Continent / West Pacific
-                6: [140.0, 160.0],   // Western Pacific
-                7: [150.0, 170.0],   // Western/Central Pacific
-                8: [170.0, 190.0]    // Central Pacific / Western Hemisphere
+                1: [60.0, 80.0],
+                2: [80.0, 100.0],
+                3: [90.0, 110.0],
+                4: [100.0, 125.0],
+                5: [120.0, 140.0],
+                6: [140.0, 160.0],
+                7: [150.0, 170.0],
+                8: [170.0, 190.0]
             };
 
             const bounds = mjoPhaseLonMap[phase] || [150.0, 170.0];
@@ -724,7 +774,6 @@
             const mjoLatMin = -48.1074;
             const mjoLatMax = 64.6991;
 
-            // Scale fill opacity based on wave amplitude
             const opacity = Math.max(0.12, Math.min(0.45, amp * 0.25));
 
             const mjoBand = L.polygon([
@@ -743,10 +792,8 @@
             mjoBand.bindPopup(`
                 <div class="space-y-1">
                     <h4 class="font-bold text-sm text-purple-300">Madden-Julian Oscillation (MJO)</h4>
-                    <p class="text-xs text-slate-300"><b>Current Live Phase:</b> Phase ${phase}</p>
-                    <p class="text-xs text-slate-300"><b>Wave Amplitude:</b> ${amp ? amp.toFixed(2) : '--'}</p>
-                    <p class="text-xs text-slate-300"><b>Longitude Span:</b> ${mjoLonStart.toFixed(1)}°E to ${mjoLonEnd.toFixed(1)}°E</p>
-                    <p class="text-[11px] text-purple-300 mt-1">${phase === 4 || phase === 5 ? 'Enhances monsoonal moisture flux toward Thailand.' : 'Convective core positioned away from Indochina peninsula.'}</p>
+                    <p class="text-xs text-slate-300"><b>Current Phase:</b> Phase ${phase}</p>
+                    <p class="text-xs text-slate-300"><b>Amplitude:</b> ${amp ? amp.toFixed(2) : '--'}</p>
                 </div>
             `);
 
@@ -778,41 +825,6 @@
 
                 APP_STATE.voronoiLayerGroup.addLayer(marker);
             });
-        }
-
-        function renderZoneList() {
-            const container = document.getElementById('station-list');
-            let filtered = [...APP_STATE.zones];
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="p-4 text-center text-xs text-amber-400">Data unavailable. Live telemetry failed to load.</div>`;
-                return;
-            }
-
-            if (APP_STATE.activeSort === 'anomaly') {
-                filtered.sort((a, b) => b.net_anomaly - a.net_anomaly);
-            } else if (APP_STATE.activeSort === 'risk') {
-                filtered.sort((a, b) => a.risk.localeCompare(b.risk));
-            }
-
-            container.innerHTML = filtered.map((z, rank) => {
-                return `
-                    <div onclick="openModal('${z.id}')" 
-                         class="glass-card hover:bg-slate-800/80 p-2.5 rounded-xl border border-slate-800/80 cursor-pointer transition flex items-center justify-between">
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-xs font-mono text-slate-500 w-4 font-bold">${rank + 1}</span>
-                            <div>
-                                <h4 class="text-xs font-semibold text-slate-200">${z.en}</h4>
-                                <p class="text-[10px] text-slate-400">${z.basin}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-bold text-cyan-400 font-mono">${z.net_anomaly >= 0 ? '+' : ''}${z.net_anomaly}%</span>
-                            <span class="text-[10px] block font-mono text-purple-300 font-semibold">${z.risk}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
         function openModal(id) {
@@ -903,9 +915,6 @@
         }
 
         function initListeners() {
-            document.getElementById('sort-anomaly').addEventListener('click', (e) => switchSort('anomaly', e.target));
-            document.getElementById('sort-risk').addEventListener('click', (e) => switchSort('risk', e.target));
-
             document.getElementById('close-modal-btn').addEventListener('click', closeModal);
             document.getElementById('refresh-btn').addEventListener('click', () => fetchLiveData());
 
@@ -913,15 +922,6 @@
                 const sidebar = document.getElementById('sidebar-panel');
                 sidebar.classList.toggle('hidden');
             });
-        }
-
-        function switchSort(sortKey, target) {
-            APP_STATE.activeSort = sortKey;
-            document.querySelectorAll('.sort-tab').forEach(b => {
-                b.className = 'sort-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition';
-            });
-            target.className = 'sort-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-cyan-400 transition';
-            renderZoneList();
         }
 
         setInterval(() => {
@@ -932,7 +932,6 @@
         window.onload = function() {
             initMap();
             initListeners();
-            // Automatically attempt live sync on load
             fetchLiveData();
         };
     </script>
