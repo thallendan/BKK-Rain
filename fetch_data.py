@@ -12,6 +12,12 @@ URL_IOD = (
     "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data"
 )
 
+# New Walker Circulation Telemetry Endpoints
+URL_CPAC850 = "https://www.cpc.ncep.noaa.gov/data/indices/cpac850"
+URL_SOI = "https://www.cpc.ncep.noaa.gov/data/indices/soi"
+URL_OLR = "https://www.cpc.ncep.noaa.gov/data/indices/olr"
+URL_HEAT_CONTENT = "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ocean/index/heat_content_index.txt"
+
 # Official HII / RID Daily Large Dam Report
 URL_HII_DAM_REPORT = (
     "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en"
@@ -100,6 +106,98 @@ def parse_iod():
   return None
 
 
+def parse_cpac850():
+  """Parses latest Central Pacific 850 hPa Trade Wind Anomaly from NOAA CPC."""
+  raw_text = fetch_text(URL_CPAC850)
+  if not raw_text:
+    return None
+
+  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
+  year_rows = [
+      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
+  ]
+
+  for row in reversed(year_rows):
+    tokens = row.split()[1:]
+    valid_vals = [float(v) for v in tokens if -50.0 < float(v) < 50.0]
+    if valid_vals:
+      return valid_vals[-1]
+
+  return None
+
+
+def parse_soi():
+  """Parses latest Standardized Southern Oscillation Index (SOI) from NOAA CPC."""
+  raw_text = fetch_text(URL_SOI)
+  if not raw_text:
+    return None
+
+  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
+  standardized_lines = []
+  for line in lines:
+    if "RANK" in line or "UNSTANDARDIZED" in line:
+      break
+    standardized_lines.append(line)
+
+  year_rows = [
+      l
+      for l in standardized_lines
+      if l.split()[0].isdigit() and len(l.split()[0]) == 4
+  ]
+
+  for row in reversed(year_rows):
+    tokens = row.split()[1:]
+    valid_vals = [float(v) for v in tokens if -30.0 < float(v) < 30.0]
+    if valid_vals:
+      return valid_vals[-1]
+
+  return None
+
+
+def parse_olr():
+  """Parses latest Central Pacific OLR anomaly from NOAA CPC."""
+  raw_text = fetch_text(URL_OLR)
+  if not raw_text:
+    return None
+
+  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
+  year_rows = [
+      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
+  ]
+
+  for row in reversed(year_rows):
+    tokens = row.split()[1:]
+    valid_vals = [float(v) for v in tokens if -100.0 < float(v) < 100.0]
+    if valid_vals:
+      return valid_vals[-1]
+
+  return None
+
+
+def parse_heat_content():
+  """Parses latest 0-300m Pacific Upper Ocean Heat Content Anomaly from NOAA CPC."""
+  raw_text = fetch_text(URL_HEAT_CONTENT)
+  if not raw_text:
+    return None
+
+  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
+  data_lines = [
+      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 6
+  ]
+
+  for row in reversed(data_lines):
+    tokens = row.split()
+    if len(tokens) >= 2:
+      try:
+        val = float(tokens[1])
+        if -10.0 < val < 10.0:
+          return val
+      except ValueError:
+        pass
+
+  return None
+
+
 def parse_hii_dam_html():
   """Parses live storage percentages for Bhumibol & Sirikit Dams from HII daily HTML report."""
   raw_html = fetch_text(URL_HII_DAM_REPORT)
@@ -109,7 +207,6 @@ def parse_hii_dam_html():
   bhumibol_pct = None
   sirikit_pct = None
 
-  # Extract table rows
   rows = re.findall(r"<tr[^>]*>(.*?)</tr>", raw_html, re.DOTALL | re.IGNORECASE)
   for row in rows:
     cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL | re.IGNORECASE)
@@ -126,7 +223,6 @@ def parse_hii_dam_html():
         except ValueError:
           pass
       for val in floats:
-        # Storage % is the percentage value under total volume column (0-100%, excluding capacity 13462)
         if 10.0 <= val <= 100.0 and val != 13462.0:
           bhumibol_pct = val
           break
@@ -150,9 +246,11 @@ def fetch_dam_storage(mjo_phase, enso_val):
   """Parses live HII dam storage levels and computes combined Chao Phraya headwater storage."""
   bhumibol_pct, sirikit_pct = parse_hii_dam_html()
 
-  # Fallback model estimation if HII site experiences a momentary timeout
   if bhumibol_pct is None:
-    print("Warning: Could not parse Bhumibol Dam level from HTML. Using model fallback.")
+    print(
+        "Warning: Could not parse Bhumibol Dam level from HTML. Using model"
+        " fallback."
+    )
     base_bhumibol = 68.5
     adj = (15.0 if mjo_phase in [4, 5] else -5.0) - (12.0 * enso_val)
     bhumibol_pct = round(max(30.0, min(98.0, base_bhumibol + adj * 0.4)), 1)
@@ -160,14 +258,16 @@ def fetch_dam_storage(mjo_phase, enso_val):
     print(f"Live Bhumibol Dam storage parsed: {bhumibol_pct}%")
 
   if sirikit_pct is None:
-    print("Warning: Could not parse Sirikit Dam level from HTML. Using model fallback.")
+    print(
+        "Warning: Could not parse Sirikit Dam level from HTML. Using model"
+        " fallback."
+    )
     base_sirikit = 74.2
     adj = (15.0 if mjo_phase in [4, 5] else -5.0) - (12.0 * enso_val)
     sirikit_pct = round(max(30.0, min(98.0, base_sirikit + adj * 0.4)), 1)
   else:
     print(f"Live Sirikit Dam storage parsed: {sirikit_pct}%")
 
-  # Combined capacity-weighted average (Bhumibol: 13,462 MCM, Sirikit: 9,510 MCM)
   combined_pct = round(
       (bhumibol_pct * 13462 + sirikit_pct * 9510) / (13462 + 9510), 1
   )
@@ -201,9 +301,9 @@ def fetch_dam_storage(mjo_phase, enso_val):
 
 def fetch_paknam_sea_level(iod_val, enso_val):
   """Computes real-time sea elevation & tide surge at Pak Nam Fort gauge (Chao Phraya estuary, Samut Prakan)."""
-  base_msl = 1.42  # Baseline spring tide water level in meters above Mean Sea Level (MSL)
+  base_msl = 1.42
   surge_factor = round(base_msl + (0.15 * iod_val) - (0.10 * enso_val), 2)
-  flood_wall_limit = 1.80  # Critical Bangkok flood wall elevation threshold (m MSL)
+  flood_wall_limit = 1.80
 
   return {
       "station_name": "Pak Nam Fort Gauge",
@@ -338,6 +438,10 @@ def main():
   enso_val = parse_enso()
   mjo_phase, mjo_amp = parse_mjo()
   iod_val = parse_iod()
+  cpac850_val = parse_cpac850()
+  soi_val = parse_soi()
+  olr_val = parse_olr()
+  heat_content_val = parse_heat_content()
 
   utc_now = datetime.now(timezone.utc).isoformat()
 
@@ -375,6 +479,10 @@ def main():
             "iod": iod_val,
             "mjo_phase": mjo_phase,
             "mjo_amplitude": mjo_amp,
+            "cpac850_trade_winds": cpac850_val,
+            "soi": soi_val,
+            "olr": olr_val,
+            "ocean_heat_content": heat_content_val,
         },
         "dams": dams,
         "paknam_gauge": paknam,
