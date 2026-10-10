@@ -12,7 +12,7 @@ URL_IOD = (
     "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data"
 )
 
-# New Walker Circulation Telemetry Endpoints
+# Walker Circulation Telemetry Endpoints
 URL_CPAC850 = "https://www.cpc.ncep.noaa.gov/data/indices/cpac850"
 URL_SOI = "https://www.cpc.ncep.noaa.gov/data/indices/soi"
 URL_OLR = "https://www.cpc.ncep.noaa.gov/data/indices/olr"
@@ -97,10 +97,12 @@ def parse_iod():
   ]
 
   for row in reversed(year_rows):
-    tokens = row.split()[1:]
-    valid_vals = [float(v) for v in tokens if float(v) > -900.0]
-    if valid_vals:
-      return valid_vals[-1]
+    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
+    if len(tokens) > 1:
+      vals = [float(v) for v in tokens[1:]]
+      valid_vals = [v for v in vals if v > -900.0]
+      if valid_vals:
+        return valid_vals[-1]
 
   print("Failed to parse valid IOD value from dmi.had.long.data")
   return None
@@ -118,10 +120,13 @@ def parse_cpac850():
   ]
 
   for row in reversed(year_rows):
-    tokens = row.split()[1:]
-    valid_vals = [float(v) for v in tokens if -50.0 < float(v) < 50.0]
-    if valid_vals:
-      return valid_vals[-1]
+    # Regex handles fixed-width concatenated numbers like '-3.0-999.9-999.9'
+    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
+    if len(tokens) > 1:
+      vals = [float(v) for v in tokens[1:]]
+      valid_vals = [v for v in vals if -50.0 < v < 50.0]
+      if valid_vals:
+        return valid_vals[-1]
 
   return None
 
@@ -146,10 +151,12 @@ def parse_soi():
   ]
 
   for row in reversed(year_rows):
-    tokens = row.split()[1:]
-    valid_vals = [float(v) for v in tokens if -30.0 < float(v) < 30.0]
-    if valid_vals:
-      return valid_vals[-1]
+    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
+    if len(tokens) > 1:
+      vals = [float(v) for v in tokens[1:]]
+      valid_vals = [v for v in vals if -30.0 < v < 30.0]
+      if valid_vals:
+        return valid_vals[-1]
 
   return None
 
@@ -166,10 +173,12 @@ def parse_olr():
   ]
 
   for row in reversed(year_rows):
-    tokens = row.split()[1:]
-    valid_vals = [float(v) for v in tokens if -100.0 < float(v) < 100.0]
-    if valid_vals:
-      return valid_vals[-1]
+    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
+    if len(tokens) > 1:
+      vals = [float(v) for v in tokens[1:]]
+      valid_vals = [v for v in vals if -100.0 < v < 100.0]
+      if valid_vals:
+        return valid_vals[-1]
 
   return None
 
@@ -186,7 +195,7 @@ def parse_heat_content():
   ]
 
   for row in reversed(data_lines):
-    tokens = row.split()
+    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
     if len(tokens) >= 2:
       try:
         val = float(tokens[1])
