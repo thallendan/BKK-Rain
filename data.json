@@ -1,12 +1,16 @@
 {
   "is_live": true,
   "status": "OK",
-  "updated_at_utc": "2026-10-10T11:38:24.213918+00:00",
+  "updated_at_utc": "2026-10-10T15:15:54.845709+00:00",
   "teleconnections": {
     "enso": 0.95,
     "iod": 0.146,
     "mjo_phase": 7,
-    "mjo_amplitude": 0.12849849
+    "mjo_amplitude": 0.12849849,
+    "cpac850_trade_winds": -3.0,
+    "soi": -2.0,
+    "olr": -1.0,
+    "ocean_heat_content": null
   },
   "dams": {
     "bhumibol": {
