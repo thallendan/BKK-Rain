@@ -115,6 +115,13 @@
             filter: blur(14px);
             transition: all 0.5s ease-in-out;
         }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.75rem;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -405,6 +412,201 @@
 
     </main>
 
+    <!-- SECTION: LIVE WALKER CIRCULATION & ATMOSPHERIC DYNAMICS visualizer -->
+    <section class="max-w-7xl mx-auto w-full px-4 pb-6 space-y-4">
+        
+        <div class="glass-panel p-4 rounded-2xl border border-slate-800/80 shadow-2xl space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                <div>
+                    <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-wind text-cyan-400 animate-pulse"></i>
+                        Walker Circulation & Atmospheric-Oceanic Dynamics
+                    </h2>
+                    <p class="text-xs text-slate-400">
+                        Live Equatorial Pacific cross-section driven by NOAA CPC teleconnection indices.
+                    </p>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase mr-1">Presets:</span>
+                    <button onclick="applyPreset('strong-la-nina')" class="preset-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-cyan-500/30 bg-cyan-950/40 text-cyan-300 hover:bg-cyan-500/20 transition">
+                        La Niña
+                    </button>
+                    <button onclick="applyPreset('neutral')" class="preset-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-sky-500/50 bg-sky-600/30 text-sky-200 hover:bg-sky-500/20 transition">
+                        Neutral
+                    </button>
+                    <button onclick="applyPreset('strong-el-nino')" class="preset-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-red-500/30 bg-red-950/40 text-red-300 hover:bg-red-500/20 transition">
+                        El Niño
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Canvas Visualizer Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+                <!-- Primary Cross-Section Canvas Area (8 cols) -->
+                <div class="lg:col-span-8 flex flex-col gap-3">
+                    <div class="glass-panel p-3 rounded-xl relative flex flex-col h-[420px] shadow-2xl overflow-hidden border border-slate-800/80">
+                        
+                        <!-- Top Canvas Header Overlay -->
+                        <div class="flex items-center justify-between mb-2 z-10 px-1">
+                            <div class="flex items-center gap-2">
+                                <span class="flex h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span>
+                                <h3 class="text-xs font-semibold text-slate-200">Equatorial Pacific Atmospheric-Oceanic Cross Section</h3>
+                            </div>
+                            <div class="flex items-center gap-3 text-[11px] text-slate-400">
+                                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block"></span> Warm SST</span>
+                                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-500/80 inline-block"></span> Cold Upwelling</span>
+                                <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-amber-400/40 inline-block"></span> Thermocline</span>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Container -->
+                        <div class="relative flex-1 w-full h-full rounded-lg overflow-hidden bg-slate-950/90">
+                            <canvas id="walkerCanvas"></canvas>
+                        </div>
+
+                        <!-- Canvas Controls Bar -->
+                        <div class="flex items-center justify-between mt-2 px-1 text-[11px]">
+                            <div class="flex items-center gap-3">
+                                <button id="btn-play-pause" onclick="togglePlayPause()" class="flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 font-medium transition">
+                                    <i class="fa-solid fa-pause text-[10px] text-cyan-400" id="icon-play-pause"></i>
+                                    <span id="text-play-pause">Pause</span>
+                                </button>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-slate-400">Speed:</span>
+                                    <select id="select-speed" onchange="changeSpeed(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-0.5 text-slate-200 focus:outline-none">
+                                        <option value="0.5">0.5x</option>
+                                        <option value="1.0" selected>1.0x</option>
+                                        <option value="1.5">1.5x</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <span class="font-mono text-cyan-300">100°E (Thai/Asia) &rarr; 180° &rarr; 80°W (S. America)</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Thailand Inset & Telemetry (4 cols) -->
+                <div class="lg:col-span-4 flex flex-col gap-3">
+
+                    <!-- Thailand Inset Box -->
+                    <div class="glass-panel p-3 rounded-xl flex flex-col h-[200px] shadow-xl relative overflow-hidden border border-slate-800/80">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-rose-400"></i> Thailand Monsoon Inset
+                            </h3>
+                            <span id="monsoon-season-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                Summer SW Monsoon
+                            </span>
+                        </div>
+
+                        <div class="relative flex-1 w-full h-full rounded-lg overflow-hidden bg-slate-950/80">
+                            <canvas id="thailandCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Telemetry & Diagnostic Gauges Panel -->
+                    <div class="glass-panel p-3 rounded-xl flex-1 flex flex-col justify-between gap-2 shadow-xl border border-slate-800/80">
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-gauge-high text-cyan-400"></i> NOAA Live Walker Telemetry
+                        </h3>
+
+                        <!-- Telemetry Grid -->
+                        <div class="grid grid-cols-2 gap-2">
+                            
+                            <!-- Trade Wind Anomaly -->
+                            <div class="glass-card p-2 rounded-lg border border-slate-800">
+                                <div class="text-[9px] text-slate-400 font-medium uppercase">850hPa Wind (CPAC)</div>
+                                <div class="text-sm font-bold text-cyan-300 mt-0.5" id="metric-cpac-val">-- m/s</div>
+                            </div>
+
+                            <!-- Southern Oscillation Index -->
+                            <div class="glass-card p-2 rounded-lg border border-slate-800">
+                                <div class="text-[9px] text-slate-400 font-medium uppercase">Tahiti-Darwin SOI</div>
+                                <div class="text-sm font-bold text-teal-300 mt-0.5" id="metric-soi-val">--</div>
+                            </div>
+
+                            <!-- Outgoing Longwave Radiation -->
+                            <div class="glass-card p-2 rounded-lg border border-slate-800">
+                                <div class="text-[9px] text-slate-400 font-medium uppercase">Pacific OLR Anomaly</div>
+                                <div class="text-sm font-bold text-purple-300 mt-0.5" id="metric-olr-val">-- W/m²</div>
+                            </div>
+
+                            <!-- Ocean Heat Content -->
+                            <div class="glass-card p-2 rounded-lg border border-slate-800">
+                                <div class="text-[9px] text-slate-400 font-medium uppercase">0-300m Heat Anomaly</div>
+                                <div class="text-sm font-bold text-amber-400 mt-0.5" id="metric-heat-val">-- °C</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Fine-Tuning Parameter Controls Panel -->
+            <div class="glass-panel p-4 rounded-xl shadow-xl space-y-3 border border-slate-800/80">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders text-cyan-400"></i> Interactive Factor Fine-Tuning
+                    </h3>
+                    <button onclick="resetParameters()" class="text-[11px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 transition">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                    <!-- Slider 1: SST Anomaly -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px]">
+                            <label class="text-slate-300 font-medium">SST Anomaly (Nino 3.4)</label>
+                            <span id="val-sst" class="font-mono font-bold text-cyan-300">0.0 °C</span>
+                        </div>
+                        <input type="range" id="slider-sst" min="-3.0" max="3.0" step="0.1" value="0.0" oninput="onSSTSliderChange(this.value)"
+                            class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400">
+                    </div>
+
+                    <!-- Slider 2: Trade Wind Strength -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px]">
+                            <label class="text-slate-300 font-medium">Trade Wind Strength</label>
+                            <span id="val-tradewind" class="font-mono font-bold text-cyan-300">100 %</span>
+                        </div>
+                        <input type="range" id="slider-tradewind" min="20" max="180" step="5" value="100" oninput="onTradeWindSliderChange(this.value)"
+                            class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400">
+                    </div>
+
+                    <!-- Control 3: Indian Ocean Dipole -->
+                    <div class="space-y-1">
+                        <label class="text-[11px] text-slate-300 font-medium block">Indian Ocean Dipole</label>
+                        <div class="grid grid-cols-3 gap-1 p-0.5 bg-slate-900 rounded-lg border border-slate-800 text-[10px]">
+                            <button onclick="setIOD('negative')" id="iod-btn-neg" class="iod-btn py-1 rounded text-slate-400 hover:text-white transition">- IOD</button>
+                            <button onclick="setIOD('neutral')" id="iod-btn-neu" class="iod-btn py-1 rounded bg-cyan-500/20 text-cyan-300 font-medium border border-cyan-500/30 transition">Neutral</button>
+                            <button onclick="setIOD('positive')" id="iod-btn-pos" class="iod-btn py-1 rounded text-slate-400 hover:text-white transition">+ IOD</button>
+                        </div>
+                    </div>
+
+                    <!-- Control 4: Thailand Monsoon Season Switcher -->
+                    <div class="space-y-1">
+                        <label class="text-[11px] text-slate-300 font-medium block">Monsoon Season</label>
+                        <div class="grid grid-cols-2 gap-1 p-0.5 bg-slate-900 rounded-lg border border-slate-800 text-[10px]">
+                            <button onclick="setMonsoonSeason('summer')" id="monsoon-btn-summer" class="monsoon-btn py-1 rounded bg-amber-500/20 text-amber-300 font-medium border border-amber-500/30 transition">Summer (SW)</button>
+                            <button onclick="setMonsoonSeason('winter')" id="monsoon-btn-winter" class="monsoon-btn py-1 rounded text-slate-400 hover:text-white transition">Winter (NE)</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
     <!-- Zone Teleconnection Detail Modal -->
     <div id="station-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all opacity-0">
         <div class="glass-panel bg-slate-900/95 border border-slate-700/80 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4 relative" id="modal-card">
@@ -483,6 +685,22 @@
             paknam_gauge: null
         };
 
+        // Walker Circulation Simulation State
+        const walkerState = {
+            sstAnomaly: 0.0,
+            tradeWindStrength: 100,
+            iod: 'neutral',
+            monsoonSeason: 'summer',
+            isPlaying: true,
+            speed: 1.0
+        };
+
+        let walkerCanvas, walkerCtx;
+        let thailandCanvas, thailandCtx;
+        let airParticles = [];
+        let rainParticles = [];
+        let oceanWaveOffset = 0;
+
         // Fetch Live JSON Data and handle update failure alerts explicitly
         async function fetchLiveData(endpointUrl = 'data.json') {
             const icon = document.getElementById('refresh-icon');
@@ -521,6 +739,11 @@
                         const ensoState = tc.enso >= 0.5 ? 'El Niño' : (tc.enso <= -0.5 ? 'La Niña' : 'Neutral');
                         document.getElementById('kpi-enso-val').innerText = ensoStr;
                         document.getElementById('kpi-enso-state').innerText = `(${ensoState})`;
+                        
+                        // Sync Walker Canvas SST
+                        walkerState.sstAnomaly = tc.enso;
+                        document.getElementById('slider-sst').value = tc.enso;
+                        document.getElementById('val-sst').innerText = ensoStr;
                     }
 
                     // IOD Display
@@ -529,12 +752,31 @@
                         const iodState = tc.iod >= 0.4 ? '+IOD' : (tc.iod <= -0.4 ? '-IOD' : 'Neutral');
                         document.getElementById('kpi-iod-val').innerText = iodStr;
                         document.getElementById('kpi-iod-state').innerText = `(${iodState})`;
+                        
+                        setIOD(tc.iod >= 0.4 ? 'positive' : (tc.iod <= -0.4 ? 'negative' : 'neutral'));
                     }
 
                     // MJO Display
                     if (tc.mjo_phase !== null && tc.mjo_phase !== undefined) {
                         document.getElementById('kpi-mjo-title').innerText = `MJO Phase ${tc.mjo_phase}`;
                         document.getElementById('kpi-mjo-desc').innerText = `Amp: ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(2) : '--'}`;
+                    }
+
+                    // Sync Live Walker Telemetry Cards
+                    if (tc.cpac850_trade_winds !== undefined && tc.cpac850_trade_winds !== null) {
+                        document.getElementById('metric-cpac-val').innerText = `${tc.cpac850_trade_winds >= 0 ? '+' : ''}${tc.cpac850_trade_winds.toFixed(2)} m/s`;
+                        walkerState.tradeWindStrength = Math.max(20, Math.min(180, 100 + (tc.cpac850_trade_winds * 30)));
+                        document.getElementById('slider-tradewind').value = walkerState.tradeWindStrength;
+                        document.getElementById('val-tradewind').innerText = `${Math.round(walkerState.tradeWindStrength)} %`;
+                    }
+                    if (tc.soi !== undefined && tc.soi !== null) {
+                        document.getElementById('metric-soi-val').innerText = `${tc.soi >= 0 ? '+' : ''}${tc.soi.toFixed(2)}`;
+                    }
+                    if (tc.olr !== undefined && tc.olr !== null) {
+                        document.getElementById('metric-olr-val').innerText = `${tc.olr >= 0 ? '+' : ''}${tc.olr.toFixed(1)} W/m²`;
+                    }
+                    if (tc.ocean_heat_content !== undefined && tc.ocean_heat_content !== null) {
+                        document.getElementById('metric-heat-val').innerText = `${tc.ocean_heat_content >= 0 ? '+' : ''}${tc.ocean_heat_content.toFixed(2)} °C`;
                     }
 
                     const topBarText = `ENSO: ${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)}°C | IOD: ${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)}°C | MJO: Phase ${tc.mjo_phase} (Amp ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(1) : '--'})`;
@@ -576,7 +818,6 @@
                     document.getElementById('paknam-risk-badge').innerText = `SURGE: ${pak.surge_risk}`;
                     document.getElementById('paknam-buffer-val').innerText = `${pak.buffer_remaining_meters.toFixed(2)} m remaining`;
 
-                    // Buffer Clearance Percentage (1.80m threshold)
                     const fillPct = Math.min(100, (pak.water_level_msl / pak.flood_wall_threshold_msl) * 100);
                     document.getElementById('paknam-buffer-bar').style.width = `${fillPct}%`;
                 }
@@ -918,6 +1159,431 @@
             });
         }
 
+        // --- WALKER CIRCULATION CANVAS ENGINE ---
+        function initCanvases() {
+            walkerCanvas = document.getElementById('walkerCanvas');
+            if (walkerCanvas) walkerCtx = walkerCanvas.getContext('2d');
+
+            thailandCanvas = document.getElementById('thailandCanvas');
+            if (thailandCanvas) thailandCtx = thailandCanvas.getContext('2d');
+
+            resizeCanvases();
+        }
+
+        function resizeCanvases() {
+            if (walkerCanvas && walkerCanvas.parentElement) {
+                walkerCanvas.width = walkerCanvas.parentElement.clientWidth;
+                walkerCanvas.height = walkerCanvas.parentElement.clientHeight;
+            }
+            if (thailandCanvas && thailandCanvas.parentElement) {
+                thailandCanvas.width = thailandCanvas.parentElement.clientWidth;
+                thailandCanvas.height = thailandCanvas.parentElement.clientHeight;
+            }
+        }
+
+        function initAirParticles() {
+            airParticles = [];
+            for (let i = 0; i < 110; i++) {
+                airParticles.push({
+                    x: Math.random(),
+                    y: Math.random(),
+                    size: Math.random() * 2 + 1.2,
+                    alpha: Math.random() * 0.7 + 0.3,
+                    speedOffset: Math.random() * 0.5 + 0.75
+                });
+            }
+        }
+
+        function initRainParticles() {
+            rainParticles = [];
+            for (let i = 0; i < 60; i++) {
+                rainParticles.push({
+                    x: Math.random(),
+                    y: Math.random(),
+                    length: Math.random() * 8 + 5,
+                    speed: Math.random() * 3 + 3
+                });
+            }
+        }
+
+        function applyPreset(presetName) {
+            if (presetName === 'strong-la-nina') {
+                walkerState.sstAnomaly = -2.5;
+                walkerState.tradeWindStrength = 160;
+            } else if (presetName === 'neutral') {
+                walkerState.sstAnomaly = 0.0;
+                walkerState.tradeWindStrength = 100;
+            } else if (presetName === 'strong-el-nino') {
+                walkerState.sstAnomaly = +2.6;
+                walkerState.tradeWindStrength = 30;
+            }
+
+            document.getElementById('slider-sst').value = walkerState.sstAnomaly;
+            document.getElementById('val-sst').innerText = (walkerState.sstAnomaly >= 0 ? '+' : '') + walkerState.sstAnomaly.toFixed(1) + ' °C';
+            document.getElementById('slider-tradewind').value = walkerState.tradeWindStrength;
+            document.getElementById('val-tradewind').innerText = Math.round(walkerState.tradeWindStrength) + ' %';
+        }
+
+        function onSSTSliderChange(val) {
+            walkerState.sstAnomaly = parseFloat(val);
+            document.getElementById('val-sst').innerText = (walkerState.sstAnomaly >= 0 ? '+' : '') + walkerState.sstAnomaly.toFixed(1) + ' °C';
+        }
+
+        function onTradeWindSliderChange(val) {
+            walkerState.tradeWindStrength = parseInt(val);
+            document.getElementById('val-tradewind').innerText = walkerState.tradeWindStrength + ' %';
+        }
+
+        function setIOD(mode) {
+            walkerState.iod = mode;
+            document.querySelectorAll('.iod-btn').forEach(b => {
+                b.className = 'iod-btn py-1 rounded text-slate-400 hover:text-white transition';
+            });
+            const btn = document.getElementById(`iod-btn-${mode.substring(0,3)}`);
+            if (btn) btn.className = 'iod-btn py-1 rounded bg-cyan-500/20 text-cyan-300 font-medium border border-cyan-500/30 transition';
+        }
+
+        function setMonsoonSeason(season) {
+            walkerState.monsoonSeason = season;
+            document.querySelectorAll('.monsoon-btn').forEach(b => {
+                b.className = 'monsoon-btn py-1 rounded text-slate-400 hover:text-white transition';
+            });
+            const btn = document.getElementById(`monsoon-btn-${season}`);
+            if (btn) {
+                btn.className = season === 'summer' 
+                    ? 'monsoon-btn py-1 rounded bg-amber-500/20 text-amber-300 font-medium border border-amber-500/30 transition'
+                    : 'monsoon-btn py-1 rounded bg-cyan-500/20 text-cyan-300 font-medium border border-cyan-500/30 transition';
+            }
+        }
+
+        function togglePlayPause() {
+            walkerState.isPlaying = !walkerState.isPlaying;
+            const icon = document.getElementById('icon-play-pause');
+            const text = document.getElementById('text-play-pause');
+            if (walkerState.isPlaying) {
+                icon.className = 'fa-solid fa-pause text-[10px] text-cyan-400';
+                text.innerText = 'Pause';
+            } else {
+                icon.className = 'fa-solid fa-play text-[10px] text-teal-400';
+                text.innerText = 'Play';
+            }
+        }
+
+        function changeSpeed(val) {
+            walkerState.speed = parseFloat(val);
+        }
+
+        function resetParameters() {
+            applyPreset('neutral');
+            setIOD('neutral');
+            setMonsoonSeason('summer');
+        }
+
+        function drawWalkerCrossSection() {
+            if (!walkerCtx || !walkerCanvas) return;
+            const width = walkerCanvas.width;
+            const height = walkerCanvas.height;
+
+            walkerCtx.clearRect(0, 0, width, height);
+
+            const seaLevelY = height * 0.52;
+            const oceanBottomY = height * 0.92;
+            const tropopauseY = height * 0.08;
+
+            const skyGradient = walkerCtx.createLinearGradient(0, 0, 0, seaLevelY);
+            skyGradient.addColorStop(0, '#020617');
+            skyGradient.addColorStop(0.5, '#0f172a');
+            skyGradient.addColorStop(1, '#1e293b');
+            walkerCtx.fillStyle = skyGradient;
+            walkerCtx.fillRect(0, 0, width, seaLevelY);
+
+            let risingBranchX = 0.22;
+            if (walkerState.sstAnomaly > 0) {
+                risingBranchX += (walkerState.sstAnomaly / 3.0) * 0.48;
+            } else {
+                risingBranchX += (walkerState.sstAnomaly / 3.0) * 0.10;
+            }
+
+            const oceanGradient = walkerCtx.createLinearGradient(0, seaLevelY, width, seaLevelY);
+            if (walkerState.sstAnomaly > 1.0) {
+                oceanGradient.addColorStop(0, '#0284c7');
+                oceanGradient.addColorStop(0.5, '#ef4444');
+                oceanGradient.addColorStop(1, '#dc2626');
+            } else if (walkerState.sstAnomaly < -1.0) {
+                oceanGradient.addColorStop(0, '#ef4444');
+                oceanGradient.addColorStop(0.35, '#0284c7');
+                oceanGradient.addColorStop(1, '#0284c7');
+            } else {
+                oceanGradient.addColorStop(0, '#ef4444');
+                oceanGradient.addColorStop(0.5, '#0284c7');
+                oceanGradient.addColorStop(1, '#0369a1');
+            }
+
+            walkerCtx.fillStyle = '#030712';
+            walkerCtx.fillRect(0, seaLevelY, width, oceanBottomY - seaLevelY);
+
+            walkerCtx.fillStyle = oceanGradient;
+            walkerCtx.globalAlpha = 0.85;
+            walkerCtx.fillRect(0, seaLevelY, width, 35);
+            walkerCtx.globalAlpha = 1.0;
+
+            let seaLevelSlopeWest = - (walkerState.tradeWindStrength - 100) * 0.08;
+            walkerCtx.beginPath();
+            walkerCtx.moveTo(0, seaLevelY + seaLevelSlopeWest);
+
+            for (let x = 0; x <= width; x += 10) {
+                const waveY = Math.sin((x * 0.02) + oceanWaveOffset) * 2;
+                const slopeOffset = (x / width) * (seaLevelSlopeWest * -2);
+                walkerCtx.lineTo(x, seaLevelY + waveY + slopeOffset);
+            }
+            walkerCtx.lineTo(width, oceanBottomY);
+            walkerCtx.lineTo(0, oceanBottomY);
+            walkerCtx.closePath();
+
+            let thermoclineWestDepth = 100 + (walkerState.tradeWindStrength - 100) * 0.5;
+            let thermoclineEastDepth = 30 - (walkerState.sstAnomaly * 12);
+
+            const westThermY = seaLevelY + thermoclineWestDepth;
+            const eastThermY = seaLevelY + thermoclineEastDepth;
+
+            walkerCtx.beginPath();
+            walkerCtx.moveTo(0, seaLevelY + 30);
+            walkerCtx.bezierCurveTo(
+                width * 0.3, westThermY,
+                width * 0.7, eastThermY,
+                width, eastThermY
+            );
+            walkerCtx.lineTo(width, oceanBottomY);
+            walkerCtx.lineTo(0, oceanBottomY);
+            walkerCtx.closePath();
+            
+            const deepColdGrad = walkerCtx.createLinearGradient(0, seaLevelY, 0, oceanBottomY);
+            deepColdGrad.addColorStop(0, '#0c4a6e');
+            deepColdGrad.addColorStop(1, '#0284c7');
+            walkerCtx.fillStyle = deepColdGrad;
+            walkerCtx.globalAlpha = 0.6;
+            walkerCtx.fill();
+            walkerCtx.globalAlpha = 1.0;
+
+            walkerCtx.beginPath();
+            walkerCtx.moveTo(0, seaLevelY + thermoclineWestDepth * 0.7);
+            walkerCtx.bezierCurveTo(
+                width * 0.35, westThermY,
+                width * 0.65, eastThermY,
+                width, eastThermY
+            );
+            walkerCtx.strokeStyle = '#f59e0b';
+            walkerCtx.lineWidth = 3;
+            walkerCtx.setLineDash([6, 4]);
+            walkerCtx.stroke();
+            walkerCtx.setLineDash([]);
+
+            walkerCtx.fillStyle = '#fbbf24';
+            walkerCtx.font = '9px Inter';
+            walkerCtx.fillText("THERMOCLINE LAYER", width * 0.42, (westThermY + eastThermY) / 2 + 10);
+
+            const speedFactor = (walkerState.isPlaying ? walkerState.speed : 0);
+            const risingX = risingBranchX * width;
+            let sinkingX = width * 0.88;
+            if (walkerState.sstAnomaly > 1.0) sinkingX = width * 0.18;
+
+            airParticles.forEach(p => {
+                if (walkerState.isPlaying) {
+                    if (p.x < risingBranchX) {
+                        p.x += 0.0015 * p.speedOffset * speedFactor;
+                    } else if (p.x >= risingBranchX && p.x < (sinkingX / width)) {
+                        if (p.y < 0.3) {
+                            p.x += 0.002 * p.speedOffset * speedFactor;
+                        } else {
+                            p.x -= 0.0025 * (walkerState.tradeWindStrength / 100) * p.speedOffset * speedFactor;
+                        }
+                    } else {
+                        p.x -= 0.002 * p.speedOffset * speedFactor;
+                    }
+
+                    const distToRising = Math.abs(p.x * width - risingX);
+                    if (distToRising < width * 0.12) {
+                        p.y -= 0.004 * speedFactor;
+                    } else {
+                        p.y += 0.0015 * speedFactor;
+                    }
+
+                    if (p.x < 0.02) p.x = 0.98;
+                    if (p.x > 0.98) p.x = 0.02;
+                    if (p.y < 0.12) p.y = 0.42;
+                    if (p.y > 0.48) p.y = 0.15;
+                }
+
+                const drawPx = p.x * width;
+                const drawPy = tropopauseY + p.y * (seaLevelY - tropopauseY);
+
+                walkerCtx.beginPath();
+                walkerCtx.arc(drawPx, drawPy, p.size, 0, Math.PI * 2);
+                walkerCtx.fillStyle = Math.abs(drawPx - risingX) < width * 0.15 ? `rgba(248, 113, 113, ${p.alpha})` : `rgba(125, 211, 252, ${p.alpha})`;
+                walkerCtx.fill();
+            });
+
+            const tradeArrowY = seaLevelY - 16;
+            for (let i = 0; i < 4; i++) {
+                const arrowX = width * 0.25 + (i * (width * 0.14));
+                if (walkerState.sstAnomaly < 1.5) {
+                    drawWindArrow(walkerCtx, arrowX, tradeArrowY, -20 * (walkerState.tradeWindStrength / 100), '#38bdf8');
+                } else {
+                    drawWindArrow(walkerCtx, arrowX, tradeArrowY, 18, '#f87171');
+                }
+            }
+
+            drawConvectiveCloudCluster(walkerCtx, risingX, seaLevelY - 65, walkerState.sstAnomaly);
+
+            // West Landmass
+            walkerCtx.fillStyle = '#1e293b';
+            walkerCtx.beginPath();
+            walkerCtx.moveTo(0, seaLevelY - 12);
+            walkerCtx.lineTo(width * 0.14, seaLevelY - 12);
+            walkerCtx.lineTo(width * 0.16, seaLevelY);
+            walkerCtx.lineTo(0, seaLevelY + 25);
+            walkerCtx.closePath();
+            walkerCtx.fill();
+            walkerCtx.strokeStyle = '#10b981';
+            walkerCtx.lineWidth = 2.5;
+            walkerCtx.stroke();
+
+            // East Landmass
+            walkerCtx.fillStyle = '#1e293b';
+            walkerCtx.beginPath();
+            walkerCtx.moveTo(width * 0.88, seaLevelY);
+            walkerCtx.lineTo(width * 0.90, seaLevelY - 20);
+            walkerCtx.lineTo(width, seaLevelY - 28);
+            walkerCtx.lineTo(width, seaLevelY + 30);
+            walkerCtx.closePath();
+            walkerCtx.fill();
+            walkerCtx.strokeStyle = '#f59e0b';
+            walkerCtx.lineWidth = 2.5;
+            walkerCtx.stroke();
+
+            walkerCtx.fillStyle = '#f8fafc';
+            walkerCtx.font = 'bold 10px Inter';
+            walkerCtx.fillText("THAILAND / MARITIME CONTINENT", 10, seaLevelY - 22);
+
+            walkerCtx.fillText("SOUTH AMERICA", width - 110, seaLevelY - 30);
+
+            if (walkerState.isPlaying) oceanWaveOffset += 0.04 * walkerState.speed;
+        }
+
+        function drawWindArrow(ctx, x, y, length, color) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + length, y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            const dir = length > 0 ? 1 : -1;
+            ctx.beginPath();
+            ctx.moveTo(x + length, y);
+            ctx.lineTo(x + length - (dir * 5), y - 3);
+            ctx.lineTo(x + length - (dir * 5), y + 3);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawConvectiveCloudCluster(ctx, cx, cy, sstAnomaly) {
+            ctx.fillStyle = sstAnomaly > 1.0 ? 'rgba(203, 213, 225, 0.7)' : 'rgba(241, 245, 249, 0.9)';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctx.arc(cx - 18, cy + 6, 16, 0, Math.PI * 2);
+            ctx.arc(cx + 18, cy + 5, 18, 0, Math.PI * 2);
+            ctx.fill();
+
+            const rainXStart = cx - 25;
+            const rainXEnd = cx + 25;
+            const rainYStart = cy + 18;
+            
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.2;
+
+            rainParticles.forEach(rp => {
+                const rx = rainXStart + rp.x * (rainXEnd - rainXStart);
+                const ry = rainYStart + (rp.y * 40);
+
+                ctx.beginPath();
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx - 1.5, ry + rp.length);
+                ctx.stroke();
+
+                if (walkerState.isPlaying) {
+                    rp.y += 0.04 * walkerState.speed;
+                    if (rp.y > 1.0) rp.y = 0;
+                }
+            });
+        }
+
+        function drawThailandInset() {
+            if (!thailandCtx || !thailandCanvas) return;
+            const width = thailandCanvas.width;
+            const height = thailandCanvas.height;
+
+            thailandCtx.clearRect(0, 0, width, height);
+            thailandCtx.fillStyle = '#090d16';
+            thailandCtx.fillRect(0, 0, width, height);
+
+            const centerX = width * 0.48;
+            const centerY = height * 0.48;
+
+            thailandCtx.beginPath();
+            thailandCtx.moveTo(centerX - 8, centerY - 60);
+            thailandCtx.lineTo(centerX + 20, centerY - 55);
+            thailandCtx.lineTo(centerX + 40, centerY - 35);
+            thailandCtx.lineTo(centerX + 32, centerY - 8);
+            thailandCtx.lineTo(centerX + 12, centerY + 8);
+            thailandCtx.lineTo(centerX + 8, centerY + 55);
+            thailandCtx.lineTo(centerX - 6, centerY + 60);
+            thailandCtx.lineTo(centerX - 10, centerY + 18);
+            thailandCtx.lineTo(centerX - 28, centerY - 18);
+            thailandCtx.closePath();
+
+            if (walkerState.sstAnomaly >= 1.0) {
+                thailandCtx.fillStyle = '#3f3f46';
+                thailandCtx.strokeStyle = '#ef4444';
+            } else if (walkerState.sstAnomaly <= -1.0) {
+                thailandCtx.fillStyle = '#064e3b';
+                thailandCtx.strokeStyle = '#34d399';
+            } else {
+                thailandCtx.fillStyle = '#14532d';
+                thailandCtx.strokeStyle = '#10b981';
+            }
+            thailandCtx.lineWidth = 2;
+            thailandCtx.fill();
+            thailandCtx.stroke();
+
+            thailandCtx.fillStyle = '#f8fafc';
+            thailandCtx.font = 'bold 8px Inter';
+            thailandCtx.fillText("Bangkok", centerX - 4, centerY + 12);
+
+            let rainIntensity = 15;
+            if (walkerState.sstAnomaly <= -1.0) rainIntensity = 45;
+            if (walkerState.sstAnomaly >= 1.0) rainIntensity = 2;
+
+            thailandCtx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+            thailandCtx.lineWidth = 1;
+
+            for (let i = 0; i < rainIntensity; i++) {
+                const rx = centerX - 25 + Math.sin(i * 99) * 35;
+                const ry = centerY - 40 + ((i * 10 + Date.now() * 0.05) % 80);
+
+                thailandCtx.beginPath();
+                thailandCtx.moveTo(rx, ry);
+                thailandCtx.lineTo(rx - 1.5, ry + 5);
+                thailandCtx.stroke();
+            }
+        }
+
+        function animateLoop() {
+            drawWalkerCrossSection();
+            drawThailandInset();
+            requestAnimationFrame(animateLoop);
+        }
+
         function initListeners() {
             document.getElementById('close-modal-btn').addEventListener('click', closeModal);
             document.getElementById('refresh-btn').addEventListener('click', () => fetchLiveData());
@@ -925,6 +1591,10 @@
             document.getElementById('mobile-toggle-btn').addEventListener('click', () => {
                 const sidebar = document.getElementById('sidebar-panel');
                 sidebar.classList.toggle('hidden');
+            });
+
+            window.addEventListener('resize', () => {
+                resizeCanvases();
             });
         }
 
@@ -935,8 +1605,12 @@
 
         window.onload = function() {
             initMap();
+            initCanvases();
+            initAirParticles();
+            initRainParticles();
             initListeners();
             fetchLiveData();
+            requestAnimationFrame(animateLoop);
         };
     </script>
 </body>
