@@ -1491,25 +1491,29 @@
             let sinkingX = width * 0.88;
             if (walkerState.sstAnomaly > 1.0) sinkingX = width * 0.18;
 
+            // Compute proportional circulation cell vigor
+            const cellIntensity = Math.max(0.15, walkerState.tradeWindStrength / 100);
+
             airParticles.forEach(p => {
                 if (walkerState.isPlaying) {
                     if (p.x < risingBranchX) {
-                        p.x += 0.0015 * p.speedOffset * speedFactor;
+                        p.x += 0.0015 * cellIntensity * p.speedOffset * speedFactor;
                     } else if (p.x >= risingBranchX && p.x < (sinkingX / width)) {
                         if (p.y < 0.3) {
-                            p.x += 0.002 * p.speedOffset * speedFactor;
+                            // Scale upper return flow by cellIntensity
+                            p.x += 0.002 * cellIntensity * p.speedOffset * speedFactor;
                         } else {
-                            p.x -= 0.0025 * (walkerState.tradeWindStrength / 100) * p.speedOffset * speedFactor;
+                            p.x -= 0.0025 * cellIntensity * p.speedOffset * speedFactor;
                         }
                     } else {
-                        p.x -= 0.002 * p.speedOffset * speedFactor;
+                        p.x -= 0.002 * cellIntensity * p.speedOffset * speedFactor;
                     }
 
                     const distToRising = Math.abs(p.x * width - risingX);
                     if (distToRising < width * 0.12) {
-                        p.y -= 0.004 * speedFactor;
+                        p.y -= 0.004 * cellIntensity * speedFactor;
                     } else {
-                        p.y += 0.0015 * speedFactor;
+                        p.y += 0.0015 * cellIntensity * speedFactor;
                     }
 
                     if (p.x < 0.02) p.x = 0.98;
