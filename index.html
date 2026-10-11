@@ -762,6 +762,7 @@
         const walkerState = {
             sstAnomaly: 0.0,
             tradeWindStrength: 100,
+            olr: 0.0,
             iod: 'neutral',
             monsoonSeason: 'summer',
             isPlaying: true,
@@ -861,12 +862,8 @@
                         const badge = document.getElementById('badge-cpac-state');
                         el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(2)} m/s`;
                         
-                        // NOAA CPC ZONAL WIND CONVENTION:
-                        // Positive CPAC (> +1.5) = Easterly anomaly (La Niña Signal)
-                        // Negative CPAC (< -1.5) = Westerly anomaly (El Niño Signal)
                         updateTelemetryBadge(el, badge, val, v => v > 1.5, v => v < -1.5);
 
-                        // Calculate trade wind strength: Positive CPAC increases Easterly strength %
                         walkerState.tradeWindStrength = Math.max(20, Math.min(180, 100 + (val * 20)));
                         document.getElementById('slider-tradewind').value = walkerState.tradeWindStrength;
                         document.getElementById('val-tradewind').innerText = `${Math.round(walkerState.tradeWindStrength)} %`;
@@ -882,6 +879,7 @@
 
                     if (tc.olr !== undefined && tc.olr !== null) {
                         const val = tc.olr;
+                        walkerState.olr = val;
                         const el = document.getElementById('metric-olr-val');
                         const badge = document.getElementById('badge-olr-state');
                         el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(1)} W/m²`;
@@ -1375,6 +1373,7 @@
         function resetParameters() {
             walkerState.sstAnomaly = 0.0;
             walkerState.tradeWindStrength = 100;
+            walkerState.olr = 0.0;
             document.getElementById('slider-sst').value = 0.0;
             document.getElementById('val-sst').innerText = '0.0 °C';
             document.getElementById('slider-tradewind').value = 100;
@@ -1491,7 +1490,6 @@
             let sinkingX = width * 0.88;
             if (walkerState.sstAnomaly > 1.0) sinkingX = width * 0.18;
 
-            // Compute proportional circulation cell vigor
             const cellIntensity = Math.max(0.15, walkerState.tradeWindStrength / 100);
 
             airParticles.forEach(p => {
@@ -1500,7 +1498,6 @@
                         p.x += 0.0015 * cellIntensity * p.speedOffset * speedFactor;
                     } else if (p.x >= risingBranchX && p.x < (sinkingX / width)) {
                         if (p.y < 0.3) {
-                            // Scale upper return flow by cellIntensity
                             p.x += 0.002 * cellIntensity * p.speedOffset * speedFactor;
                         } else {
                             p.x -= 0.0025 * cellIntensity * p.speedOffset * speedFactor;
@@ -1541,7 +1538,8 @@
                 }
             }
 
-            drawConvectiveCloudCluster(walkerCtx, risingX, seaLevelY - 65, walkerState.sstAnomaly);
+            // Dynamically scale convective cloud cluster and top anvil outflow by OLR
+            drawConvectiveCloudCluster(walkerCtx, risingX, seaLevelY - 65, walkerState.sstAnomaly, walkerState.olr);
 
             // West Landmass
             walkerCtx.fillStyle = '#1e293b';
@@ -1595,7 +1593,12 @@
             ctx.fill();
         }
 
-        function drawConvectiveCloudCluster(ctx, cx, cy, sstAnomaly) {
+        function drawConvectiveCloudCluster(ctx, cx, cy, sstAnomaly, olr) {
+            const olrVal = (olr !== undefined && olr !== null) ? olr : 0;
+            // Strong negative OLR values indicate high cloud tops / deep convection -> broaden anvil top
+            const anvilExpansion = Math.max(0, -olrVal * 1.1);
+
+            // Base cloud cluster puffs
             ctx.fillStyle = sstAnomaly > 1.0 ? 'rgba(203, 213, 225, 0.7)' : 'rgba(241, 245, 249, 0.9)';
             ctx.beginPath();
             ctx.arc(cx, cy, 22, 0, Math.PI * 2);
@@ -1603,8 +1606,25 @@
             ctx.arc(cx + 18, cy + 5, 18, 0, Math.PI * 2);
             ctx.fill();
 
-            const rainXStart = cx - 25;
-            const rainXEnd = cx + 25;
+            // Upper Anvil Cloud Outflow (Rendered when negative OLR indicates active convective divergence aloft)
+            if (anvilExpansion > 1.5) {
+                // Central horizontal anvil top
+                ctx.fillStyle = 'rgba(226, 232, 240, 0.85)';
+                ctx.beginPath();
+                ctx.ellipse(cx, cy - 14, 24 + anvilExpansion, 10 + (anvilExpansion * 0.2), 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Translucent outer outflow wisps extending laterally
+                ctx.fillStyle = 'rgba(186, 230, 253, 0.4)';
+                ctx.beginPath();
+                ctx.ellipse(cx - (22 + anvilExpansion), cy - 14, 12, 5, 0, 0, Math.PI * 2);
+                ctx.ellipse(cx + (22 + anvilExpansion), cy - 14, 12, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Expand rain drop shaft horizontal range along with anvil plume
+            const rainXStart = cx - 25 - (anvilExpansion * 0.35);
+            const rainXEnd = cx + 25 + (anvilExpansion * 0.35);
             const rainYStart = cy + 18;
             
             ctx.strokeStyle = '#38bdf8';
