@@ -426,20 +426,6 @@
                         Live Equatorial Pacific cross-section driven by NOAA CPC teleconnection indices.
                     </p>
                 </div>
-
-                <!-- Quick Presets -->
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase mr-1">Presets:</span>
-                    <button onclick="applyPreset('strong-la-nina')" class="preset-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-cyan-500/30 bg-cyan-950/40 text-cyan-300 hover:bg-cyan-500/20 transition">
-                        La Niña
-                    </button>
-                    <button onclick="applyPreset('neutral')" class="preset-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-sky-500/50 bg-sky-600/30 text-sky-200 hover:bg-sky-500/20 transition">
-                        Neutral
-                    </button>
-                    <button onclick="applyPreset('strong-el-nino')" class="preset-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-red-500/30 bg-red-950/40 text-red-300 hover:bg-red-500/20 transition">
-                        El Niño
-                    </button>
-                </div>
             </div>
 
             <!-- Main Canvas Visualizer Grid -->
@@ -598,6 +584,61 @@
                             <button onclick="setMonsoonSeason('summer')" id="monsoon-btn-summer" class="monsoon-btn py-1 rounded bg-amber-500/20 text-amber-300 font-medium border border-amber-500/30 transition">Summer (SW)</button>
                             <button onclick="setMonsoonSeason('winter')" id="monsoon-btn-winter" class="monsoon-btn py-1 rounded text-slate-400 hover:text-white transition">Winter (NE)</button>
                         </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- NOAA Live Walker Telemetry Factors Explanation Card -->
+            <div class="glass-panel p-4 rounded-xl shadow-xl space-y-3 border border-slate-800/80">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-cyan-400"></i>
+                    NOAA Live Walker Telemetry Factors & Bangkok Hydrological Impacts
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    
+                    <!-- Factor 1 -->
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                        <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-wind text-cyan-400"></i>
+                            850 hPa Trade Wind Anomaly (CPAC850)
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            Measures lower-troposphere trade wind speed across the Central Pacific (175°W–140°W) at ~1.5 km altitude. Strong easterly (negative) trade wind anomalies pile warm surface waters toward Southeast Asia, driving intense upward air movement and boosting monsoonal rainfall in Greater Bangkok. Westerly (positive) wind anomalies weaken trade winds, triggering drought conditions.
+                        </p>
+                    </div>
+
+                    <!-- Factor 2 -->
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                        <div class="font-bold text-teal-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrows-left-right-to-line text-teal-400"></i>
+                            Tahiti-Darwin Southern Oscillation Index (SOI)
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            Calculates the normalized air pressure difference between Tahiti (Eastern Pacific) and Darwin, Australia (Western Pacific). Sustained positive values (> +7.0) indicate La Niña conditions with high pressure over the East and low pressure over Asia, driving warm moisture into Central Thailand and increasing flood risk. Sustained negative values (< -7.0) signal El Niño and monsoon suppression.
+                        </p>
+                    </div>
+
+                    <!-- Factor 3 -->
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                        <div class="font-bold text-purple-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-cloud-sun-rain text-purple-400"></i>
+                            Central Pacific OLR Anomaly (Outgoing Longwave Radiation)
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            Measures thermal radiation emitted into space from the tropical atmosphere. Negative OLR anomalies indicate thick, cold thunderstorm cloud tops over the Central Pacific. Positive OLR anomalies indicate clear skies over the Pacific, confirming that primary convective cloud formation and rain activity have migrated westward over the Gulf of Thailand and the Indochina peninsula.
+                        </p>
+                    </div>
+
+                    <!-- Factor 4 -->
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                        <div class="font-bold text-amber-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-temperature-three-quarters text-amber-400"></i>
+                            0-300m Upper Ocean Heat Content Anomaly
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            Quantifies the total thermal energy stored in the upper 300 meters of the Equatorial Pacific Ocean. Subsurface warm water buildup serves as a leading multi-month predictor of El Niño warm water expansion. Elevated Pacific heat content provides an early warning of reduced upstream basin runoff into northern reservoirs (Bhumibol and Sirikit) and decreased seasonal rainfall for Bangkok.
+                        </p>
                     </div>
 
                 </div>
@@ -1206,24 +1247,6 @@
             }
         }
 
-        function applyPreset(presetName) {
-            if (presetName === 'strong-la-nina') {
-                walkerState.sstAnomaly = -2.5;
-                walkerState.tradeWindStrength = 160;
-            } else if (presetName === 'neutral') {
-                walkerState.sstAnomaly = 0.0;
-                walkerState.tradeWindStrength = 100;
-            } else if (presetName === 'strong-el-nino') {
-                walkerState.sstAnomaly = +2.6;
-                walkerState.tradeWindStrength = 30;
-            }
-
-            document.getElementById('slider-sst').value = walkerState.sstAnomaly;
-            document.getElementById('val-sst').innerText = (walkerState.sstAnomaly >= 0 ? '+' : '') + walkerState.sstAnomaly.toFixed(1) + ' °C';
-            document.getElementById('slider-tradewind').value = walkerState.tradeWindStrength;
-            document.getElementById('val-tradewind').innerText = Math.round(walkerState.tradeWindStrength) + ' %';
-        }
-
         function onSSTSliderChange(val) {
             walkerState.sstAnomaly = parseFloat(val);
             document.getElementById('val-sst').innerText = (walkerState.sstAnomaly >= 0 ? '+' : '') + walkerState.sstAnomaly.toFixed(1) + ' °C';
@@ -1274,7 +1297,12 @@
         }
 
         function resetParameters() {
-            applyPreset('neutral');
+            walkerState.sstAnomaly = 0.0;
+            walkerState.tradeWindStrength = 100;
+            document.getElementById('slider-sst').value = 0.0;
+            document.getElementById('val-sst').innerText = '0.0 °C';
+            document.getElementById('slider-tradewind').value = 100;
+            document.getElementById('val-tradewind').innerText = '100 %';
             setIOD('neutral');
             setMonsoonSeason('summer');
         }
