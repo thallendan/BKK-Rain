@@ -616,12 +616,12 @@
                             850 hPa Trade Wind Anomaly (CPAC850)
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Measures lower-troposphere zonal wind speed across the Central Pacific (175°W–140°W) at ~1.5 km altitude. Anomaly values typically range between <strong>-10.0 m/s and +10.0 m/s</strong>.
+                            Measures lower-troposphere zonal wind anomaly across the Central Pacific (175°W–140°W) at ~1.5 km altitude. Per NOAA CPC index conventions, <strong>positive values indicate easterly wind anomalies</strong> and <strong>negative values indicate westerly wind anomalies</strong>.
                         </p>
                         <div class="space-y-1 text-[10px] border-t border-slate-800/80 pt-1.5 font-mono">
-                            <p class="text-cyan-300"><strong>Negative (&lt; -1.5 m/s):</strong> Strong Easterlies (La Niña Signal) &rarr; Warm surface water piled toward Southeast Asia &rarr; <em>High Monsoon Rainfall & BKK Flood Risk</em></p>
+                            <p class="text-cyan-300"><strong>Positive (&gt; +1.5 m/s):</strong> Strong Easterlies (La Niña Signal) &rarr; Warm surface water piled toward Southeast Asia &rarr; <em>High Monsoon Rainfall & BKK Flood Risk</em></p>
                             <p class="text-slate-400"><strong>Neutral (-1.5 to +1.5 m/s):</strong> Climatological Normal &rarr; <em>Average Seasonal Bangkok Precipitation</em></p>
-                            <p class="text-amber-400"><strong>Positive (&gt; +1.5 m/s):</strong> Westerly Anomaly (El Niño Signal) &rarr; Trade winds collapse or reverse &rarr; <em>Monsoon Suppression & Drought Risk</em></p>
+                            <p class="text-amber-400"><strong>Negative (&lt; -1.5 m/s):</strong> Westerly Anomaly (El Niño Signal) &rarr; Trade winds collapse or reverse &rarr; <em>Monsoon Suppression & Drought Risk</em></p>
                         </div>
                     </div>
 
@@ -860,9 +860,14 @@
                         const el = document.getElementById('metric-cpac-val');
                         const badge = document.getElementById('badge-cpac-state');
                         el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(2)} m/s`;
-                        updateTelemetryBadge(el, badge, val, v => v < -1.5, v => v > 1.5);
+                        
+                        // NOAA CPC ZONAL WIND CONVENTION:
+                        // Positive CPAC (> +1.5) = Easterly anomaly (La Niña Signal)
+                        // Negative CPAC (< -1.5) = Westerly anomaly (El Niño Signal)
+                        updateTelemetryBadge(el, badge, val, v => v > 1.5, v => v < -1.5);
 
-                        walkerState.tradeWindStrength = Math.max(20, Math.min(180, 100 + (val * 30)));
+                        // Calculate trade wind strength: Positive CPAC increases Easterly strength %
+                        walkerState.tradeWindStrength = Math.max(20, Math.min(180, 100 + (val * 20)));
                         document.getElementById('slider-tradewind').value = walkerState.tradeWindStrength;
                         document.getElementById('val-tradewind').innerText = `${Math.round(walkerState.tradeWindStrength)} %`;
                     }
