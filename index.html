@@ -557,7 +557,7 @@
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
 
                     <!-- Slider 1: SST Anomaly -->
                     <div class="space-y-1">
@@ -579,7 +579,17 @@
                             class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400">
                     </div>
 
-                    <!-- Control 3: Indian Ocean Dipole -->
+                    <!-- Slider 3: Pacific OLR Anomaly -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px]">
+                            <label class="text-slate-300 font-medium">Pacific OLR Anomaly</label>
+                            <span id="val-olr" class="font-mono font-bold text-cyan-300">0.0 W/m²</span>
+                        </div>
+                        <input type="range" id="slider-olr" min="-50.0" max="50.0" step="1.0" value="0.0" oninput="onOLRSliderChange(this.value)"
+                            class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400">
+                    </div>
+
+                    <!-- Control 4: Indian Ocean Dipole -->
                     <div class="space-y-1">
                         <label class="text-[11px] text-slate-300 font-medium block">Indian Ocean Dipole</label>
                         <div class="grid grid-cols-3 gap-1 p-0.5 bg-slate-900 rounded-lg border border-slate-800 text-[10px]">
@@ -589,7 +599,7 @@
                         </div>
                     </div>
 
-                    <!-- Control 4: Thailand Monsoon Season Switcher -->
+                    <!-- Control 5: Thailand Monsoon Season Switcher -->
                     <div class="space-y-1">
                         <label class="text-[11px] text-slate-300 font-medium block">Monsoon Season</label>
                         <div class="grid grid-cols-2 gap-1 p-0.5 bg-slate-900 rounded-lg border border-slate-800 text-[10px]">
@@ -884,6 +894,10 @@
                         const badge = document.getElementById('badge-olr-state');
                         el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(1)} W/m²`;
                         updateTelemetryBadge(el, badge, val, v => v > 10.0, v => v < -10.0);
+
+                        // Sync OLR Slider and Value readout
+                        document.getElementById('slider-olr').value = val;
+                        document.getElementById('val-olr').innerText = `${val >= 0 ? '+' : ''}${val.toFixed(1)} W/m²`;
                     }
 
                     if (tc.ocean_heat_content !== undefined && tc.ocean_heat_content !== null) {
@@ -1331,6 +1345,11 @@
             document.getElementById('val-tradewind').innerText = walkerState.tradeWindStrength + ' %';
         }
 
+        function onOLRSliderChange(val) {
+            walkerState.olr = parseFloat(val);
+            document.getElementById('val-olr').innerText = (walkerState.olr >= 0 ? '+' : '') + walkerState.olr.toFixed(1) + ' W/m²';
+        }
+
         function setIOD(mode) {
             walkerState.iod = mode;
             document.querySelectorAll('.iod-btn').forEach(b => {
@@ -1389,6 +1408,8 @@
 
             if (tc.olr !== null && tc.olr !== undefined) {
                 walkerState.olr = tc.olr;
+                document.getElementById('slider-olr').value = tc.olr;
+                document.getElementById('val-olr').innerText = (tc.olr >= 0 ? '+' : '') + tc.olr.toFixed(1) + ' W/m²';
             }
 
             if (tc.iod !== null && tc.iod !== undefined) {
@@ -1610,7 +1631,6 @@
 
         function drawConvectiveCloudCluster(ctx, cx, cy, sstAnomaly, olr) {
             const olrVal = (olr !== undefined && olr !== null) ? olr : 0;
-            // Enhanced scaling factor so even moderate OLR anomalies produce visible cloud top expansion
             const anvilExpansion = Math.max(0, -olrVal * 2.2);
 
             // Base cloud cluster puffs
