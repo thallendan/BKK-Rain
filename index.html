@@ -552,8 +552,8 @@
                     <h3 class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
                         <i class="fa-solid fa-sliders text-cyan-400"></i> Interactive Factor Fine-Tuning
                     </h3>
-                    <button onclick="resetParameters()" class="text-[11px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 transition">
-                        <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+                    <button onclick="setToLiveData()" class="text-[11px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 transition">
+                        <i class="fa-solid fa-rotate-left"></i> Set to Live Data
                     </button>
                 </div>
 
@@ -1370,15 +1370,31 @@
             walkerState.speed = parseFloat(val);
         }
 
-        function resetParameters() {
-            walkerState.sstAnomaly = 0.0;
-            walkerState.tradeWindStrength = 100;
-            walkerState.olr = 0.0;
-            document.getElementById('slider-sst').value = 0.0;
-            document.getElementById('val-sst').innerText = '0.0 °C';
-            document.getElementById('slider-tradewind').value = 100;
-            document.getElementById('val-tradewind').innerText = '100 %';
-            setIOD('neutral');
+        // Resets interactive controls to match live fetched telemetry
+        function setToLiveData() {
+            if (!APP_STATE.teleconnections) return;
+            const tc = APP_STATE.teleconnections;
+
+            if (tc.enso !== null && tc.enso !== undefined) {
+                walkerState.sstAnomaly = tc.enso;
+                document.getElementById('slider-sst').value = tc.enso;
+                document.getElementById('val-sst').innerText = (tc.enso >= 0 ? '+' : '') + tc.enso.toFixed(1) + ' °C';
+            }
+
+            if (tc.cpac850_trade_winds !== null && tc.cpac850_trade_winds !== undefined) {
+                walkerState.tradeWindStrength = Math.max(20, Math.min(180, 100 + (tc.cpac850_trade_winds * 20)));
+                document.getElementById('slider-tradewind').value = walkerState.tradeWindStrength;
+                document.getElementById('val-tradewind').innerText = Math.round(walkerState.tradeWindStrength) + ' %';
+            }
+
+            if (tc.olr !== null && tc.olr !== undefined) {
+                walkerState.olr = tc.olr;
+            }
+
+            if (tc.iod !== null && tc.iod !== undefined) {
+                setIOD(tc.iod >= 0.4 ? 'positive' : (tc.iod <= -0.4 ? 'negative' : 'neutral'));
+            }
+
             setMonsoonSeason('summer');
         }
 
@@ -1538,7 +1554,6 @@
                 }
             }
 
-            // Dynamically scale convective cloud cluster and top anvil outflow by OLR
             drawConvectiveCloudCluster(walkerCtx, risingX, seaLevelY - 65, walkerState.sstAnomaly, walkerState.olr);
 
             // West Landmass
@@ -1595,8 +1610,8 @@
 
         function drawConvectiveCloudCluster(ctx, cx, cy, sstAnomaly, olr) {
             const olrVal = (olr !== undefined && olr !== null) ? olr : 0;
-            // Strong negative OLR values indicate high cloud tops / deep convection -> broaden anvil top
-            const anvilExpansion = Math.max(0, -olrVal * 1.1);
+            // Enhanced scaling factor so even moderate OLR anomalies produce visible cloud top expansion
+            const anvilExpansion = Math.max(0, -olrVal * 2.2);
 
             // Base cloud cluster puffs
             ctx.fillStyle = sstAnomaly > 1.0 ? 'rgba(203, 213, 225, 0.7)' : 'rgba(241, 245, 249, 0.9)';
@@ -1606,19 +1621,19 @@
             ctx.arc(cx + 18, cy + 5, 18, 0, Math.PI * 2);
             ctx.fill();
 
-            // Upper Anvil Cloud Outflow (Rendered when negative OLR indicates active convective divergence aloft)
-            if (anvilExpansion > 1.5) {
+            // Upper Anvil Cloud Outflow (Rendered whenever negative OLR indicates active cloud top development)
+            if (anvilExpansion > 0.2) {
                 // Central horizontal anvil top
                 ctx.fillStyle = 'rgba(226, 232, 240, 0.85)';
                 ctx.beginPath();
-                ctx.ellipse(cx, cy - 14, 24 + anvilExpansion, 10 + (anvilExpansion * 0.2), 0, 0, Math.PI * 2);
+                ctx.ellipse(cx, cy - 14, 20 + anvilExpansion, 8 + (anvilExpansion * 0.15), 0, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Translucent outer outflow wisps extending laterally
                 ctx.fillStyle = 'rgba(186, 230, 253, 0.4)';
                 ctx.beginPath();
-                ctx.ellipse(cx - (22 + anvilExpansion), cy - 14, 12, 5, 0, 0, Math.PI * 2);
-                ctx.ellipse(cx + (22 + anvilExpansion), cy - 14, 12, 5, 0, 0, Math.PI * 2);
+                ctx.ellipse(cx - (18 + anvilExpansion), cy - 14, 10, 4, 0, 0, Math.PI * 2);
+                ctx.ellipse(cx + (18 + anvilExpansion), cy - 14, 10, 4, 0, 0, Math.PI * 2);
                 ctx.fill();
             }
 
