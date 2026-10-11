@@ -598,47 +598,67 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                     
                     <!-- Factor 1 -->
-                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
                         <div class="font-bold text-cyan-300 flex items-center gap-1.5">
                             <i class="fa-solid fa-wind text-cyan-400"></i>
                             850 hPa Trade Wind Anomaly (CPAC850)
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Measures lower-troposphere trade wind speed across the Central Pacific (175°W–140°W) at ~1.5 km altitude. Strong easterly (negative) trade wind anomalies pile warm surface waters toward Southeast Asia, driving intense upward air movement and boosting monsoonal rainfall in Greater Bangkok. Westerly (positive) wind anomalies weaken trade winds, triggering drought conditions.
+                            Measures lower-troposphere zonal wind speed across the Central Pacific (175°W–140°W) at ~1.5 km altitude. Anomaly values typically range between <strong>-10.0 m/s and +10.0 m/s</strong>.
                         </p>
+                        <div class="space-y-1 text-[10px] border-t border-slate-800/80 pt-1.5 font-mono">
+                            <p class="text-cyan-300"><strong>Negative (&lt; -1.5 m/s):</strong> Strong Easterlies (La Niña) &rarr; Warm surface water piled toward Southeast Asia &rarr; <em>High Monsoon Rainfall & BKK Flood Risk</em></p>
+                            <p class="text-slate-400"><strong>Neutral (-1.5 to +1.5 m/s):</strong> Climatological Normal &rarr; <em>Average Seasonal Bangkok Precipitation</em></p>
+                            <p class="text-amber-400"><strong>Positive (&gt; +1.5 m/s):</strong> Westerly Anomaly (El Niño) &rarr; Trade winds collapse or reverse &rarr; <em>Monsoon Suppression & Drought Risk</em></p>
+                        </div>
                     </div>
 
                     <!-- Factor 2 -->
-                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
                         <div class="font-bold text-teal-300 flex items-center gap-1.5">
                             <i class="fa-solid fa-arrows-left-right-to-line text-teal-400"></i>
                             Tahiti-Darwin Southern Oscillation Index (SOI)
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Calculates the normalized air pressure difference between Tahiti (Eastern Pacific) and Darwin, Australia (Western Pacific). Sustained positive values (> +7.0) indicate La Niña conditions with high pressure over the East and low pressure over Asia, driving warm moisture into Central Thailand and increasing flood risk. Sustained negative values (< -7.0) signal El Niño and monsoon suppression.
+                            Calculates standardized air pressure differences between Tahiti (East Pacific) and Darwin, Australia (West Pacific). Standardized monthly values typically range from <strong>-3.0 to +3.0</strong> (raw index -35 to +35).
                         </p>
+                        <div class="space-y-1 text-[10px] border-t border-slate-800/80 pt-1.5 font-mono">
+                            <p class="text-teal-300"><strong>Positive (&gt; +0.8 or +7.0 raw):</strong> La Niña State &rarr; High pressure over Tahiti, low over Asia &rarr; <em>Enhanced Convection & Urban Flash Flooding</em></p>
+                            <p class="text-slate-400"><strong>Neutral (-0.8 to +0.8):</strong> Balanced Pressure Gradient &rarr; <em>Typical Monsoonal Rainfall Pattern</em></p>
+                            <p class="text-amber-400"><strong>Negative (&lt; -0.8 or -7.0 raw):</strong> El Niño State &rarr; Air sinks over Southeast Asia &rarr; <em>Reduced Basin Runoff & Seasonal Drought Risk</em></p>
+                        </div>
                     </div>
 
                     <!-- Factor 3 -->
-                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
                         <div class="font-bold text-purple-300 flex items-center gap-1.5">
                             <i class="fa-solid fa-cloud-sun-rain text-purple-400"></i>
                             Central Pacific OLR Anomaly (Outgoing Longwave Radiation)
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Measures thermal radiation emitted into space from the tropical atmosphere. Negative OLR anomalies indicate thick, cold thunderstorm cloud tops over the Central Pacific. Positive OLR anomalies indicate clear skies over the Pacific, confirming that primary convective cloud formation and rain activity have migrated westward over the Gulf of Thailand and the Indochina peninsula.
+                            Measures thermal radiation emitted into space from the equatorial atmosphere. Anomaly values typically range from <strong>-50 W/m² to +50 W/m²</strong>.
                         </p>
+                        <div class="space-y-1 text-[10px] border-t border-slate-800/80 pt-1.5 font-mono">
+                            <p class="text-purple-300"><strong>Positive (&gt; +10 W/m²):</strong> Clear Skies over Central Pacific (La Niña) &rarr; Convective storm activity shifts west &rarr; <em>Heavy Monsoonal Squalls over Indochina</em></p>
+                            <p class="text-slate-400"><strong>Neutral (-10 to +10 W/m²):</strong> Baseline Radiation &rarr; <em>Climatological Convective Distribution</em></p>
+                            <p class="text-amber-400"><strong>Negative (&lt; -10 W/m²):</strong> Deep Thunderclouds over Central Pacific (El Niño) &rarr; Storms pulled away from Asia &rarr; <em>Drier Monsoons in Greater BKK</em></p>
+                        </div>
                     </div>
 
                     <!-- Factor 4 -->
-                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1">
+                    <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
                         <div class="font-bold text-amber-300 flex items-center gap-1.5">
                             <i class="fa-solid fa-temperature-three-quarters text-amber-400"></i>
                             0-300m Upper Ocean Heat Content Anomaly
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Quantifies the total thermal energy stored in the upper 300 meters of the Equatorial Pacific Ocean. Subsurface warm water buildup serves as a leading multi-month predictor of El Niño warm water expansion. Elevated Pacific heat content provides an early warning of reduced upstream basin runoff into northern reservoirs (Bhumibol and Sirikit) and decreased seasonal rainfall for Bangkok.
+                            Quantifies total thermal energy stored in the upper 300 meters of the Equatorial Pacific. Anomaly values typically range from <strong>-3.0 °C to +3.0 °C</strong>.
                         </p>
+                        <div class="space-y-1 text-[10px] border-t border-slate-800/80 pt-1.5 font-mono">
+                            <p class="text-cyan-300"><strong>Negative (&lt; -0.5 °C):</strong> Subsurface Cold Pool (La Niña) &rarr; Multi-month tropical moisture inflow &rarr; <em>High Northern Reservoir Retention & BKK Flood Risk</em></p>
+                            <p class="text-slate-400"><strong>Neutral (-0.5 to +0.5 °C):</strong> Normal Water Column &rarr; <em>Standard Inflows to Chao Phraya Basin</em></p>
+                            <p class="text-amber-400"><strong>Positive (&gt; +0.5 °C):</strong> Subsurface Warm Water Buildup (El Niño) &rarr; <em>Multi-Month Early Warning of Dry Monsoon Cycles</em></p>
+                        </div>
                     </div>
 
                 </div>
