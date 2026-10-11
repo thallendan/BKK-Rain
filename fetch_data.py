@@ -23,7 +23,6 @@ URL_HII_DAM_REPORT = (
     "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en"
 )
 
-# Standard browser User-Agent header to prevent HTTP 403 Forbidden blocks
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
@@ -120,7 +119,6 @@ def parse_cpac850():
   ]
 
   for row in reversed(year_rows):
-    # Regex handles fixed-width concatenated numbers like '-3.0-999.9-999.9'
     tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
     if len(tokens) > 1:
       vals = [float(v) for v in tokens[1:]]
@@ -190,17 +188,19 @@ def parse_heat_content():
     return None
 
   lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  data_lines = [
-      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 6
+  # NOAA heat_content_index.txt uses 4-digit year tokens ('YYYY MON ...')
+  year_rows = [
+      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
   ]
 
-  for row in reversed(data_lines):
-    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
-    if len(tokens) >= 2:
+  for row in reversed(year_rows):
+    tokens = re.findall(r"[-+]?\d*\.?\d+", row)
+    if len(tokens) >= 3:
       try:
-        val = float(tokens[1])
-        if -10.0 < val < 10.0:
-          return val
+        # tokens[0]=Year, tokens[1]=Month, tokens[2:]=Heat Anomaly columns
+        vals = [float(v) for v in tokens[2:] if -10.0 < float(v) < 10.0]
+        if vals:
+          return vals[-1]
       except ValueError:
         pass
 
