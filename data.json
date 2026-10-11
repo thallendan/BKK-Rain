@@ -1,7 +1,7 @@
 {
   "is_live": true,
   "status": "OK",
-  "updated_at_utc": "2026-10-10T20:55:48.519633+00:00",
+  "updated_at_utc": "2026-10-11T02:22:20.445803+00:00",
   "teleconnections": {
     "enso": 0.95,
     "iod": 0.146,
@@ -10,7 +10,7 @@
     "cpac850_trade_winds": -3.0,
     "soi": -2.0,
     "olr": -1.0,
-    "ocean_heat_content": null
+    "ocean_heat_content": 3.39
   },
   "dams": {
     "bhumibol": {
