@@ -507,25 +507,25 @@
                             <!-- Trade Wind Anomaly -->
                             <div class="glass-card p-2 rounded-lg border border-slate-800">
                                 <div class="text-[9px] text-slate-400 font-medium uppercase">850hPa Wind (CPAC)</div>
-                                <div class="text-sm font-bold text-cyan-300 mt-0.5" id="metric-cpac-val">-- m/s</div>
+                                <div class="text-sm font-bold mt-0.5 transition-colors duration-300" id="metric-cpac-val">-- m/s</div>
                             </div>
 
                             <!-- Southern Oscillation Index -->
                             <div class="glass-card p-2 rounded-lg border border-slate-800">
                                 <div class="text-[9px] text-slate-400 font-medium uppercase">Tahiti-Darwin SOI</div>
-                                <div class="text-sm font-bold text-teal-300 mt-0.5" id="metric-soi-val">--</div>
+                                <div class="text-sm font-bold mt-0.5 transition-colors duration-300" id="metric-soi-val">--</div>
                             </div>
 
                             <!-- Outgoing Longwave Radiation -->
                             <div class="glass-card p-2 rounded-lg border border-slate-800">
                                 <div class="text-[9px] text-slate-400 font-medium uppercase">Pacific OLR Anomaly</div>
-                                <div class="text-sm font-bold text-purple-300 mt-0.5" id="metric-olr-val">-- W/m²</div>
+                                <div class="text-sm font-bold mt-0.5 transition-colors duration-300" id="metric-olr-val">-- W/m²</div>
                             </div>
 
                             <!-- Ocean Heat Content -->
                             <div class="glass-card p-2 rounded-lg border border-slate-800">
                                 <div class="text-[9px] text-slate-400 font-medium uppercase">0-300m Heat Anomaly</div>
-                                <div class="text-sm font-bold text-amber-400 mt-0.5" id="metric-heat-val">-- °C</div>
+                                <div class="text-sm font-bold mt-0.5 transition-colors duration-300" id="metric-heat-val">-- °C</div>
                             </div>
 
                         </div>
@@ -652,7 +652,7 @@
                             0-300m Upper Ocean Heat Content Anomaly
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Quantifies total thermal energy stored in the upper 300 meters of the Equatorial Pacific. Anomaly values typically range from <strong>-3.0 °C to +3.0 °C</strong>.
+                            Quantifies total thermal energy stored in the upper 300 meters of the Equatorial Pacific. Anomaly values typically range from <strong>-4.0 °C to +4.0 °C</strong>.
                         </p>
                         <div class="space-y-1 text-[10px] border-t border-slate-800/80 pt-1.5 font-mono">
                             <p class="text-cyan-300"><strong>Negative (&lt; -0.5 °C):</strong> Subsurface Cold Pool (La Niña) &rarr; Multi-month tropical moisture inflow &rarr; <em>High Northern Reservoir Retention & BKK Flood Risk</em></p>
@@ -823,21 +823,37 @@
                         document.getElementById('kpi-mjo-desc').innerText = `Amp: ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(2) : '--'}`;
                     }
 
-                    // Sync Live Walker Telemetry Cards
+                    // DYNAMICALLY SYNC & COLOR LIVE WALKER TELEMETRY CARDS
                     if (tc.cpac850_trade_winds !== undefined && tc.cpac850_trade_winds !== null) {
-                        document.getElementById('metric-cpac-val').innerText = `${tc.cpac850_trade_winds >= 0 ? '+' : ''}${tc.cpac850_trade_winds.toFixed(2)} m/s`;
-                        walkerState.tradeWindStrength = Math.max(20, Math.min(180, 100 + (tc.cpac850_trade_winds * 30)));
+                        const val = tc.cpac850_trade_winds;
+                        const el = document.getElementById('metric-cpac-val');
+                        el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(2)} m/s`;
+                        el.className = `text-sm font-bold mt-0.5 transition-colors duration-300 ${val < -1.5 ? 'text-cyan-300' : (val > 1.5 ? 'text-amber-400' : 'text-slate-300')}`;
+
+                        walkerState.tradeWindStrength = Math.max(20, Math.min(180, 100 + (val * 30)));
                         document.getElementById('slider-tradewind').value = walkerState.tradeWindStrength;
                         document.getElementById('val-tradewind').innerText = `${Math.round(walkerState.tradeWindStrength)} %`;
                     }
+
                     if (tc.soi !== undefined && tc.soi !== null) {
-                        document.getElementById('metric-soi-val').innerText = `${tc.soi >= 0 ? '+' : ''}${tc.soi.toFixed(2)}`;
+                        const val = tc.soi;
+                        const el = document.getElementById('metric-soi-val');
+                        el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(2)}`;
+                        el.className = `text-sm font-bold mt-0.5 transition-colors duration-300 ${val > 0.8 ? 'text-teal-300' : (val < -0.8 ? 'text-amber-400' : 'text-slate-300')}`;
                     }
+
                     if (tc.olr !== undefined && tc.olr !== null) {
-                        document.getElementById('metric-olr-val').innerText = `${tc.olr >= 0 ? '+' : ''}${tc.olr.toFixed(1)} W/m²`;
+                        const val = tc.olr;
+                        const el = document.getElementById('metric-olr-val');
+                        el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(1)} W/m²`;
+                        el.className = `text-sm font-bold mt-0.5 transition-colors duration-300 ${val > 10.0 ? 'text-purple-300' : (val < -10.0 ? 'text-amber-400' : 'text-slate-300')}`;
                     }
+
                     if (tc.ocean_heat_content !== undefined && tc.ocean_heat_content !== null) {
-                        document.getElementById('metric-heat-val').innerText = `${tc.ocean_heat_content >= 0 ? '+' : ''}${tc.ocean_heat_content.toFixed(2)} °C`;
+                        const val = tc.ocean_heat_content;
+                        const el = document.getElementById('metric-heat-val');
+                        el.innerText = `${val >= 0 ? '+' : ''}${val.toFixed(2)} °C`;
+                        el.className = `text-sm font-bold mt-0.5 transition-colors duration-300 ${val < -0.5 ? 'text-cyan-300' : (val > 0.5 ? 'text-amber-400' : 'text-slate-300')}`;
                     }
 
                     const topBarText = `ENSO: ${tc.enso >= 0 ? '+' : ''}${tc.enso.toFixed(2)}°C | IOD: ${tc.iod >= 0 ? '+' : ''}${tc.iod.toFixed(2)}°C | MJO: Phase ${tc.mjo_phase} (Amp ${tc.mjo_amplitude ? tc.mjo_amplitude.toFixed(1) : '--'})`;
