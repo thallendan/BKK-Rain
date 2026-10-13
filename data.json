@@ -1,7 +1,7 @@
 {
   "is_live": true,
   "status": "OK",
-  "updated_at_utc": "2026-10-13T13:14:51.408083+00:00",
+  "updated_at_utc": "2026-10-13T22:07:43.040542+00:00",
   "teleconnections": {
     "enso": 0.95,
     "iod": 0.146,
@@ -32,11 +32,11 @@
   "paknam_gauge": {
     "station_name": "Pak Nam Fort Gauge",
     "location": "Chao Phraya Estuary, Samut Prakan",
-    "water_level_msl": 1.35,
-    "tide_state": "Spring High Tide",
-    "surge_risk": "MODERATE",
+    "water_level_msl": null,
+    "tide_state": "DATA_UNAVAILABLE",
+    "surge_risk": "NO_DATA",
     "flood_wall_threshold_msl": 1.8,
-    "buffer_remaining_meters": 0.45
+    "buffer_remaining_meters": null
   },
   "zones": [
     {
