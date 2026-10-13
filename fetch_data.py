@@ -188,7 +188,6 @@ def parse_heat_content():
     return None
 
   lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  # NOAA heat_content_index.txt uses 4-digit year tokens ('YYYY MON ...')
   year_rows = [
       l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
   ]
@@ -197,7 +196,6 @@ def parse_heat_content():
     tokens = re.findall(r"[-+]?\d*\.?\d+", row)
     if len(tokens) >= 3:
       try:
-        # tokens[0]=Year, tokens[1]=Month, tokens[2:]=Heat Anomaly columns
         vals = [float(v) for v in tokens[2:] if -10.0 < float(v) < 10.0]
         if vals:
           return vals[-1]
@@ -251,34 +249,32 @@ def parse_hii_dam_html():
   return bhumibol_pct, sirikit_pct
 
 
-def fetch_dam_storage(mjo_phase, enso_val):
-  """Parses live HII dam storage levels and computes combined Chao Phraya headwater storage."""
+def fetch_dam_storage():
+  """Parses live HII dam storage levels. Never synthesizes missing levels."""
   bhumibol_pct, sirikit_pct = parse_hii_dam_html()
 
   if bhumibol_pct is None:
     print(
-        "Warning: Could not parse Bhumibol Dam level from HTML. Using model"
-        " fallback."
+        "Warning: Could not parse live Bhumibol Dam level. Reporting"
+        " DATA_UNAVAILABLE."
     )
-    base_bhumibol = 68.5
-    adj = (15.0 if mjo_phase in [4, 5] else -5.0) - (12.0 * enso_val)
-    bhumibol_pct = round(max(30.0, min(98.0, base_bhumibol + adj * 0.4)), 1)
   else:
     print(f"Live Bhumibol Dam storage parsed: {bhumibol_pct}%")
 
   if sirikit_pct is None:
     print(
-        "Warning: Could not parse Sirikit Dam level from HTML. Using model"
-        " fallback."
+        "Warning: Could not parse live Sirikit Dam level. Reporting"
+        " DATA_UNAVAILABLE."
     )
-    base_sirikit = 74.2
-    adj = (15.0 if mjo_phase in [4, 5] else -5.0) - (12.0 * enso_val)
-    sirikit_pct = round(max(30.0, min(98.0, base_sirikit + adj * 0.4)), 1)
   else:
     print(f"Live Sirikit Dam storage parsed: {sirikit_pct}%")
 
-  combined_pct = round(
-      (bhumibol_pct * 13462 + sirikit_pct * 9510) / (13462 + 9510), 1
+  combined_pct = (
+      round(
+          (bhumibol_pct * 13462 + sirikit_pct * 9510) / (13462 + 9510), 1
+      )
+      if (bhumibol_pct is not None and sirikit_pct is not None)
+      else None
   )
 
   return {
@@ -288,9 +284,13 @@ def fetch_dam_storage(mjo_phase, enso_val):
           "capacity_mcm": 13462,
           "current_storage_pct": bhumibol_pct,
           "status": (
-              "HIGH"
-              if bhumibol_pct >= 80
-              else ("MODERATE" if bhumibol_pct >= 50 else "LOW")
+              (
+                  "HIGH"
+                  if bhumibol_pct >= 80
+                  else ("MODERATE" if bhumibol_pct >= 50 else "LOW")
+              )
+              if bhumibol_pct is not None
+              else "DATA_UNAVAILABLE"
           ),
       },
       "sirikit": {
@@ -299,35 +299,31 @@ def fetch_dam_storage(mjo_phase, enso_val):
           "capacity_mcm": 9510,
           "current_storage_pct": sirikit_pct,
           "status": (
-              "CRITICAL"
-              if sirikit_pct >= 85
-              else ("HIGH" if sirikit_pct >= 70 else "MODERATE")
+              (
+                  "CRITICAL"
+                  if sirikit_pct >= 85
+                  else ("HIGH" if sirikit_pct >= 70 else "MODERATE")
+              )
+              if sirikit_pct is not None
+              else "DATA_UNAVAILABLE"
           ),
       },
       "combined_chao_phraya_storage_pct": combined_pct,
   }
 
 
-def fetch_paknam_sea_level(iod_val, enso_val):
-  """Computes real-time sea elevation & tide surge at Pak Nam Fort gauge (Chao Phraya estuary, Samut Prakan)."""
-  base_msl = 1.42
-  surge_factor = round(base_msl + (0.15 * iod_val) - (0.10 * enso_val), 2)
+def fetch_paknam_sea_level():
+  """Reports Pak Nam Fort gauge level. Never computes synthetic surge estimates."""
   flood_wall_limit = 1.80
 
   return {
       "station_name": "Pak Nam Fort Gauge",
       "location": "Chao Phraya Estuary, Samut Prakan",
-      "water_level_msl": surge_factor,
-      "tide_state": "Spring High Tide",
-      "surge_risk": (
-          "HIGH"
-          if surge_factor >= 1.65
-          else ("MODERATE" if surge_factor >= 1.30 else "LOW")
-      ),
+      "water_level_msl": None,
+      "tide_state": "DATA_UNAVAILABLE",
+      "surge_risk": "NO_DATA",
       "flood_wall_threshold_msl": flood_wall_limit,
-      "buffer_remaining_meters": round(
-          max(0.0, flood_wall_limit - surge_factor), 2
-      ),
+      "buffer_remaining_meters": None,
   }
 
 
@@ -476,8 +472,8 @@ def main():
     print("CRITICAL WARNING: Telemetry fetch failed for one or more endpoints.")
   else:
     zones = compute_thailand_hydrology(enso_val, iod_val, mjo_phase, mjo_amp)
-    dams = fetch_dam_storage(mjo_phase, enso_val)
-    paknam = fetch_paknam_sea_level(iod_val, enso_val)
+    dams = fetch_dam_storage()
+    paknam = fetch_paknam_sea_level()
 
     payload = {
         "is_live": True,
