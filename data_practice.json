@@ -1,16 +1,75 @@
 {
-  "timestamp_utc": "2026-10-14T02:19:04.767203+00:00",
+  "timestamp_utc": "2026-10-14T03:27:57.729468+00:00",
   "total_endpoints": 8,
   "successful_count": 8,
   "failed_count": 0,
+  "summary_parameters": {
+    "enso_nino34_anom": {
+      "label": "ENSO (Niño 3.4 SST Anomaly)",
+      "value": "+2.84",
+      "unit": "°C",
+      "period": "2026-09",
+      "description": "Equatorial Pacific Ocean SST Anomaly"
+    },
+    "mjo_phase_amp": {
+      "label": "MJO (Phase & Amplitude)",
+      "value": "Phase 1 (Amp 1.44)",
+      "unit": "index",
+      "period": "2026-10-12",
+      "description": "Madden-Julian Oscillation Index"
+    },
+    "iod_dmi_index": {
+      "label": "Indian Ocean Dipole (DMI)",
+      "value": "+0.15",
+      "unit": "°C",
+      "period": "2026-May",
+      "description": "Equatorial Indian Ocean SST Gradient"
+    },
+    "cpac850_wind_index": {
+      "label": "CPAC 850mb Trade Wind Index",
+      "value": "-3.00",
+      "unit": "m/s anomaly",
+      "period": "2026-Sep",
+      "description": "Central Pacific Zonal Wind Anomaly"
+    },
+    "soi_index": {
+      "label": "Southern Oscillation Index (SOI)",
+      "value": "-2.00",
+      "unit": "index",
+      "period": "2026-Sep",
+      "description": "Tahiti-Darwin Sea Level Pressure Anomaly"
+    },
+    "olr_index": {
+      "label": "Outgoing Longwave Radiation (OLR)",
+      "value": "-1.00",
+      "unit": "W/m² anomaly",
+      "period": "2026-Sep",
+      "description": "Equatorial Pacific Cloudiness Proxy"
+    },
+    "pacific_heat_content": {
+      "label": "Pacific Upper 300m Heat Content",
+      "value": "+2.93",
+      "unit": "°C anomaly",
+      "period": "2026-09",
+      "description": "Equatorial Subsurface Ocean Heat Anomaly (160E-80W)"
+    },
+    "thailand_dam_status": {
+      "label": "Thailand Dam Storage Status",
+      "value": "13 Rows",
+      "unit": "HTML Table Rows Extracted",
+      "period": "Latest",
+      "description": "RID Large Reservoir Storage Table"
+    }
+  },
   "results": [
     {
+      "key": "enso",
       "name": "ENSO (Niño Indices)",
       "url": "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices",
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.228,
+      "response_time_sec": 0.231,
       "size_bytes": 39272,
       "line_count": 538,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -27,12 +86,13 @@
       "error": null
     },
     {
+      "key": "mjo",
       "name": "MJO (RMM Index)",
       "url": "https://www.bom.gov.au/clim_data/IDCKGEM000/rmm.74toRealtime.txt",
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.605,
+      "response_time_sec": 0.665,
       "size_bytes": 2735420,
       "line_count": 19129,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -49,12 +109,13 @@
       "error": null
     },
     {
+      "key": "iod",
       "name": "IOD (Indian Ocean Dipole)",
       "url": "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data",
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.139,
+      "response_time_sec": 0.196,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -71,12 +132,13 @@
       "error": null
     },
     {
+      "key": "cpac850",
       "name": "CPAC850 (Zonal Wind Anomaly)",
       "url": "https://www.cpc.ncep.noaa.gov/data/indices/cpac850",
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.138,
+      "response_time_sec": 0.266,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -93,12 +155,13 @@
       "error": null
     },
     {
+      "key": "soi",
       "name": "Tahiti-Darwin Sea Pressure Difference (SOI)",
       "url": "https://www.cpc.ncep.noaa.gov/data/indices/soi",
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.204,
+      "response_time_sec": 0.317,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -115,12 +178,13 @@
       "error": null
     },
     {
+      "key": "olr",
       "name": "Outgoing Longwave Radiation (OLR)",
       "url": "https://www.cpc.ncep.noaa.gov/data/indices/olr",
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.258,
+      "response_time_sec": 0.173,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -137,12 +201,13 @@
       "error": null
     },
     {
+      "key": "heat_content",
       "name": "Pacific Heat Content Index",
       "url": "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ocean/index/heat_content_index.txt",
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.184,
+      "response_time_sec": 0.225,
       "size_bytes": 23053,
       "line_count": 575,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -159,19 +224,20 @@
       "error": null
     },
     {
+      "key": "dam_storage",
       "name": "Thailand Dam Storage (HII/RID)",
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.148,
-      "size_bytes": 52050,
+      "response_time_sec": 1.83,
+      "size_bytes": 52049,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
         "<html>",
         "\t<head>",
-        "\t\t<title>Summary table of large reservoir storage conditions13  2569</title>",
+        "\t\t<title>Summary table of large reservoir storage conditions14  2569</title>",
         "\t\t<META http-equiv='Content-Type' content='text/html;charset=UTF-8'>",
         "<style type='text/css'>",
         "body {  font-family: Arial, Helvetica, sans-serif; font-size: 8pt}",
