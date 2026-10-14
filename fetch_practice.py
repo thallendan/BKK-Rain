@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 """fetch_practice.py
 
-Fetches live climate and hydrological data from 8 endpoints, parses current key scalar
-parameters (ENSO, MJO, IOD, CPAC850, SOI, OLR, Pacific Heat Content, and Thailand Dam Storage),
-and saves the standardized JSON structure strictly to 'data_practice.json'.
+Fetches live climate and hydrological data from 8 endpoints, parses key scalar
+parameters (including specific upstream dams influencing Bangkok and Samut Prakan
+water supply and salinity control), and saves standardized output strictly to
+'data_practice.json'.
 """
 
 from html.parser import HTMLParser
 import json
 import re
 import ssl
+import sys
 import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
-# Standardized Target Output File
 OUTPUT_FILE = "data_practice.json"
 
 ENDPOINTS = [
@@ -63,39 +64,60 @@ ENDPOINTS = [
 
 
 class DamHTMLTableParser(HTMLParser):
-  """Standard library HTML parser fallback for extracting reservoir storage tables."""
 
   def __init__(self):
     super().__init__()
-    self.in_tr = False
-    self.in_td = False
+    self.tables = []
+    self.current_table = []
     self.current_row = []
-    self.rows = []
+    self.current_cell = []
+    self.in_table = False
+    self.in_tr = False
+    self.in_cell = False
+    self.ignore_content = False
 
   def handle_starttag(self, tag, attrs):
-    if tag.lower() in ("tr",):
+    tag = tag.lower()
+    if tag in ("script", "style"):
+      self.ignore_content = True
+    elif tag == "table":
+      self.in_table = True
+      self.current_table = []
+    elif tag == "tr" and self.in_table:
       self.in_tr = True
       self.current_row = []
-    elif tag.lower() in ("td", "th") and self.in_tr:
-      self.in_td = True
+    elif tag in ("td", "th") and self.in_tr:
+      self.in_cell = True
+      self.current_cell = []
 
   def handle_endtag(self, tag):
-    if tag.lower() in ("tr",):
+    tag = tag.lower()
+    if tag in ("script", "style"):
+      self.ignore_content = False
+    elif tag == "table":
+      self.in_table = False
+      if self.current_table:
+        self.tables.append(self.current_table)
+    elif tag == "tr" and self.in_table:
       self.in_tr = False
       if self.current_row:
-        self.rows.append(self.current_row)
-    elif tag.lower() in ("td", "th"):
-      self.in_td = False
+        self.current_table.append(self.current_row)
+    elif tag in ("td", "th") and self.in_tr:
+      self.in_cell = False
+      cell_text = " ".join("".join(self.current_cell).split())
+      if cell_text:
+        self.current_row.append(cell_text)
 
   def handle_data(self, data):
-    if self.in_td:
-      text = data.strip()
-      if text:
-        self.current_row.append(text)
+    if self.in_cell and not self.ignore_content:
+      self.current_cell.append(data)
 
 
-def parse_dam_storage(html_text):
-  """Parses HTML table from HII/RID dam report using BeautifulSoup or HTMLParser."""
+def parse_dam_storage_bkk_region(html_text):
+  """Parses reservoir storage from HII HTML report specifically for dams
+
+  influencing Bangkok and Samut Prakan water supply and salinity control.
+  """
   rows = []
   try:
     from bs4 import BeautifulSoup
@@ -103,67 +125,166 @@ def parse_dam_storage(html_text):
     soup = BeautifulSoup(html_text, "html.parser")
     for tr in soup.find_all("tr"):
       cells = [
-          td.get_text(strip=True) for td in tr.find_all(["td", "th"]) if td
+          td.get_text(strip=True)
+          for td in tr.find_all(["td", "th"])
+          if td.get_text(strip=True)
       ]
       if cells:
         rows.append(cells)
   except ImportError:
     parser = DamHTMLTableParser()
     parser.feed(html_text)
-    rows = parser.rows
+    for tbl in parser.tables:
+      rows.extend(tbl)
 
-  extracted_dams = {}
-  targets = {
-      "bhumibol": ["bhumibol", "ภูมิพล"],
-      "sirikit": ["sirikit", "สิริกิติ์"],
-      "pasak": ["pasak", "ป่าสัก"],
-      "kwae_noi": ["kwae", "แควน้อย"],
+  target_dams = {
+      "bhumibol": {
+          "keywords": ["bhumibol", "ภูมิพล"],
+          "label": "Bhumibol Dam (Ping River)",
+          "role": "Chao Phraya Upper Basin Headwater Storage",
+          "capacity": 13462.0,
+      },
+      "sirikit": {
+          "keywords": ["sirikit", "สิริกิติ์"],
+          "label": "Sirikit Dam (Nan River)",
+          "role": "Chao Phraya Upper Basin Headwater Storage",
+          "capacity": 9510.0,
+      },
+      "kwai_noi": {
+          "keywords": ["kwai noi", "kwae noi", "แควน้อย"],
+          "label": "Kwai Noi Bamrung Dan Dam",
+          "role": "Chao Phraya Mid-Basin Flow Regulation",
+          "capacity": 939.0,
+      },
+      "pasak": {
+          "keywords": ["pasak", "pa sak", "ป่าสัก"],
+          "label": "Pasak Jolasid Dam (Pasak River)",
+          "role": "Lower Chao Phraya / Eastern BKK Flow Buffer",
+          "capacity": 960.0,
+      },
+      "srinagarind": {
+          "keywords": ["srinagarind", "ศรีนครินทร์"],
+          "label": "Srinagarind Dam (Mae Klong Basin)",
+          "role": "Western Diversion & Samut Prakan Salinity Repulsion",
+          "capacity": 17745.0,
+      },
+      "vajiralongkorn": {
+          "keywords": ["vajiralongkorn", "วชิราลงกรณ"],
+          "label": "Vajiralongkorn Dam (Mae Klong Basin)",
+          "role": "Western Diversion & Samut Prakan Salinity Repulsion",
+          "capacity": 8860.0,
+      },
   }
+
+  parsed_dams = {}
 
   for row in rows:
     row_str = " ".join(row).lower()
-    for key, keywords in targets.items():
-      if any(kw in row_str for kw in keywords):
-        numbers = re.findall(r"\d+(?:\.\d+)?", row_str)
+    for dam_key, dam_meta in target_dams.items():
+      if dam_key not in parsed_dams and any(
+          kw in row_str for kw in dam_meta["keywords"]
+      ):
+        numbers = []
+        for cell in row:
+          matches = re.findall(r"[-+]?\d+(?:,\d{3})*(?:\.\d+)?", cell)
+          for m in matches:
+            clean_m = m.replace(",", "")
+            try:
+              numbers.append(float(clean_m))
+            except ValueError:
+              pass
+
         if numbers:
-          extracted_dams[key] = {"raw_row": row, "numbers": numbers}
+          cap = dam_meta["capacity"]
+          storage_mcm = None
+          storage_pct = None
+          usable_mcm = None
+
+          for i in range(len(numbers)):
+            num = numbers[i]
+            if 0 <= num <= cap * 1.1:
+              for j in range(i + 1, min(i + 4, len(numbers))):
+                pct = numbers[j]
+                if 0 <= pct <= 110:
+                  calc_pct = (num / cap) * 100.0
+                  if (
+                      abs(calc_pct - pct) <= 3.0
+                      or abs(pct - round(calc_pct)) <= 2
+                  ):
+                    if storage_mcm is None:
+                      storage_mcm = num
+                      storage_pct = pct
+                    elif usable_mcm is None and num <= storage_mcm:
+                      usable_mcm = num
+
+          if storage_pct is None and len(numbers) >= 3:
+            storage_mcm = numbers[1] if len(numbers) > 1 else numbers[0]
+            storage_pct = round((storage_mcm / cap) * 100.0, 1)
+
+          if storage_mcm is not None:
+            parsed_dams[dam_key] = {
+                "label": dam_meta["label"],
+                "role": dam_meta["role"],
+                "capacity_mcm": cap,
+                "storage_mcm": storage_mcm,
+                "storage_pct": (
+                    storage_pct
+                    if storage_pct is not None
+                    else round((storage_mcm / cap) * 100.0, 1)
+                ),
+                "usable_mcm": usable_mcm if usable_mcm is not None else 0.0,
+            }
 
   param_results = {}
 
-  if "bhumibol" in extracted_dams:
-    nums = extracted_dams["bhumibol"]["numbers"]
-    param_results["thailand_dam_bhumibol"] = {
-        "label": "Bhumibol Dam Storage",
-        "value": f"{nums[-1]}%",
-        "unit": "% capacity",
+  # 1. Combined 4-Dam Chao Phraya Basin Metric
+  chao_phraya_keys = ["bhumibol", "sirikit", "kwai_noi", "pasak"]
+  cp_cap_sum = sum(
+      parsed_dams[k]["capacity_mcm"]
+      for k in chao_phraya_keys
+      if k in parsed_dams
+  )
+  cp_storage_sum = sum(
+      parsed_dams[k]["storage_mcm"]
+      for k in chao_phraya_keys
+      if k in parsed_dams
+  )
+  cp_usable_sum = sum(
+      parsed_dams[k]["usable_mcm"]
+      for k in chao_phraya_keys
+      if k in parsed_dams
+  )
+
+  if cp_cap_sum > 0:
+    cp_pct = round((cp_storage_sum / cp_cap_sum) * 100.0, 1)
+    param_results["chao_phraya_4dam_combined"] = {
+        "label": "Chao Phraya 4-Dam Combined Storage",
+        "value": f"{cp_pct}%",
+        "unit": (
+            f"{cp_storage_sum:,.0f} / {cp_cap_sum:,.0f} MCM (Usable:"
+            f" {cp_usable_sum:,.0f} MCM)"
+        ),
         "period": "Latest Report",
-        "description": "Chao Phraya Ping River Upper Basin Storage",
+        "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer",
     }
 
-  if "sirikit" in extracted_dams:
-    nums = extracted_dams["sirikit"]["numbers"]
-    param_results["thailand_dam_sirikit"] = {
-        "label": "Sirikit Dam Storage",
-        "value": f"{nums[-1]}%",
-        "unit": "% capacity",
+  # 2. Individual Dam Metrics
+  for k, info in parsed_dams.items():
+    param_results[f"dam_{k}"] = {
+        "label": info["label"],
+        "value": f"{info['storage_pct']}%",
+        "unit": (
+            f"{info['storage_mcm']:,.0f} / {info['capacity_mcm']:,.0f} MCM"
+            f" (Usable: {info['usable_mcm']:,.0f} MCM)"
+        ),
         "period": "Latest Report",
-        "description": "Chao Phraya Nan River Upper Basin Storage",
-    }
-
-  if not param_results:
-    param_results["thailand_dam_status"] = {
-        "label": "Thailand Dam Storage Status",
-        "value": f"{len(rows)} Rows",
-        "unit": "HTML Table Rows Extracted",
-        "period": "Latest",
-        "description": "RID Large Reservoir Storage Table",
+        "description": info["role"],
     }
 
   return param_results
 
 
 def parse_enso_sstoi(body_text):
-  """Extracts latest Niño 3.4 SST Anomaly from NOAA sstoi.indices."""
   lines = [
       line.strip()
       for line in body_text.splitlines()
@@ -171,7 +292,6 @@ def parse_enso_sstoi(body_text):
   ]
   if not lines:
     return None
-
   parts = lines[-1].split()
   if len(parts) >= 10:
     yr, mon, nino34_anom = parts[0], parts[1], parts[9]
@@ -188,11 +308,12 @@ def parse_enso_sstoi(body_text):
 
 
 def parse_mjo_rmm(body_text):
-  """Extracts latest MJO Phase & Amplitude from BOM rmm.74toRealtime.txt."""
   lines = [
       line.strip()
       for line in body_text.splitlines()
-      if line.strip() and not line.startswith("RMM") and not line.startswith("year")
+      if line.strip()
+      and not line.startswith("RMM")
+      and not line.startswith("year")
   ]
   for line in reversed(lines):
     parts = line.split()
@@ -212,7 +333,6 @@ def parse_mjo_rmm(body_text):
 
 
 def parse_iod_dmi(body_text):
-  """Extracts latest Indian Ocean Dipole Mode Index (DMI) from NOAA PSL."""
   lines = [
       line.strip()
       for line in body_text.splitlines()
@@ -256,7 +376,6 @@ def parse_iod_dmi(body_text):
 
 
 def parse_table_latest_value(body_text, param_key, label, unit, desc):
-  """Generic monthly table parser for NOAA tabular text files."""
   lines = [
       line.strip()
       for line in body_text.splitlines()
@@ -301,7 +420,6 @@ def parse_table_latest_value(body_text, param_key, label, unit, desc):
 
 
 def parse_pacific_heat_content(body_text):
-  """Extracts Equatorial Pacific Upper 300m Heat Content Anomaly."""
   lines = [
       line.strip()
       for line in body_text.splitlines()
@@ -330,7 +448,6 @@ def parse_pacific_heat_content(body_text):
 
 
 def extract_parameters(endpoint_key, content_type, body_text):
-  """Routes response payload to specific parameter extraction functions."""
   try:
     if endpoint_key == "enso":
       return parse_enso_sstoi(body_text)
@@ -365,14 +482,13 @@ def extract_parameters(endpoint_key, content_type, body_text):
     elif endpoint_key == "heat_content":
       return parse_pacific_heat_content(body_text)
     elif endpoint_key == "dam_storage":
-      return parse_dam_storage(body_text)
+      return parse_dam_storage_bkk_region(body_text)
   except Exception as e:
     return {"error": f"Parsing failed: {str(e)}"}
   return None
 
 
 def classify_format(content_type: str, body_text: str) -> str:
-  """Classifies data format."""
   text_head = body_text.strip()[:300].lower()
   if (
       "text/html" in content_type.lower()
@@ -395,7 +511,6 @@ def classify_format(content_type: str, body_text: str) -> str:
 
 
 def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
-  """Executes HTTP request, captures diagnostics, and parses scalar parameters."""
   url = endpoint["url"]
   name = endpoint["name"]
   key = endpoint["key"]
@@ -411,6 +526,8 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
 
   req = urllib.request.Request(url, headers=headers)
   ctx = ssl.create_default_context()
+  ctx.check_hostname = False
+  ctx.verify_mode = ssl.CERT_NONE
 
   diagnostic = {
       "key": key,
@@ -430,7 +547,7 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
   extracted_params = {}
 
   try:
-    with urllib.request.urlopen(req, context=ctx, timeout=15) as response:
+    with urllib.request.urlopen(req, context=ctx, timeout=20) as response:
       elapsed = round(time.time() - start_time, 3)
       status = response.status
       content_type = response.headers.get("Content-Type", "Unknown")
@@ -463,7 +580,7 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
   except urllib.error.URLError as e:
     diagnostic["error"] = f"URL Connection Error: {e.reason}"
   except TimeoutError:
-    diagnostic["error"] = "Connection timed out (15s limit)"
+    diagnostic["error"] = "Connection timed out (20s limit)"
   except Exception as e:
     diagnostic["error"] = f"Fetch failed: {str(e)}"
 
