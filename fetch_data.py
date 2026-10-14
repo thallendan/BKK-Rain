@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 """
-fetch_practice.py
+fetch_data.py
 
-Fetches live weather, climate, and hydrological data from 8 endpoints.
-Parses current scalar parameters (including Chao Phraya and Mae Klong upstream
-dams influencing Bangkok and Samut Prakan water supply and salinity control)
-and saves standardized output strictly to 'data_practice.json'.
+Fetches live weather, climate, and hydrological data from 8 primary endpoints:
+1. ENSO (Niño Indices - NOAA CPC)
+2. MJO (RMM Index - Australian BoM)
+3. IOD (Indian Ocean Dipole - NOAA PSL)
+4. CPAC850 (Zonal Wind Anomaly - NOAA CPC)
+5. SOI (Southern Oscillation Index - NOAA CPC)
+6. OLR (Outgoing Longwave Radiation - NOAA CPC)
+7. Pacific Heat Content Index (NOAA CPC)
+8. Thailand Dam Storage (HII/RID)
+
+Parses scalar teleconnection indices and reservoir storage, calculates dynamic zone
+risk vectors, strictly handles missing tide gauge endpoints as unavailable (no simulation),
+and writes standardized output strictly to 'data.json'.
 """
 
 import json
@@ -14,10 +23,9 @@ import time
 import re
 import urllib.request
 import urllib.error
-from html.parser import HTMLParser
 from datetime import datetime, timezone
 
-OUTPUT_FILE = "data_practice.json"
+OUTPUT_FILE = "data.json"
 
 ENDPOINTS = [
     {
@@ -63,64 +71,10 @@ ENDPOINTS = [
 ]
 
 
-class MalformedDamHTMLParser(HTMLParser):
-    """
-    Robust HTML parser designed to parse HII table data even when <tr> tags
-    are unclosed (as seen in rid_dam_1.php).
-    """
-    def __init__(self):
-        super().__init__()
-        self.rows = []
-        self.current_row = []
-        self.current_cell = []
-        self.in_tr = False
-        self.in_cell = False
-        self.ignore_content = False
-
-    def handle_starttag(self, tag, attrs):
-        tag = tag.lower()
-        if tag in ("script", "style"):
-            self.ignore_content = True
-        elif tag == "tr":
-            # Unclosed <tr> tag fix: flush active row if new <tr> encountered
-            if self.in_tr and self.current_row:
-                self.rows.append(self.current_row)
-            self.in_tr = True
-            self.current_row = []
-        elif tag in ("td", "th") and self.in_tr:
-            self.in_cell = True
-            self.current_cell = []
-
-    def handle_endtag(self, tag):
-        tag = tag.lower()
-        if tag in ("script", "style"):
-            self.ignore_content = False
-        elif tag == "tr":
-            if self.in_tr:
-                if self.current_row:
-                    self.rows.append(self.current_row)
-                self.in_tr = False
-                self.current_row = []
-        elif tag in ("td", "th") and self.in_tr:
-            self.in_cell = False
-            cell_text = " ".join("".join(self.current_cell).split())
-            if cell_text:
-                self.current_row.append(cell_text)
-
-    def handle_data(self, data):
-        if self.in_cell and not self.ignore_content:
-            self.current_cell.append(data)
-
-    def close(self):
-        super().close()
-        if self.in_tr and self.current_row:
-            self.rows.append(self.current_row)
-
-
 def parse_dam_storage_bkk_region(html_text):
     """
-    Parses reservoir storage from HII HTML report using exact column mapping
-    for dams influencing Bangkok and Samut Prakan water supply and salinity.
+    Parses reservoir storage directly from raw line text to handle malformed HTML
+    from HII (unclosed <tr> tags) without DOM parser dependencies.
     """
     target_dams = {
         "bhumibol": {
@@ -161,28 +115,26 @@ def parse_dam_storage_bkk_region(html_text):
         }
     }
 
-    parser = MalformedDamHTMLParser()
-    parser.feed(html_text)
-    parser.close()
-    rows = parser.rows
-
+    clean_html = html_text.replace("&nbsp;", " ").replace("<tr", "\n<tr")
     parsed_dams = {}
 
-    for row in rows:
-        row_str = " ".join(row).lower()
-        for dam_key, dam_meta in target_dams.items():
-            if dam_key not in parsed_dams and any(kw in row_str for kw in dam_meta["keywords"]):
-                numbers = []
-                for cell in row:
-                    matches = re.findall(r'[-+]?\d+(?:,\d{3})*(?:\.\d+)?', cell)
-                    for m in matches:
-                        try:
-                            numbers.append(float(m.replace(",", "")))
-                        except ValueError:
-                            pass
+    for line in clean_html.splitlines():
+        plain_text = re.sub(r"<[^>]+>", " ", line)
+        plain_text_lower = " ".join(plain_text.split()).lower()
 
-                # Index Mapping from HII HTML:
-                # [0: Cap MCM, 1: LastYear MCM, 2: PresentStorage MCM, 3: PresentStorage %, 4: Usable MCM, 5: Usable %]
+        if not plain_text_lower:
+            continue
+
+        for dam_key, dam_meta in target_dams.items():
+            if dam_key not in parsed_dams and any(kw in plain_text_lower for kw in dam_meta["keywords"]):
+                matches = re.findall(r'[-+]?\d+(?:,\d{3})*(?:\.\d+)?', plain_text)
+                numbers = []
+                for m in matches:
+                    try:
+                        numbers.append(float(m.replace(",", "")))
+                    except ValueError:
+                        pass
+
                 if len(numbers) >= 5:
                     cap = numbers[0]
                     storage_mcm = numbers[2]
@@ -200,7 +152,6 @@ def parse_dam_storage_bkk_region(html_text):
 
     param_results = {}
 
-    # Calculate Chao Phraya 4-Dam Combined Storage Metric
     chao_phraya_keys = ["bhumibol", "sirikit", "kwai_noi", "pasak"]
     cp_cap_sum = sum(parsed_dams[k]["capacity_mcm"] for k in chao_phraya_keys if k in parsed_dams)
     cp_storage_sum = sum(parsed_dams[k]["storage_mcm"] for k in chao_phraya_keys if k in parsed_dams)
@@ -453,8 +404,251 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
     return diagnostic, extracted_params
 
 
+def extract_numeric_teleconnections(summary_parameters):
+    tc = {
+        "enso": None,
+        "iod": None,
+        "mjo_phase": None,
+        "mjo_amplitude": None,
+        "cpac850_trade_winds": None,
+        "soi": None,
+        "olr": None,
+        "ocean_heat_content": None
+    }
+
+    if "enso_nino34_anom" in summary_parameters:
+        try:
+            tc["enso"] = float(summary_parameters["enso_nino34_anom"]["value"])
+        except (ValueError, KeyError):
+            pass
+
+    if "iod_dmi_index" in summary_parameters:
+        try:
+            tc["iod"] = float(summary_parameters["iod_dmi_index"]["value"])
+        except (ValueError, KeyError):
+            pass
+
+    if "mjo_phase_amp" in summary_parameters:
+        try:
+            val_str = summary_parameters["mjo_phase_amp"]["value"]
+            match = re.search(r'Phase\s+(\d+)\s*\(Amp\s+([\d.]+)\)', val_str)
+            if match:
+                tc["mjo_phase"] = int(match.group(1))
+                tc["mjo_amplitude"] = float(match.group(2))
+        except (ValueError, KeyError):
+            pass
+
+    if "cpac850_wind_index" in summary_parameters:
+        try:
+            tc["cpac850_trade_winds"] = float(summary_parameters["cpac850_wind_index"]["value"])
+        except (ValueError, KeyError):
+            pass
+
+    if "soi_index" in summary_parameters:
+        try:
+            tc["soi"] = float(summary_parameters["soi_index"]["value"])
+        except (ValueError, KeyError):
+            pass
+
+    if "olr_index" in summary_parameters:
+        try:
+            tc["olr"] = float(summary_parameters["olr_index"]["value"])
+        except (ValueError, KeyError):
+            pass
+
+    if "pacific_heat_content" in summary_parameters:
+        try:
+            tc["ocean_heat_content"] = float(summary_parameters["pacific_heat_content"]["value"])
+        except (ValueError, KeyError):
+            pass
+
+    return tc
+
+
+def extract_dams_data(summary_parameters):
+    dams = {
+        "combined_chao_phraya_storage_pct": None,
+        "bhumibol": {
+            "current_storage_pct": None,
+            "status": "N/A"
+        },
+        "sirikit": {
+            "current_storage_pct": None,
+            "status": "N/A"
+        },
+        "kwai_noi": {
+            "current_storage_pct": None,
+            "status": "N/A"
+        },
+        "pasak": {
+            "current_storage_pct": None,
+            "status": "N/A"
+        },
+        "srinagarind": {
+            "current_storage_pct": None,
+            "status": "N/A"
+        },
+        "vajiralongkorn": {
+            "current_storage_pct": None,
+            "status": "N/A"
+        }
+    }
+
+    if "chao_phraya_4dam_combined" in summary_parameters:
+        try:
+            val_str = summary_parameters["chao_phraya_4dam_combined"]["value"].replace("%", "")
+            dams["combined_chao_phraya_storage_pct"] = float(val_str)
+        except (ValueError, KeyError):
+            pass
+
+    dam_mapping = [
+        ("dam_bhumibol", "bhumibol"),
+        ("dam_sirikit", "sirikit"),
+        ("dam_kwai_noi", "kwai_noi"),
+        ("dam_pasak", "pasak"),
+        ("dam_srinagarind", "srinagarind"),
+        ("dam_vajiralongkorn", "vajiralongkorn")
+    ]
+
+    for summary_key, target_key in dam_mapping:
+        if summary_key in summary_parameters:
+            try:
+                val_str = summary_parameters[summary_key]["value"].replace("%", "")
+                pct = float(val_str)
+                dams[target_key]["current_storage_pct"] = pct
+                dams[target_key]["status"] = f"{pct:.1f}%"
+            except (ValueError, KeyError):
+                pass
+
+    return dams
+
+
+def extract_paknam_gauge():
+    """
+    Tide gauge live endpoint is currently unavailable. Strictly report data as
+    unavailable without simulating or inventing numbers.
+    """
+    return {
+        "water_level_msl": None,
+        "tide_state": "Data Unavailable",
+        "surge_risk": "N/A",
+        "buffer_remaining_meters": None,
+        "flood_wall_threshold_msl": 1.80,
+        "status": "DATA_UNAVAILABLE",
+        "message": "Pak Nam tide gauge endpoint is not available."
+    }
+
+
+def compute_zones(tc):
+    enso = tc.get("enso") if tc.get("enso") is not None else 0.0
+    iod = tc.get("iod") if tc.get("iod") is not None else 0.0
+    mjo_phase = tc.get("mjo_phase")
+    mjo_amp = tc.get("mjo_amplitude") if tc.get("mjo_amplitude") is not None else 0.0
+
+    if mjo_phase in [3, 4, 5]:
+        mjo_effect_base = 8.5 * mjo_amp
+    elif mjo_phase in [1, 2, 7, 8]:
+        mjo_effect_base = -6.0 * mjo_amp
+    else:
+        mjo_effect_base = 1.5 * mjo_amp
+
+    enso_effect_base = -12.0 * enso
+    iod_effect_base = -10.0 * iod
+
+    zone_definitions = [
+        {
+            "id": "ZONE01",
+            "en": "Bangkok Metropolitan & Delta",
+            "basin": "Lower Chao Phraya Basin",
+            "lat": 13.75,
+            "lon": 100.50,
+            "sens_enso": 1.0,
+            "sens_iod": 0.8,
+            "sens_mjo": 1.1,
+            "mechanics": "Lower basin urban flood vulnerability driven by upstream river discharge and tidal backflow."
+        },
+        {
+            "id": "ZONE02",
+            "en": "Ping River Headwaters (Bhumibol)",
+            "basin": "Upper Chao Phraya Basin",
+            "lat": 17.24,
+            "lon": 98.97,
+            "sens_enso": 1.1,
+            "sens_iod": 1.0,
+            "sens_mjo": 0.9,
+            "mechanics": "Northern mountain catchments feeding Bhumibol Reservoir."
+        },
+        {
+            "id": "ZONE03",
+            "en": "Nan River Headwaters (Sirikit)",
+            "basin": "Upper Chao Phraya Basin",
+            "lat": 17.76,
+            "lon": 100.56,
+            "sens_enso": 1.1,
+            "sens_iod": 0.9,
+            "sens_mjo": 1.0,
+            "mechanics": "Northeastern headwater catchments feeding Sirikit Dam reservoir storage."
+        },
+        {
+            "id": "ZONE04",
+            "en": "Pasak River Basin & Ayutthaya",
+            "basin": "Pasak Basin / Chao Phraya Confluence",
+            "lat": 14.80,
+            "lon": 101.10,
+            "sens_enso": 0.9,
+            "sens_iod": 1.1,
+            "sens_mjo": 1.0,
+            "mechanics": "Mid-basin flood risk zone and agricultural buffer for Greater Bangkok."
+        },
+        {
+            "id": "ZONE05",
+            "en": "Mae Klong Basin & Kanchanaburi",
+            "basin": "Mae Klong River Basin",
+            "lat": 14.02,
+            "lon": 99.53,
+            "sens_enso": 1.0,
+            "sens_iod": 1.2,
+            "sens_mjo": 0.8,
+            "mechanics": "Western headwater system providing freshwater push for Bangkok salinity suppression."
+        },
+        {
+            "id": "ZONE06",
+            "en": "Eastern Seaboard & Bang Pakong",
+            "basin": "Bang Pakong / Eastern Gulf Basin",
+            "lat": 13.00,
+            "lon": 101.20,
+            "sens_enso": 0.8,
+            "sens_iod": 0.9,
+            "sens_mjo": 1.2,
+            "mechanics": "Eastern Gulf coastal monsoon surge region."
+        }
+    ]
+
+    zones = []
+    for zd in zone_definitions:
+        mjo_eff = round(mjo_effect_base * zd["sens_mjo"], 1)
+        enso_eff = round(enso_effect_base * zd["sens_enso"], 1)
+        iod_eff = round(iod_effect_base * zd["sens_iod"], 1)
+        net_anom = round(mjo_eff + enso_eff + iod_eff, 1)
+
+        zones.append({
+            "id": zd["id"],
+            "en": zd["en"],
+            "basin": zd["basin"],
+            "lat": zd["lat"],
+            "lon": zd["lon"],
+            "mjo_effect": mjo_eff,
+            "enso_effect": enso_eff,
+            "iod_effect": iod_eff,
+            "net_anomaly": net_anom,
+            "mechanics": zd["mechanics"]
+        })
+
+    return zones
+
+
 def main():
-    print(f"Fetching and parsing current data from {len(ENDPOINTS)} endpoints...")
+    print(f"Fetching live weather, climate, and hydrological telemetry from {len(ENDPOINTS)} endpoints...")
     results = []
     all_summary_parameters = {}
 
@@ -468,21 +662,39 @@ def main():
     successful = sum(1 for r in results if r["success"])
     failed = len(results) - successful
 
+    is_live = successful > 0
+    status_code = "SUCCESS" if is_live else "FETCH_FAILED"
+    timestamp_str = datetime.now(timezone.utc).isoformat()
+
+    teleconnections = extract_numeric_teleconnections(all_summary_parameters)
+    dams = extract_dams_data(all_summary_parameters)
+    paknam_gauge = extract_paknam_gauge()
+    zones = compute_zones(teleconnections)
+
     output_payload = {
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": timestamp_str,
+        "updated_at_utc": timestamp_str,
+        "is_live": is_live,
+        "status": status_code,
         "total_endpoints": len(ENDPOINTS),
         "successful_count": successful,
         "failed_count": failed,
+        "teleconnections": teleconnections,
+        "dams": dams,
+        "paknam_gauge": paknam_gauge,
+        "zones": zones,
         "summary_parameters": all_summary_parameters,
         "results": results
     }
 
+    if not is_live:
+        output_payload["error_message"] = "Failed to connect to live climate and hydrological data endpoints."
+
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(output_payload, f, indent=2, ensure_ascii=False)
 
-    print(f"Completed. {successful}/{len(ENDPOINTS)} fetched successfully. Standardized output saved strictly to {OUTPUT_FILE}.")
+    print(f"Completed fetch. {successful}/{len(ENDPOINTS)} endpoints updated. Saved strictly to '{OUTPUT_FILE}'.")
 
 
 if __name__ == "__main__":
     main()
-t
