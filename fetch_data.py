@@ -1,503 +1,488 @@
-from datetime import datetime, timezone
+#!/usr/bin/env python3
+"""
+fetch_practice.py
+
+Fetches live weather, climate, and hydrological data from 8 endpoints.
+Parses current scalar parameters (including Chao Phraya and Mae Klong upstream
+dams influencing Bangkok and Samut Prakan water supply and salinity control)
+and saves standardized output strictly to 'data_practice.json'.
+"""
+
 import json
+import ssl
+import time
 import re
 import urllib.request
+import urllib.error
+from html.parser import HTMLParser
+from datetime import datetime, timezone
 
-# Target Telemetry Endpoints
-URL_ENSO = "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices"
-URL_MJO = (
-    "https://www.bom.gov.au/climate/mjo/graphics/rmm.74toRealtime.txt"
-)
-URL_IOD = (
-    "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data"
-)
+OUTPUT_FILE = "data_practice.json"
 
-# Walker Circulation Telemetry Endpoints
-URL_CPAC850 = "https://www.cpc.ncep.noaa.gov/data/indices/cpac850"
-URL_SOI = "https://www.cpc.ncep.noaa.gov/data/indices/soi"
-URL_OLR = "https://www.cpc.ncep.noaa.gov/data/indices/olr"
-URL_HEAT_CONTENT = "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ocean/index/heat_content_index.txt"
+ENDPOINTS = [
+    {
+        "key": "enso",
+        "name": "ENSO (Niño Indices)",
+        "url": "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices"
+    },
+    {
+        "key": "mjo",
+        "name": "MJO (RMM Index)",
+        "url": "https://www.bom.gov.au/clim_data/IDCKGEM000/rmm.74toRealtime.txt"
+    },
+    {
+        "key": "iod",
+        "name": "IOD (Indian Ocean Dipole)",
+        "url": "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data"
+    },
+    {
+        "key": "cpac850",
+        "name": "CPAC850 (Zonal Wind Anomaly)",
+        "url": "https://www.cpc.ncep.noaa.gov/data/indices/cpac850"
+    },
+    {
+        "key": "soi",
+        "name": "Tahiti-Darwin Sea Pressure Difference (SOI)",
+        "url": "https://www.cpc.ncep.noaa.gov/data/indices/soi"
+    },
+    {
+        "key": "olr",
+        "name": "Outgoing Longwave Radiation (OLR)",
+        "url": "https://www.cpc.ncep.noaa.gov/data/indices/olr"
+    },
+    {
+        "key": "heat_content",
+        "name": "Pacific Heat Content Index",
+        "url": "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ocean/index/heat_content_index.txt"
+    },
+    {
+        "key": "dam_storage",
+        "name": "Thailand Dam Storage (HII/RID)",
+        "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en"
+    }
+]
 
-# Official HII / RID Daily Large Dam Report
-URL_HII_DAM_REPORT = (
-    "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en"
-)
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
-        " like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-}
+class MalformedDamHTMLParser(HTMLParser):
+    """
+    Robust HTML parser designed to parse HII table data even when <tr> tags
+    are unclosed (as seen in rid_dam_1.php).
+    """
+    def __init__(self):
+        super().__init__()
+        self.rows = []
+        self.current_row = []
+        self.current_cell = []
+        self.in_tr = False
+        self.in_cell = False
+        self.ignore_content = False
+
+    def handle_starttag(self, tag, attrs):
+        tag = tag.lower()
+        if tag in ("script", "style"):
+            self.ignore_content = True
+        elif tag == "tr":
+            # Unclosed <tr> tag fix: flush active row if new <tr> encountered
+            if self.in_tr and self.current_row:
+                self.rows.append(self.current_row)
+            self.in_tr = True
+            self.current_row = []
+        elif tag in ("td", "th") and self.in_tr:
+            self.in_cell = True
+            self.current_cell = []
+
+    def handle_endtag(self, tag):
+        tag = tag.lower()
+        if tag in ("script", "style"):
+            self.ignore_content = False
+        elif tag == "tr":
+            if self.in_tr:
+                if self.current_row:
+                    self.rows.append(self.current_row)
+                self.in_tr = False
+                self.current_row = []
+        elif tag in ("td", "th") and self.in_tr:
+            self.in_cell = False
+            cell_text = " ".join("".join(self.current_cell).split())
+            if cell_text:
+                self.current_row.append(cell_text)
+
+    def handle_data(self, data):
+        if self.in_cell and not self.ignore_content:
+            self.current_cell.append(data)
+
+    def close(self):
+        super().close()
+        if self.in_tr and self.current_row:
+            self.rows.append(self.current_row)
 
 
-def fetch_text(url):
-  """Fetches raw text content from remote HTTP endpoints with custom headers."""
-  try:
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=15) as response:
-      return response.read().decode("utf-8", errors="ignore")
-  except Exception as e:
-    print(f"Error fetching from {url}: {e}")
+def parse_dam_storage_bkk_region(html_text):
+    """
+    Parses reservoir storage from HII HTML report using exact column mapping
+    for dams influencing Bangkok and Samut Prakan water supply and salinity.
+    """
+    target_dams = {
+        "bhumibol": {
+            "keywords": ["bhumibol", "bhumipol", "ภูมิพล"],
+            "label": "Bhumibol Dam (Ping River)",
+            "role": "Chao Phraya Upper Basin Headwater Storage",
+            "capacity": 13462.0
+        },
+        "sirikit": {
+            "keywords": ["sirikit", "สิริกิติ์"],
+            "label": "Sirikit Dam (Nan River)",
+            "role": "Chao Phraya Upper Basin Headwater Storage",
+            "capacity": 9510.0
+        },
+        "kwai_noi": {
+            "keywords": ["kheaw noi", "kwai noi", "kwae noi", "แควน้อย"],
+            "label": "Kwai Noi Bamrung Dan Dam",
+            "role": "Chao Phraya Mid-Basin Flow Regulation",
+            "capacity": 939.0
+        },
+        "pasak": {
+            "keywords": ["pa sak jorasit", "pasak", "pa sak", "ป่าสัก"],
+            "label": "Pasak Jolasid Dam (Pasak River)",
+            "role": "Lower Chao Phraya / Eastern BKK Flow Buffer",
+            "capacity": 872.0
+        },
+        "srinagarind": {
+            "keywords": ["srinakarin", "srinagarind", "ศรีนครินทร์"],
+            "label": "Srinagarind Dam (Mae Klong Basin)",
+            "role": "Western Diversion & Samut Prakan Salinity Repulsion",
+            "capacity": 17745.0
+        },
+        "vajiralongkorn": {
+            "keywords": ["wachiralongkorn", "vajiralongkorn", "วชิราลงกรณ"],
+            "label": "Vajiralongkorn Dam (Mae Klong Basin)",
+            "role": "Western Diversion & Samut Prakan Salinity Repulsion",
+            "capacity": 8860.0
+        }
+    }
+
+    parser = MalformedDamHTMLParser()
+    parser.feed(html_text)
+    parser.close()
+    rows = parser.rows
+
+    parsed_dams = {}
+
+    for row in rows:
+        row_str = " ".join(row).lower()
+        for dam_key, dam_meta in target_dams.items():
+            if dam_key not in parsed_dams and any(kw in row_str for kw in dam_meta["keywords"]):
+                numbers = []
+                for cell in row:
+                    matches = re.findall(r'[-+]?\d+(?:,\d{3})*(?:\.\d+)?', cell)
+                    for m in matches:
+                        try:
+                            numbers.append(float(m.replace(",", "")))
+                        except ValueError:
+                            pass
+
+                # Index Mapping from HII HTML:
+                # [0: Cap MCM, 1: LastYear MCM, 2: PresentStorage MCM, 3: PresentStorage %, 4: Usable MCM, 5: Usable %]
+                if len(numbers) >= 5:
+                    cap = numbers[0]
+                    storage_mcm = numbers[2]
+                    storage_pct = numbers[3]
+                    usable_mcm = numbers[4]
+
+                    parsed_dams[dam_key] = {
+                        "label": dam_meta["label"],
+                        "role": dam_meta["role"],
+                        "capacity_mcm": cap,
+                        "storage_mcm": storage_mcm,
+                        "storage_pct": storage_pct,
+                        "usable_mcm": usable_mcm
+                    }
+
+    param_results = {}
+
+    # Calculate Chao Phraya 4-Dam Combined Storage Metric
+    chao_phraya_keys = ["bhumibol", "sirikit", "kwai_noi", "pasak"]
+    cp_cap_sum = sum(parsed_dams[k]["capacity_mcm"] for k in chao_phraya_keys if k in parsed_dams)
+    cp_storage_sum = sum(parsed_dams[k]["storage_mcm"] for k in chao_phraya_keys if k in parsed_dams)
+    cp_usable_sum = sum(parsed_dams[k]["usable_mcm"] for k in chao_phraya_keys if k in parsed_dams)
+
+    if cp_cap_sum > 0:
+        cp_pct = round((cp_storage_sum / cp_cap_sum) * 100.0, 1)
+        param_results["chao_phraya_4dam_combined"] = {
+            "label": "Chao Phraya 4-Dam Combined Storage",
+            "value": f"{cp_pct}%",
+            "unit": f"{cp_storage_sum:,.0f} / {cp_cap_sum:,.0f} MCM (Usable: {cp_usable_sum:,.0f} MCM)",
+            "period": "Latest Report",
+            "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
+        }
+
+    for k, info in parsed_dams.items():
+        param_results[f"dam_{k}"] = {
+            "label": info["label"],
+            "value": f"{info['storage_pct']}%",
+            "unit": f"{info['storage_mcm']:,.0f} / {info['capacity_mcm']:,.0f} MCM (Usable: {info['usable_mcm']:,.0f} MCM)",
+            "period": "Latest Report",
+            "description": info["role"]
+        }
+
+    return param_results
+
+
+def parse_enso_sstoi(body_text):
+    lines = [line.strip() for line in body_text.splitlines() if line.strip() and not line.startswith("YR")]
+    if not lines:
+        return None
+    parts = lines[-1].split()
+    if len(parts) >= 10:
+        yr, mon, nino34_anom = parts[0], parts[1], parts[9]
+        return {
+            "enso_nino34_anom": {
+                "label": "ENSO (Niño 3.4 SST Anomaly)",
+                "value": f"{float(nino34_anom):+.2f}",
+                "unit": "°C",
+                "period": f"{yr}-{int(mon):02d}",
+                "description": "Equatorial Pacific Ocean SST Anomaly"
+            }
+        }
     return None
 
 
-def parse_enso():
-  """Parses latest Niño 3.4 SST Anomaly from NOAA CPC sstoi.indices."""
-  raw_text = fetch_text(URL_ENSO)
-  if not raw_text:
+def parse_mjo_rmm(body_text):
+    lines = [line.strip() for line in body_text.splitlines() if line.strip() and not line.startswith("RMM") and not line.startswith("year")]
+    for line in reversed(lines):
+        parts = line.split()
+        if len(parts) >= 7:
+            yr, mon, day, rmm1, rmm2, phase, amp = parts[:7]
+            if phase != "999" and float(amp) < 900:
+                return {
+                    "mjo_phase_amp": {
+                        "label": "MJO (Phase & Amplitude)",
+                        "value": f"Phase {phase} (Amp {float(amp):.2f})",
+                        "unit": "index",
+                        "period": f"{yr}-{int(mon):02d}-{int(day):02d}",
+                        "description": "Madden-Julian Oscillation Index"
+                    }
+                }
     return None
 
-  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  if not lines:
+
+def parse_iod_dmi(body_text):
+    lines = [line.strip() for line in body_text.splitlines() if line.strip() and len(line.split()) > 2]
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    for line in reversed(lines):
+        parts = line.split()
+        if len(parts) >= 13 and parts[0].isdigit():
+            yr = parts[0]
+            values = parts[1:13]
+            for idx in range(11, -1, -1):
+                try:
+                    val = float(values[idx])
+                    if val > -900:
+                        return {
+                            "iod_dmi_index": {
+                                "label": "Indian Ocean Dipole (DMI)",
+                                "value": f"{val:+.2f}",
+                                "unit": "°C",
+                                "period": f"{yr}-{months[idx]}",
+                                "description": "Equatorial Indian Ocean SST Gradient"
+                            }
+                        }
+                except ValueError:
+                    continue
     return None
 
-  last_line = lines[-1].split()
-  try:
-    return float(last_line[7])
-  except (ValueError, IndexError):
-    print("Failed to parse Niño 3.4 anomaly from sstoi.indices")
+
+def parse_table_latest_value(body_text, param_key, label, unit, desc):
+    lines = [line.strip() for line in body_text.splitlines() if line.strip() and line[:4].isdigit()]
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    for line in reversed(lines):
+        line_clean = re.sub(r'(\d)-', r'\1 -', line)
+        parts = line_clean.split()
+        if len(parts) >= 2 and parts[0].isdigit():
+            yr = parts[0]
+            values = parts[1:]
+            for idx in range(min(12, len(values)) - 1, -1, -1):
+                try:
+                    val = float(values[idx])
+                    if val > -900:
+                        return {
+                            param_key: {
+                                "label": label,
+                                "value": f"{val:+.2f}",
+                                "unit": unit,
+                                "period": f"{yr}-{months[idx]}",
+                                "description": desc
+                            }
+                        }
+                except ValueError:
+                    continue
     return None
 
 
-def parse_mjo():
-  """Parses latest MJO phase and amplitude from BoM rmm.74toRealtime.txt."""
-  raw_text = fetch_text(URL_MJO)
-  if not raw_text:
-    return None, None
-
-  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  data_lines = [
-      l for l in lines if not l.startswith("year") and not l.startswith("name")
-  ]
-  if not data_lines:
-    return None, None
-
-  last_line = data_lines[-1].split()
-  try:
-    phase = int(last_line[5])
-    amp = float(last_line[6])
-    return phase, amp
-  except (ValueError, IndexError):
-    print("Failed to parse MJO phase/amplitude from rmm.74toRealtime.txt")
-    return None, None
-
-
-def parse_iod():
-  """Parses latest Dipole Mode Index (IOD) from NOAA PSL dmi.had.long.data."""
-  raw_text = fetch_text(URL_IOD)
-  if not raw_text:
+def parse_pacific_heat_content(body_text):
+    lines = [line.strip() for line in body_text.splitlines() if line.strip() and line[0].isdigit()]
+    for line in reversed(lines):
+        parts = line.split()
+        if len(parts) >= 4 and parts[0].isdigit():
+            yr, mon, heat_val = parts[0], parts[1], parts[3]
+            try:
+                val = float(heat_val)
+                return {
+                    "pacific_heat_content": {
+                        "label": "Pacific Upper 300m Heat Content",
+                        "value": f"{val:+.2f}",
+                        "unit": "°C anomaly",
+                        "period": f"{yr}-{int(mon):02d}",
+                        "description": "Equatorial Subsurface Ocean Heat Anomaly (160E-80W)"
+                    }
+                }
+            except ValueError:
+                continue
     return None
 
-  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  year_rows = [
-      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
-  ]
 
-  for row in reversed(year_rows):
-    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
-    if len(tokens) > 1:
-      vals = [float(v) for v in tokens[1:]]
-      valid_vals = [v for v in vals if v > -900.0]
-      if valid_vals:
-        return valid_vals[-1]
-
-  print("Failed to parse valid IOD value from dmi.had.long.data")
-  return None
-
-
-def parse_cpac850():
-  """Parses latest Central Pacific 850 hPa Trade Wind Anomaly from NOAA CPC."""
-  raw_text = fetch_text(URL_CPAC850)
-  if not raw_text:
+def extract_parameters(endpoint_key, content_type, body_text):
+    try:
+        if endpoint_key == "enso":
+            return parse_enso_sstoi(body_text)
+        elif endpoint_key == "mjo":
+            return parse_mjo_rmm(body_text)
+        elif endpoint_key == "iod":
+            return parse_iod_dmi(body_text)
+        elif endpoint_key == "cpac850":
+            return parse_table_latest_value(body_text, "cpac850_wind_index", "CPAC 850mb Trade Wind Index", "m/s anomaly", "Central Pacific Zonal Wind Anomaly")
+        elif endpoint_key == "soi":
+            return parse_table_latest_value(body_text, "soi_index", "Southern Oscillation Index (SOI)", "index", "Tahiti-Darwin Sea Level Pressure Anomaly")
+        elif endpoint_key == "olr":
+            return parse_table_latest_value(body_text, "olr_index", "Outgoing Longwave Radiation (OLR)", "W/m² anomaly", "Equatorial Pacific Cloudiness Proxy")
+        elif endpoint_key == "heat_content":
+            return parse_pacific_heat_content(body_text)
+        elif endpoint_key == "dam_storage":
+            return parse_dam_storage_bkk_region(body_text)
+    except Exception as e:
+        return {"error": f"Parsing failed: {str(e)}"}
     return None
 
-  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  year_rows = [
-      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
-  ]
 
-  for row in reversed(year_rows):
-    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
-    if len(tokens) > 1:
-      vals = [float(v) for v in tokens[1:]]
-      valid_vals = [v for v in vals if -50.0 < v < 50.0]
-      if valid_vals:
-        return valid_vals[-1]
-
-  return None
+def classify_format(content_type: str, body_text: str) -> str:
+    text_head = body_text.strip()[:300].lower()
+    if "text/html" in content_type.lower() or "<html" in text_head or "<!doctype html" in text_head:
+        return "HTML Document (Web Report)"
+    if "application/json" in content_type.lower() or (text_head.startswith("{") or text_head.startswith("[")):
+        return "JSON Structured Data"
+    lines = [line.strip() for line in body_text.splitlines() if line.strip() and not line.strip().startswith("#")]
+    if lines and len(lines[0].split()) >= 3:
+        return "Fixed-Width / Space-Delimited ASCII Table"
+    return "Plain Text / Unformatted"
 
 
-def parse_soi():
-  """Parses latest Standardized Southern Oscillation Index (SOI) from NOAA CPC."""
-  raw_text = fetch_text(URL_SOI)
-  if not raw_text:
-    return None
+def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
+    url = endpoint["url"]
+    name = endpoint["name"]
+    key = endpoint["key"]
+    start_time = time.time()
 
-  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  standardized_lines = []
-  for line in lines:
-    if "RANK" in line or "UNSTANDARDIZED" in line:
-      break
-    standardized_lines.append(line)
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        )
+    }
 
-  year_rows = [
-      l
-      for l in standardized_lines
-      if l.split()[0].isdigit() and len(l.split()[0]) == 4
-  ]
+    req = urllib.request.Request(url, headers=headers)
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
 
-  for row in reversed(year_rows):
-    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
-    if len(tokens) > 1:
-      vals = [float(v) for v in tokens[1:]]
-      valid_vals = [v for v in vals if -30.0 < v < 30.0]
-      if valid_vals:
-        return valid_vals[-1]
+    diagnostic = {
+        "key": key,
+        "name": name,
+        "url": url,
+        "success": False,
+        "status_code": None,
+        "content_type": "Unknown",
+        "response_time_sec": None,
+        "size_bytes": 0,
+        "line_count": 0,
+        "data_format": "N/A",
+        "sample_preview": [],
+        "error": None
+    }
 
-  return None
+    extracted_params = {}
 
+    try:
+        with urllib.request.urlopen(req, context=ctx, timeout=20) as response:
+            elapsed = round(time.time() - start_time, 3)
+            status = response.status
+            content_type = response.headers.get("Content-Type", "Unknown")
+            raw_bytes = response.read()
 
-def parse_olr():
-  """Parses latest Central Pacific OLR anomaly from NOAA CPC."""
-  raw_text = fetch_text(URL_OLR)
-  if not raw_text:
-    return None
+            try:
+                body_text = raw_bytes.decode("utf-8")
+            except UnicodeDecodeError:
+                body_text = raw_bytes.decode("latin-1", errors="replace")
 
-  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  year_rows = [
-      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
-  ]
+            lines = body_text.splitlines()
+            non_empty_lines = [line for line in lines if line.strip()]
 
-  for row in reversed(year_rows):
-    tokens = re.findall(r"[-+]?\d+\.\d+|[-+]?\d+", row)
-    if len(tokens) > 1:
-      vals = [float(v) for v in tokens[1:]]
-      valid_vals = [v for v in vals if -100.0 < v < 100.0]
-      if valid_vals:
-        return valid_vals[-1]
+            diagnostic["success"] = True
+            diagnostic["status_code"] = status
+            diagnostic["content_type"] = content_type
+            diagnostic["response_time_sec"] = elapsed
+            diagnostic["size_bytes"] = len(raw_bytes)
+            diagnostic["line_count"] = len(lines)
+            diagnostic["data_format"] = classify_format(content_type, body_text)
+            diagnostic["sample_preview"] = non_empty_lines[:8]
 
-  return None
+            parsed = extract_parameters(key, content_type, body_text)
+            if parsed:
+                extracted_params.update(parsed)
 
+    except urllib.error.HTTPError as e:
+        diagnostic["status_code"] = e.code
+        diagnostic["error"] = f"HTTP Error {e.code}: {e.reason}"
+    except urllib.error.URLError as e:
+        diagnostic["error"] = f"URL Connection Error: {e.reason}"
+    except TimeoutError:
+        diagnostic["error"] = "Connection timed out (20s limit)"
+    except Exception as e:
+        diagnostic["error"] = f"Fetch failed: {str(e)}"
 
-def parse_heat_content():
-  """Parses latest 0-300m Pacific Upper Ocean Heat Content Anomaly from NOAA CPC."""
-  raw_text = fetch_text(URL_HEAT_CONTENT)
-  if not raw_text:
-    return None
-
-  lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
-  year_rows = [
-      l for l in lines if l.split()[0].isdigit() and len(l.split()[0]) == 4
-  ]
-
-  for row in reversed(year_rows):
-    tokens = re.findall(r"[-+]?\d*\.?\d+", row)
-    if len(tokens) >= 3:
-      try:
-        vals = [float(v) for v in tokens[2:] if -10.0 < float(v) < 10.0]
-        if vals:
-          return vals[-1]
-      except ValueError:
-        pass
-
-  return None
-
-
-def parse_hii_dam_html():
-  """Parses live storage percentages for Bhumibol & Sirikit Dams from HII daily HTML report."""
-  raw_html = fetch_text(URL_HII_DAM_REPORT)
-  if not raw_html:
-    return None, None
-
-  bhumibol_pct = None
-  sirikit_pct = None
-
-  rows = re.findall(r"<tr[^>]*>(.*?)</tr>", raw_html, re.DOTALL | re.IGNORECASE)
-  for row in rows:
-    cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL | re.IGNORECASE)
-    clean_cells = [
-        re.sub(r"<[^>]+>", "", c).strip().replace(",", "") for c in cells
-    ]
-    row_text = " ".join(clean_cells)
-
-    if "Bhumibol" in row_text:
-      floats = []
-      for c in clean_cells:
-        try:
-          floats.append(float(c))
-        except ValueError:
-          pass
-      for val in floats:
-        if 10.0 <= val <= 100.0 and val != 13462.0:
-          bhumibol_pct = val
-          break
-
-    if "Sirikit" in row_text:
-      floats = []
-      for c in clean_cells:
-        try:
-          floats.append(float(c))
-        except ValueError:
-          pass
-      for val in floats:
-        if 10.0 <= val <= 100.0 and val != 9510.0:
-          sirikit_pct = val
-          break
-
-  return bhumibol_pct, sirikit_pct
-
-
-def fetch_dam_storage():
-  """Parses live HII dam storage levels. Never synthesizes missing levels."""
-  bhumibol_pct, sirikit_pct = parse_hii_dam_html()
-
-  if bhumibol_pct is None:
-    print(
-        "Warning: Could not parse live Bhumibol Dam level. Reporting"
-        " DATA_UNAVAILABLE."
-    )
-  else:
-    print(f"Live Bhumibol Dam storage parsed: {bhumibol_pct}%")
-
-  if sirikit_pct is None:
-    print(
-        "Warning: Could not parse live Sirikit Dam level. Reporting"
-        " DATA_UNAVAILABLE."
-    )
-  else:
-    print(f"Live Sirikit Dam storage parsed: {sirikit_pct}%")
-
-  combined_pct = (
-      round(
-          (bhumibol_pct * 13462 + sirikit_pct * 9510) / (13462 + 9510), 1
-      )
-      if (bhumibol_pct is not None and sirikit_pct is not None)
-      else None
-  )
-
-  return {
-      "bhumibol": {
-          "name": "Bhumibol Dam (Ping River)",
-          "province": "Tak Province",
-          "capacity_mcm": 13462,
-          "current_storage_pct": bhumibol_pct,
-          "status": (
-              (
-                  "HIGH"
-                  if bhumibol_pct >= 80
-                  else ("MODERATE" if bhumibol_pct >= 50 else "LOW")
-              )
-              if bhumibol_pct is not None
-              else "DATA_UNAVAILABLE"
-          ),
-      },
-      "sirikit": {
-          "name": "Sirikit Dam (Nan River)",
-          "province": "Uttaradit Province",
-          "capacity_mcm": 9510,
-          "current_storage_pct": sirikit_pct,
-          "status": (
-              (
-                  "CRITICAL"
-                  if sirikit_pct >= 85
-                  else ("HIGH" if sirikit_pct >= 70 else "MODERATE")
-              )
-              if sirikit_pct is not None
-              else "DATA_UNAVAILABLE"
-          ),
-      },
-      "combined_chao_phraya_storage_pct": combined_pct,
-  }
-
-
-def fetch_paknam_sea_level():
-  """Reports Pak Nam Fort gauge level. Never computes synthetic surge estimates."""
-  flood_wall_limit = 1.80
-
-  return {
-      "station_name": "Pak Nam Fort Gauge",
-      "location": "Chao Phraya Estuary, Samut Prakan",
-      "water_level_msl": None,
-      "tide_state": "DATA_UNAVAILABLE",
-      "surge_risk": "NO_DATA",
-      "flood_wall_threshold_msl": flood_wall_limit,
-      "buffer_remaining_meters": None,
-  }
-
-
-def compute_thailand_hydrology(enso_val, iod_val, mjo_phase, mjo_amp):
-  """Computes regional monsoon teleconnection vectors for Thai river basins."""
-  mjo_forcing_map = {
-      1: -10.0,
-      2: -5.0,
-      3: 15.0,
-      4: 35.0,
-      5: 28.0,
-      6: 5.0,
-      7: -15.0,
-      8: -20.0,
-  }
-  base_mjo_pct = mjo_forcing_map.get(mjo_phase, 0.0) * min(mjo_amp, 2.0)
-  enso_pct = -20.0 * enso_val
-  iod_pct = 15.0 * iod_val
-
-  zones = [
-      {
-          "id": "ZONE01",
-          "en": "Chao Phraya Basin & Delta (Bangkok Gate)",
-          "basin": "Central Plains & Greater Bangkok",
-          "lat": 14.20,
-          "lon": 100.50,
-          "mjo_effect": round(base_mjo_pct * 1.1, 1),
-          "enso_effect": round(enso_pct, 1),
-          "iod_effect": round(iod_pct, 1),
-          "risk": (
-              "High Flood" if (base_mjo_pct + enso_pct) > 15 else "Normal"
-          ),
-          "mechanics": (
-              f"MJO Phase {mjo_phase} drives tropical convective moisture across"
-              " the Gulf of Thailand into the Chao Phraya delta."
-          ),
-      },
-      {
-          "id": "ZONE02",
-          "en": "Ping River Headwaters (Bhumibol Dam)",
-          "basin": "Northern Highlands (Chiang Mai/Tak)",
-          "lat": 18.79,
-          "lon": 98.98,
-          "mjo_effect": round(base_mjo_pct * 0.85, 1),
-          "enso_effect": round(enso_pct * 0.95, 1),
-          "iod_effect": round(iod_pct, 1),
-          "risk": "Moderate Flood",
-          "mechanics": (
-              "Orographic lifting along the Tenasserim Range amplifies monsoon"
-              " flows into Bhumibol Reservoir."
-          ),
-      },
-      {
-          "id": "ZONE03",
-          "en": "Mun-Chi Confluence (Mekong Basin)",
-          "basin": "Northeast Plateau (Ubon Ratchathani)",
-          "lat": 15.23,
-          "lon": 104.85,
-          "mjo_effect": round(base_mjo_pct * 1.2, 1),
-          "enso_effect": round(enso_pct * 1.1, 1),
-          "iod_effect": round(iod_pct, 1),
-          "risk": "Severe Flood",
-          "mechanics": (
-              "Monsoon troughing creates strong moisture convergence over"
-              " Eastern Isan."
-          ),
-      },
-      {
-          "id": "ZONE04",
-          "en": "Andaman Coast & Western Ranges",
-          "basin": "Southern West Coast (Phuket/Ranong)",
-          "lat": 8.20,
-          "lon": 98.30,
-          "mjo_effect": round(base_mjo_pct * 1.35, 1),
-          "enso_effect": round(enso_pct * 1.1, 1),
-          "iod_effect": round(iod_pct * 1.2, 1),
-          "risk": "High Surge",
-          "mechanics": (
-              "Direct onshore squall lines triggered by active Indian Ocean"
-              " convective waves."
-          ),
-      },
-      {
-          "id": "ZONE05",
-          "en": "Eastern Seaboard Coast",
-          "basin": "Rayong & Chonburi Marine",
-          "lat": 12.80,
-          "lon": 101.25,
-          "mjo_effect": round(base_mjo_pct * 0.95, 1),
-          "enso_effect": round(enso_pct * 0.9, 1),
-          "iod_effect": round(iod_pct, 1),
-          "risk": "Moderate Flood",
-          "mechanics": (
-              "Moisture convergence along Gulf of Thailand coastal boundaries."
-          ),
-      },
-      {
-          "id": "ZONE06",
-          "en": "Nan River Catchment (Sirikit Dam)",
-          "basin": "Upper North Catchment (Uttaradit)",
-          "lat": 17.62,
-          "lon": 100.09,
-          "mjo_effect": round(base_mjo_pct * 0.9, 1),
-          "enso_effect": round(enso_pct, 1),
-          "iod_effect": round(iod_pct, 1),
-          "risk": "Moderate Flood",
-          "mechanics": (
-              "Monsoonal rainfall contributing directly to northern storage"
-              " reservoirs."
-          ),
-      },
-  ]
-  return zones
+    return diagnostic, extracted_params
 
 
 def main():
-  enso_val = parse_enso()
-  mjo_phase, mjo_amp = parse_mjo()
-  iod_val = parse_iod()
-  cpac850_val = parse_cpac850()
-  soi_val = parse_soi()
-  olr_val = parse_olr()
-  heat_content_val = parse_heat_content()
+    print(f"Fetching and parsing current data from {len(ENDPOINTS)} endpoints...")
+    results = []
+    all_summary_parameters = {}
 
-  utc_now = datetime.now(timezone.utc).isoformat()
+    for ep in ENDPOINTS:
+        print(f" -> Fetching {ep['name']} ({ep['url']})")
+        diag, params = fetch_endpoint(ep)
+        results.append(diag)
+        if params:
+            all_summary_parameters.update(params)
 
-  if (
-      enso_val is None
-      or mjo_phase is None
-      or mjo_amp is None
-      or iod_val is None
-  ):
-    payload = {
-        "is_live": False,
-        "status": "FETCH_FAILED",
-        "error_message": (
-            "Failed to fetch live climate telemetry from one or more"
-            " endpoints. Data has not been updated."
-        ),
-        "updated_at_utc": utc_now,
-        "teleconnections": None,
-        "dams": None,
-        "paknam_gauge": None,
-        "zones": [],
+    successful = sum(1 for r in results if r["success"])
+    failed = len(results) - successful
+
+    output_payload = {
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "total_endpoints": len(ENDPOINTS),
+        "successful_count": successful,
+        "failed_count": failed,
+        "summary_parameters": all_summary_parameters,
+        "results": results
     }
-    print("CRITICAL WARNING: Telemetry fetch failed for one or more endpoints.")
-  else:
-    zones = compute_thailand_hydrology(enso_val, iod_val, mjo_phase, mjo_amp)
-    dams = fetch_dam_storage()
-    paknam = fetch_paknam_sea_level()
 
-    payload = {
-        "is_live": True,
-        "status": "OK",
-        "updated_at_utc": utc_now,
-        "teleconnections": {
-            "enso": enso_val,
-            "iod": iod_val,
-            "mjo_phase": mjo_phase,
-            "mjo_amplitude": mjo_amp,
-            "cpac850_trade_winds": cpac850_val,
-            "soi": soi_val,
-            "olr": olr_val,
-            "ocean_heat_content": heat_content_val,
-        },
-        "dams": dams,
-        "paknam_gauge": paknam,
-        "zones": zones,
-    }
-    print("SUCCESS: All climate and dam endpoints successfully fetched and synced.")
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(output_payload, f, indent=2, ensure_ascii=False)
 
-  with open("data.json", "w", encoding="utf-8") as f:
-    json.dump(payload, f, indent=2)
+    print(f"Completed. {successful}/{len(ENDPOINTS)} fetched successfully. Standardized output saved strictly to {OUTPUT_FILE}.")
 
 
 if __name__ == "__main__":
-  main()
+    main()
+t
