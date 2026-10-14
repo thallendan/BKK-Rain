@@ -181,11 +181,12 @@ def main():
         "results": results,
     }
 
-    with open("practice_results.json", "w", encoding="utf-8") as f:
-        json.dump(output_payload, f, indent=2, ensure_ascii=False)
+    with open("data_practice.json", "w", encoding="utf-8") as f:
+      json.dump(output_payload, f, indent=2, ensure_ascii=False)
 
     print(
-        f"Completed. {successful}/{len(ENDPOINTS)} endpoints fetched successfully. Saved to practice_results.json."
+        f"Completed. {successful}/{len(ENDPOINTS)} endpoints fetched"
+        " successfully. Saved to data_practice.json."
     )
 
 
