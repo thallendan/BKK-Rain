@@ -1,11 +1,14 @@
 name: Fetch Dam Practice Diagnostic
 
 on:
-  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+  workflow_dispatch:
   push:
     paths:
       - 'fetch_dam_practice.py'
       - '.github/workflows/fetch_dam_practice.yml'
+
+permissions:
+  contents: write
 
 jobs:
   run-dam-fetch:
