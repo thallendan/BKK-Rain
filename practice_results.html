@@ -203,9 +203,9 @@
       const banner = document.getElementById('fetch-error-banner');
 
       try {
-        const response = await fetch('practice_results.json');
+        const response = await fetch('data_practice.json');
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: Failed to load practice_results.json`);
+          throw new Error(`HTTP ${response.status}: Failed to load data_practice.json`);
         }
 
         const data = await response.json();
