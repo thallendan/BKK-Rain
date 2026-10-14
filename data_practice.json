@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-14T06:33:49.828411+00:00",
+  "timestamp_utc": "2026-10-14T06:53:20.239225+00:00",
   "total_endpoints": 8,
   "successful_count": 8,
   "failed_count": 0,
@@ -52,34 +52,6 @@
       "unit": "°C anomaly",
       "period": "2026-09",
       "description": "Equatorial Subsurface Ocean Heat Anomaly (160E-80W)"
-    },
-    "chao_phraya_4dam_combined": {
-      "label": "Chao Phraya 4-Dam Combined Storage",
-      "value": "99.6%",
-      "unit": "23,844 / 23,932 MCM (Usable: 0 MCM)",
-      "period": "Latest Report",
-      "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
-    },
-    "dam_bhumibol": {
-      "label": "Bhumibol Dam (Ping River)",
-      "value": "70.0%",
-      "unit": "13,462 / 13,462 MCM (Usable: 0 MCM)",
-      "period": "Latest Report",
-      "description": "Chao Phraya Upper Basin Headwater Storage"
-    },
-    "dam_sirikit": {
-      "label": "Sirikit Dam (Nan River)",
-      "value": "82.0%",
-      "unit": "9,510 / 9,510 MCM (Usable: 0 MCM)",
-      "period": "Latest Report",
-      "description": "Chao Phraya Upper Basin Headwater Storage"
-    },
-    "dam_pasak": {
-      "label": "Pasak Jolasid Dam (Pasak River)",
-      "value": "93.0%",
-      "unit": "872 / 960 MCM (Usable: 0 MCM)",
-      "period": "Latest Report",
-      "description": "Lower Chao Phraya / Eastern BKK Flow Buffer"
     }
   },
   "results": [
@@ -90,7 +62,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.372,
+      "response_time_sec": 0.179,
       "size_bytes": 39272,
       "line_count": 538,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -113,7 +85,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.32,
+      "response_time_sec": 0.425,
       "size_bytes": 2735420,
       "line_count": 19129,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -136,7 +108,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.203,
+      "response_time_sec": 0.335,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -159,7 +131,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.331,
+      "response_time_sec": 0.169,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -182,7 +154,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.41,
+      "response_time_sec": 0.18,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -205,7 +177,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.368,
+      "response_time_sec": 0.176,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -228,7 +200,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.335,
+      "response_time_sec": 0.171,
       "size_bytes": 23053,
       "line_count": 575,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -251,7 +223,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.613,
+      "response_time_sec": 1.366,
       "size_bytes": 52049,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
