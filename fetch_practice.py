@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
 fetch_practice.py
+
 Fetches live weather, climate, and hydrological data from 8 endpoints.
 Parses current scalar parameters (including Chao Phraya and Mae Klong upstream
 dams influencing Bangkok and Samut Prakan water supply and salinity control)
 and saves standardized output strictly to 'data_practice.json'.
 """
 
-import sys
 import json
 import ssl
 import time
@@ -114,8 +114,8 @@ class DamHTMLTableParser(HTMLParser):
 
 def parse_dam_storage_bkk_region(html_text):
     """
-    Parses reservoir storage from HII HTML report specifically for dams
-    influencing Bangkok and Samut Prakan water supply and salinity control.
+    Parses reservoir storage from HII HTML report using exact column mapping
+    from 'dam_dump.html' for dams influencing Bangkok and Samut Prakan.
     """
     target_dams = {
         "bhumibol": {
@@ -131,40 +131,37 @@ def parse_dam_storage_bkk_region(html_text):
             "capacity": 9510.0
         },
         "kwai_noi": {
-            "keywords": ["kwai", "kwae", "khwae", "แควน้อย"],
+            "keywords": ["kheaw noi", "kwai noi", "kwae noi", "แควน้อย"],
             "label": "Kwai Noi Bamrung Dan Dam",
             "role": "Chao Phraya Mid-Basin Flow Regulation",
             "capacity": 939.0
         },
         "pasak": {
-            "keywords": ["pasak", "pa sak", "ป่าสัก"],
+            "keywords": ["pa sak jorasit", "pasak", "pa sak", "ป่าสัก"],
             "label": "Pasak Jolasid Dam (Pasak River)",
             "role": "Lower Chao Phraya / Eastern BKK Flow Buffer",
-            "capacity": 960.0
+            "capacity": 872.0
         },
         "srinagarind": {
-            "keywords": ["srinagarind", "srinakarind", "ศรีนครินทร์"],
+            "keywords": ["srinakarin", "srinagarind", "ศรีนครินทร์"],
             "label": "Srinagarind Dam (Mae Klong Basin)",
             "role": "Western Diversion & Samut Prakan Salinity Repulsion",
             "capacity": 17745.0
         },
         "vajiralongkorn": {
-            "keywords": ["vajiralongkorn", "วชิราลงกรณ"],
+            "keywords": ["wachiralongkorn", "vajiralongkorn", "วชิราลงกรณ"],
             "label": "Vajiralongkorn Dam (Mae Klong Basin)",
             "role": "Western Diversion & Samut Prakan Salinity Repulsion",
             "capacity": 8860.0
         }
     }
 
-    parsed_dams = {}
-
-    # Pass 1: Parse HTML Table structure
     rows = []
     try:
         from bs4 import BeautifulSoup
-        soup = BeautifulSoup(html_text, 'html.parser')
-        for tr in soup.find_all('tr'):
-            cells = [td.get_text(strip=True) for td in tr.find_all(['td', 'th']) if td.get_text(strip=True)]
+        soup = BeautifulSoup(html_text, "html.parser")
+        for tr in soup.find_all("tr"):
+            cells = [td.get_text(strip=True) for td in tr.find_all(["td", "th"]) if td.get_text(strip=True)]
             if cells:
                 rows.append(cells)
     except ImportError:
@@ -172,6 +169,8 @@ def parse_dam_storage_bkk_region(html_text):
         parser.feed(html_text)
         for tbl in parser.tables:
             rows.extend(tbl)
+
+    parsed_dams = {}
 
     for row in rows:
         row_str = " ".join(row).lower()
@@ -181,81 +180,26 @@ def parse_dam_storage_bkk_region(html_text):
                 for cell in row:
                     matches = re.findall(r'[-+]?\d+(?:,\d{3})*(?:\.\d+)?', cell)
                     for m in matches:
-                        clean_m = m.replace(',', '')
                         try:
-                            numbers.append(float(clean_m))
+                            numbers.append(float(m.replace(",", "")))
                         except ValueError:
                             pass
-                
-                if numbers:
-                    cap = dam_meta["capacity"]
-                    storage_mcm = None
-                    storage_pct = None
-                    usable_mcm = None
-                    
-                    for i in range(len(numbers)):
-                        num = numbers[i]
-                        if 1.0 <= num <= cap * 1.1:
-                            for j in range(i + 1, min(i + 4, len(numbers))):
-                                pct = numbers[j]
-                                if 0.0 <= pct <= 110.0:
-                                    calc_pct = (num / cap) * 100.0
-                                    if abs(calc_pct - pct) <= 5.0 or abs(pct - round(calc_pct)) <= 3:
-                                        if storage_mcm is None:
-                                            storage_mcm = num
-                                            storage_pct = pct
-                                        elif usable_mcm is None and num <= storage_mcm:
-                                            usable_mcm = num
 
-                    if storage_mcm is not None:
-                        parsed_dams[dam_key] = {
-                            "label": dam_meta["label"],
-                            "role": dam_meta["role"],
-                            "capacity_mcm": cap,
-                            "storage_mcm": storage_mcm,
-                            "storage_pct": storage_pct if storage_pct is not None else round((storage_mcm / cap) * 100.0, 1),
-                            "usable_mcm": usable_mcm if usable_mcm is not None else 0.0
-                        }
+                # Matching layout: [0:Cap, 1:LastYear, 2:PresentMCM, 3:PresentPct, 4:UsableMCM, 5:UsablePct]
+                if len(numbers) >= 5:
+                    cap = numbers[0]
+                    storage_mcm = numbers[2]
+                    storage_pct = numbers[3]
+                    usable_mcm = numbers[4] if len(numbers) >= 5 else 0.0
 
-    # Pass 2: Fallback Raw-Text Regex Scan (if Pass 1 missed any target dams)
-    if len(parsed_dams) < len(target_dams):
-        clean_text = re.sub(r'&nbsp;', ' ', html_text)
-        clean_text = re.sub(r'<[^>]+>', ' ', clean_text)
-        
-        for line in clean_text.splitlines():
-            line_clean = " ".join(line.split()).lower()
-            if not line_clean:
-                continue
-            for dam_key, dam_meta in target_dams.items():
-                if dam_key not in parsed_dams and any(kw in line_clean for kw in dam_meta["keywords"]):
-                    matches = re.findall(r'[-+]?\d+(?:,\d{3})*(?:\.\d+)?', line)
-                    numbers = []
-                    for m in matches:
-                        try:
-                            numbers.append(float(m.replace(',', '')))
-                        except ValueError:
-                            pass
-                    
-                    if len(numbers) >= 2:
-                        cap = dam_meta["capacity"]
-                        storage_mcm = None
-                        storage_pct = None
-                        
-                        for num in numbers:
-                            if 10.0 <= num <= cap * 1.1 and storage_mcm is None:
-                                storage_mcm = num
-                            elif 0.0 <= num <= 110.0 and storage_pct is None and storage_mcm is not None:
-                                storage_pct = num
-                        
-                        if storage_mcm is not None:
-                            parsed_dams[dam_key] = {
-                                "label": dam_meta["label"],
-                                "role": dam_meta["role"],
-                                "capacity_mcm": cap,
-                                "storage_mcm": storage_mcm,
-                                "storage_pct": storage_pct if storage_pct is not None else round((storage_mcm / cap) * 100.0, 1),
-                                "usable_mcm": 0.0
-                            }
+                    parsed_dams[dam_key] = {
+                        "label": dam_meta["label"],
+                        "role": dam_meta["role"],
+                        "capacity_mcm": cap,
+                        "storage_mcm": storage_mcm,
+                        "storage_pct": storage_pct,
+                        "usable_mcm": usable_mcm
+                    }
 
     param_results = {}
 
