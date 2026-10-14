@@ -1,0 +1,104 @@
+{
+  "timestamp_utc": "2026-10-14T04:05:44.517043+00:00",
+  "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
+  "total_tables_found": 3,
+  "tables_structure": [
+    {
+      "table_index": 0,
+      "row_count": 3,
+      "header_row_sample": [
+        "RegionReservoir, Dam",
+        "Capacityatstorage level(SL.)MCM",
+        "Storage level in",
+        "Inflow",
+        "Outflow"
+      ]
+    },
+    {
+      "table_index": 1,
+      "row_count": 5,
+      "header_row_sample": [
+        "% เทียบกับ รนก."
+      ]
+    },
+    {
+      "table_index": 2,
+      "row_count": 5,
+      "header_row_sample": [
+        "% เทียบกับ รนก."
+      ]
+    }
+  ],
+  "matched_chao_phraya_dams": [],
+  "all_tables_data": [
+    [
+      [
+        "RegionReservoir, Dam",
+        "Capacityatstorage level(SL.)MCM",
+        "Storage level in",
+        "Inflow",
+        "Outflow"
+      ],
+      [
+        "Year 2568Volume",
+        "Present",
+        "Usable",
+        "Averagefor the year",
+        "Volume MCM",
+        "Cumulative inflow from January 169",
+        "Today",
+        "Cumulative inflow from January 169 MCM"
+      ],
+      [
+        "Volume MCM",
+        "% Compared SL.",
+        "Volume MCM",
+        "% Compared SL.",
+        "Volume MCM",
+        "% Compared withan annual average."
+      ]
+    ],
+    [
+      [
+        "% เทียบกับ รนก."
+      ],
+      [
+        "",
+        "> 80%"
+      ],
+      [
+        "",
+        "51-80%"
+      ],
+      [
+        "",
+        "30-50%"
+      ],
+      [
+        "",
+        "< 30%"
+      ]
+    ],
+    [
+      [
+        "% เทียบกับ รนก."
+      ],
+      [
+        "",
+        "> 80%"
+      ],
+      [
+        "",
+        "51-80%"
+      ],
+      [
+        "",
+        "30-50%"
+      ],
+      [
+        "",
+        "< 30%"
+      ]
+    ]
+  ]
+}
