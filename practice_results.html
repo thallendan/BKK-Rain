@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Endpoints Fetch Practice Verification</title>
+  <title>Weather Endpoints Standardized Practice Dashboard</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -16,6 +16,7 @@
       --fail-bg: #7f1d1d;
       --fail-fg: #f87171;
       --accent: #38bdf8;
+      --metric-bg: #0b1329;
     }
 
     body {
@@ -28,7 +29,7 @@
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1150px;
       margin: 0 auto;
     }
 
@@ -51,9 +52,17 @@
       flex-wrap: wrap;
     }
 
+    .section-title {
+      font-size: 1.25rem;
+      margin: 2rem 0 1rem 0;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
     .summary-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 1rem;
       margin-bottom: 2rem;
     }
@@ -69,6 +78,41 @@
       font-size: 1.8rem;
       font-weight: bold;
       margin-top: 0.25rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background-color: var(--metric-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-value {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .metric-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
     }
 
     .results-grid {
@@ -148,14 +192,6 @@
       margin: 0;
     }
 
-    .error-box {
-      color: var(--fail-fg);
-      background-color: var(--fail-bg);
-      padding: 0.75rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
-    }
-
     .alert-failed {
       background-color: var(--fail-bg);
       border: 1px solid var(--fail-fg);
@@ -168,7 +204,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>Weather Endpoints Fetch Practice Verification</h1>
+      <h1>Weather Endpoints Standardized Practice Dashboard</h1>
       <div class="meta-bar">
         <span>Target Repository Diagnostic Test</span>
         <span id="last-run">Loading...</span>
@@ -192,6 +228,12 @@
       </div>
     </div>
 
+    <h2 class="section-title">Standardized Current Parameter Values</h2>
+    <div class="metrics-grid" id="metrics-container">
+      <p style="color: var(--text-muted);">Parsing current climate parameters...</p>
+    </div>
+
+    <h2 class="section-title">Endpoint Fetch Diagnostics & Format Inspection</h2>
     <div class="results-grid" id="results-container">
       <p style="color: var(--text-muted);">Loading fetch diagnostic data...</p>
     </div>
@@ -200,9 +242,11 @@
   <script>
     async function loadResults() {
       const container = document.getElementById('results-container');
+      const metricsContainer = document.getElementById('metrics-container');
       const banner = document.getElementById('fetch-error-banner');
 
       try {
+        // Target strictly 'data_practice.json'
         const response = await fetch('data_practice.json');
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: Failed to load data_practice.json`);
@@ -210,31 +254,71 @@
 
         const data = await response.json();
 
-        // Render Summary Counters
-        document.getElementById('last-run').innerText = `Last Executed (UTC): ${new Date(data.timestamp_utc).toUTCString()}`;
-        document.getElementById('total-cnt').innerText = data.total_endpoints;
-        document.getElementById('success-cnt').innerText = data.successful_count;
-        document.getElementById('fail-cnt').innerText = data.failed_count;
+        // Safe ISO Date parsing
+        let dateStr = 'N/A';
+        if (data.timestamp_utc) {
+          const parsedMs = Date.parse(data.timestamp_utc);
+          if (!isNaN(parsedMs)) {
+            dateStr = new Date(parsedMs).toUTCString();
+          }
+        }
+
+        document.getElementById('last-run').innerText = `Last Executed (UTC): ${dateStr}`;
+        document.getElementById('total-cnt').innerText = data.total_endpoints ?? 0;
+        document.getElementById('success-cnt').innerText = data.successful_count ?? 0;
+        document.getElementById('fail-cnt').innerText = data.failed_count ?? 0;
 
         if (data.failed_count > 0) {
           banner.innerHTML = `
             <div class="alert-failed">
-              <strong>Warning:</strong> ${data.failed_count} endpoint(s) failed to fetch during the last GitHub workflow run. Review details below.
+              <strong>Warning:</strong> ${data.failed_count} endpoint(s) failed to fetch. Review details below.
             </div>`;
+        } else {
+          banner.innerHTML = '';
         }
 
-        container.innerHTML = '';
+        // Render Current Extracted Parameters
+        metricsContainer.innerHTML = '';
+        const params = data.summary_parameters || {};
+        const paramKeys = Object.keys(params);
 
-        // Render Individual Endpoints
-        data.results.forEach(item => {
+        if (paramKeys.length === 0) {
+          metricsContainer.innerHTML = '<p style="color: var(--text-muted);">No current parameters extracted.</p>';
+        } else {
+          paramKeys.forEach(key => {
+            const p = params[key];
+            const mCard = document.createElement('div');
+            mCard.className = 'metric-card';
+            mCard.innerHTML = `
+              <div class="metric-label">${escapeHtml(p.label || key)}</div>
+              <div class="metric-value">${escapeHtml(p.value || 'N/A')} <span style="font-size: 0.9rem; font-weight: normal; color: var(--text-muted);">${escapeHtml(p.unit || '')}</span></div>
+              <div class="metric-meta">
+                <span>${escapeHtml(p.description || '')}</span>
+                <strong>${escapeHtml(p.period || '')}</strong>
+              </div>
+            `;
+            metricsContainer.appendChild(mCard);
+          });
+        }
+
+        // Render Endpoint Diagnostics
+        container.innerHTML = '';
+        const results = data.results || [];
+
+        if (results.length === 0) {
+          container.innerHTML = '<p style="color: var(--text-muted);">No diagnostic records found in payload.</p>';
+          return;
+        }
+
+        results.forEach(item => {
           const card = document.createElement('div');
           card.className = 'result-item';
 
           const headerHTML = `
             <div class="result-header">
               <div>
-                <h2 class="endpoint-title">${escapeHtml(item.name)}</h2>
-                <div class="endpoint-url"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="color:inherit;">${escapeHtml(item.url)}</a></div>
+                <h3 class="endpoint-title">${escapeHtml(item.name || 'Unnamed Endpoint')}</h3>
+                <div class="endpoint-url"><a href="${escapeHtml(item.url || '#')}" target="_blank" rel="noopener" style="color:inherit;">${escapeHtml(item.url || '')}</a></div>
               </div>
               <span class="badge ${item.success ? 'badge-success' : 'badge-fail'}">
                 ${item.success ? 'SUCCESS' : 'FAILED'}
@@ -244,32 +328,37 @@
 
           let contentHTML = '';
           if (item.success) {
+            const sizeKb = item.size_bytes ? (item.size_bytes / 1024).toFixed(1) : '0.0';
+            const lines = item.line_count ? item.line_count.toLocaleString() : '0';
+            const latency = item.response_time_sec !== undefined ? `${item.response_time_sec}s` : 'N/A';
+            const previewText = Array.isArray(item.sample_preview) ? item.sample_preview.join('\n') : (item.sample_preview || '');
+
             contentHTML = `
               <div class="details-grid">
                 <div>
                   <span class="detail-label">STATUS CODE</span>
-                  <strong>${item.status_code} OK</strong>
+                  <strong>${item.status_code || 200} OK</strong>
                 </div>
                 <div>
                   <span class="detail-label">DETECTED FORMAT</span>
-                  <strong>${escapeHtml(item.data_format)}</strong>
+                  <strong>${escapeHtml(item.data_format || 'N/A')}</strong>
                 </div>
                 <div>
                   <span class="detail-label">PAYLOAD SIZE</span>
-                  <strong>${(item.size_bytes / 1024).toFixed(1)} KB</strong>
+                  <strong>${sizeKb} KB</strong>
                 </div>
                 <div>
                   <span class="detail-label">TOTAL LINES</span>
-                  <strong>${item.line_count.toLocaleString()}</strong>
+                  <strong>${lines}</strong>
                 </div>
                 <div>
                   <span class="detail-label">LATENCY</span>
-                  <strong>${item.response_time_sec}s</strong>
+                  <strong>${latency}</strong>
                 </div>
               </div>
               <div>
-                <span class="detail-label" style="margin-bottom:0.25rem;">DATA FORMAT / HEADER PREVIEW (FIRST NON-EMPTY LINES)</span>
-                <pre>${escapeHtml(item.sample_preview.join('\n'))}</pre>
+                <span class="detail-label" style="margin-bottom:0.25rem;">HEADER / DATA SAMPLE PREVIEW</span>
+                <pre>${escapeHtml(previewText)}</pre>
               </div>
             `;
           } else {
@@ -287,10 +376,11 @@
       } catch (err) {
         banner.innerHTML = `
           <div class="alert-failed">
-            <strong>Data Fetch Error:</strong> Unable to display practice results. Verify that <code>fetch_practice.py</code> has executed successfully and generated <code>practice_results.json</code>.<br>
+            <strong>Data Fetch Error:</strong> Unable to display practice results from <code>data_practice.json</code>.<br>
             <small style="opacity: 0.8;">Details: ${escapeHtml(err.message)}</small>
           </div>`;
         container.innerHTML = '';
+        metricsContainer.innerHTML = '';
       }
     }
 
