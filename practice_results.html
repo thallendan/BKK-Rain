@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Endpoints Standardized Practice Dashboard</title>
+  <title>Bangkok & Samut Prakan Hydrological & Weather Dashboard</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -17,6 +17,7 @@
       --fail-fg: #f87171;
       --accent: #38bdf8;
       --metric-bg: #0b1329;
+      --highlight: #f59e0b;
     }
 
     body {
@@ -82,7 +83,7 @@
 
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.25rem;
       margin-bottom: 2rem;
     }
@@ -93,6 +94,11 @@
       border-left: 4px solid var(--accent);
       border-radius: 8px;
       padding: 1.25rem;
+    }
+
+    .metric-card.combined {
+      border-left: 4px solid var(--highlight);
+      background-color: #1a1708;
     }
 
     .metric-label {
@@ -113,6 +119,8 @@
       font-size: 0.8rem;
       color: var(--text-muted);
       margin-top: 0.5rem;
+      flex-direction: column;
+      gap: 0.2rem;
     }
 
     .results-grid {
@@ -204,7 +212,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>Weather Endpoints Standardized Practice Dashboard</h1>
+      <h1>Bangkok & Samut Prakan Hydrological & Climate Practice Dashboard</h1>
       <div class="meta-bar">
         <span>Target Repository Diagnostic Test</span>
         <span id="last-run">Loading...</span>
@@ -228,9 +236,14 @@
       </div>
     </div>
 
-    <h2 class="section-title">Standardized Current Parameter Values</h2>
-    <div class="metrics-grid" id="metrics-container">
-      <p style="color: var(--text-muted);">Parsing current climate parameters...</p>
+    <h2 class="section-title">Bangkok & Samut Prakan Water Security (Chao Phraya & Mae Klong Dams)</h2>
+    <div class="metrics-grid" id="dam-metrics-container">
+      <p style="color: var(--text-muted);">Parsing dam parameters...</p>
+    </div>
+
+    <h2 class="section-title">Climate & Atmospheric Oscillation Indices</h2>
+    <div class="metrics-grid" id="climate-metrics-container">
+      <p style="color: var(--text-muted);">Parsing climate parameters...</p>
     </div>
 
     <h2 class="section-title">Endpoint Fetch Diagnostics & Format Inspection</h2>
@@ -242,11 +255,11 @@
   <script>
     async function loadResults() {
       const container = document.getElementById('results-container');
-      const metricsContainer = document.getElementById('metrics-container');
+      const damContainer = document.getElementById('dam-metrics-container');
+      const climateContainer = document.getElementById('climate-metrics-container');
       const banner = document.getElementById('fetch-error-banner');
 
       try {
-        // Target strictly 'data_practice.json'
         const response = await fetch('data_practice.json');
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: Failed to load data_practice.json`);
@@ -277,29 +290,41 @@
           banner.innerHTML = '';
         }
 
-        // Render Current Extracted Parameters
-        metricsContainer.innerHTML = '';
+        // Separate Dam vs Climate Parameters
         const params = data.summary_parameters || {};
-        const paramKeys = Object.keys(params);
+        damContainer.innerHTML = '';
+        climateContainer.innerHTML = '';
 
-        if (paramKeys.length === 0) {
-          metricsContainer.innerHTML = '<p style="color: var(--text-muted);">No current parameters extracted.</p>';
-        } else {
-          paramKeys.forEach(key => {
-            const p = params[key];
-            const mCard = document.createElement('div');
-            mCard.className = 'metric-card';
-            mCard.innerHTML = `
-              <div class="metric-label">${escapeHtml(p.label || key)}</div>
-              <div class="metric-value">${escapeHtml(p.value || 'N/A')} <span style="font-size: 0.9rem; font-weight: normal; color: var(--text-muted);">${escapeHtml(p.unit || '')}</span></div>
-              <div class="metric-meta">
-                <span>${escapeHtml(p.description || '')}</span>
-                <strong>${escapeHtml(p.period || '')}</strong>
-              </div>
-            `;
-            metricsContainer.appendChild(mCard);
-          });
-        }
+        let damCount = 0;
+        let climateCount = 0;
+
+        Object.keys(params).forEach(key => {
+          const p = params[key];
+          const isDam = key.startsWith('dam_') || key.includes('chao_phraya');
+
+          const mCard = document.createElement('div');
+          mCard.className = `metric-card ${key.includes('combined') ? 'combined' : ''}`;
+          mCard.innerHTML = `
+            <div class="metric-label">${escapeHtml(p.label || key)}</div>
+            <div class="metric-value">${escapeHtml(p.value || 'N/A')}</div>
+            <div style="font-size: 0.85rem; color: var(--accent); margin-top: 0.1rem;">${escapeHtml(p.unit || '')}</div>
+            <div class="metric-meta">
+              <span>${escapeHtml(p.description || '')}</span>
+              <strong style="color: var(--text-muted);">${escapeHtml(p.period || '')}</strong>
+            </div>
+          `;
+
+          if (isDam) {
+            damContainer.appendChild(mCard);
+            damCount++;
+          } else {
+            climateContainer.appendChild(mCard);
+            climateCount++;
+          }
+        });
+
+        if (damCount === 0) damContainer.innerHTML = '<p style="color: var(--text-muted);">No dam storage data extracted.</p>';
+        if (climateCount === 0) climateContainer.innerHTML = '<p style="color: var(--text-muted);">No climate index data extracted.</p>';
 
         // Render Endpoint Diagnostics
         container.innerHTML = '';
@@ -380,7 +405,8 @@
             <small style="opacity: 0.8;">Details: ${escapeHtml(err.message)}</small>
           </div>`;
         container.innerHTML = '';
-        metricsContainer.innerHTML = '';
+        damContainer.innerHTML = '';
+        climateContainer.innerHTML = '';
       }
     }
 
