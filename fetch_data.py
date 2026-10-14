@@ -2,7 +2,7 @@
 """
 fetch_data.py
 
-Fetches live weather, climate, and hydrological data from 8 primary endpoints:
+Fetches live weather, climate, and hydrological data from 9 primary endpoints:
 1. ENSO (Niño Indices - NOAA CPC)
 2. MJO (RMM Index - Australian BoM)
 3. IOD (Indian Ocean Dipole - NOAA PSL)
@@ -11,9 +11,10 @@ Fetches live weather, climate, and hydrological data from 8 primary endpoints:
 6. OLR (Outgoing Longwave Radiation - NOAA CPC)
 7. Pacific Heat Content Index (NOAA CPC)
 8. Thailand Dam Storage (HII/RID)
+9. Chao Phraya Estuary Sea Level & Tide (HII/Navy)
 
-Parses scalar teleconnection indices and reservoir storage, calculates dynamic zone
-risk vectors, strictly handles missing tide gauge endpoints as unavailable (no simulation),
+Parses scalar teleconnection indices, reservoir storage, and Pak Nam tide gauge
+telemetry, strictly handling missing endpoints as unavailable (no simulation),
 and writes standardized output strictly to 'data.json'.
 """
 
@@ -67,8 +68,65 @@ ENDPOINTS = [
         "key": "dam_storage",
         "name": "Thailand Dam Storage (HII/RID)",
         "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en"
+    },
+    {
+        "key": "chao_phraya_tide",
+        "name": "Chao Phraya Estuary Sea Level & Tide (Fort Phrachulachomklao)",
+        "url": "https://tiwrmdev.hii.or.th/v3/sealevel"
     }
 ]
+
+
+def parse_chao_phraya_tide(html_text):
+    """
+    Parses real-time sea level gauge (GLF001) and predicted tide levels (N03)
+    for Fort Phrachulachomklao at the Chao Phraya Estuary from HII/Thaiwater.
+    """
+    params = {}
+    clean_html = html_text.replace("&nbsp;", " ")
+
+    # 1. Real-time Gauge Telemetry (Station GLF001 - Fort Phrachulachomklao)
+    glf_match = re.search(r'<tr[^>]*rel="GLF001"[^>]*>(.*?)</tr>', clean_html, re.DOTALL | re.IGNORECASE)
+    if glf_match:
+        row_content = glf_match.group(1)
+        td_values = re.findall(r'<td[^>]*>(.*?)</td>', row_content, re.DOTALL | re.IGNORECASE)
+        td_clean = [re.sub(r'<[^>]+>', '', td).strip() for td in td_values]
+
+        if len(td_clean) >= 5:
+            date_str = td_clean[2]
+            time_str = td_clean[3]
+            level_str = td_clean[4]
+            try:
+                level_val = float(level_str)
+                params["chao_phraya_estuary_realtime_level"] = {
+                    "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
+                    "value": f"{level_val:+.3f}",
+                    "unit": "m MSL",
+                    "period": f"{date_str} {time_str}",
+                    "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
+                }
+            except ValueError:
+                pass
+
+    # 2. Predictive Tide Extremes (Station N03 - Fort Phrachulachomklao)
+    n03_match = re.search(r'<tr[^>]*rel="N03"[^>]*>(.*?)</tr>', clean_html, re.DOTALL | re.IGNORECASE)
+    if n03_match:
+        row_content = n03_match.group(1)
+        td_values = re.findall(r'<td[^>]*>(.*?)</td>', row_content, re.DOTALL | re.IGNORECASE)
+        td_clean = [re.sub(r'<[^>]+>', ' ', td).strip() for td in td_values]
+
+        if len(td_clean) >= 3:
+            high_info = " ".join(td_clean[1].split())
+            low_info = " ".join(td_clean[2].split())
+            params["chao_phraya_estuary_predicted_tide"] = {
+                "label": "Chao Phraya Estuary Daily Tide Bounds (Fort Phrachulachomklao)",
+                "value": f"Max: {high_info} | Min: {low_info}",
+                "unit": "m MSL (Time)",
+                "period": "Today Forecast",
+                "description": "Royal Thai Navy Predictive Tide Extremes (Station N03)"
+            }
+
+    return params if params else None
 
 
 def parse_dam_storage_bkk_region(html_text):
@@ -310,6 +368,8 @@ def extract_parameters(endpoint_key, content_type, body_text):
             return parse_pacific_heat_content(body_text)
         elif endpoint_key == "dam_storage":
             return parse_dam_storage_bkk_region(body_text)
+        elif endpoint_key == "chao_phraya_tide":
+            return parse_chao_phraya_tide(body_text)
     except Exception as e:
         return {"error": f"Parsing failed: {str(e)}"}
     return None
@@ -523,20 +583,56 @@ def extract_dams_data(summary_parameters):
     return dams
 
 
-def extract_paknam_gauge():
+def extract_paknam_gauge(summary_parameters):
     """
-    Tide gauge live endpoint is currently unavailable. Strictly report data as
-    unavailable without simulating or inventing numbers.
+    Extracts live sea level gauge telemetry (Station GLF001) and predictive tide bounds (Station N03)
+    from Chao Phraya Estuary / Fort Phrachulachomklao. Strictly reports data as unavailable
+    if the endpoint fetch fails.
     """
-    return {
+    paknam = {
         "water_level_msl": None,
         "tide_state": "Data Unavailable",
         "surge_risk": "N/A",
         "buffer_remaining_meters": None,
         "flood_wall_threshold_msl": 1.80,
+        "period": None,
         "status": "DATA_UNAVAILABLE",
         "message": "Pak Nam tide gauge endpoint is not available."
     }
+
+    if "chao_phraya_estuary_realtime_level" in summary_parameters:
+        try:
+            param_rt = summary_parameters["chao_phraya_estuary_realtime_level"]
+            val_str = param_rt["value"]
+            level_val = float(val_str)
+            threshold = 1.80
+            buffer_rem = round(threshold - level_val, 3)
+
+            if level_val >= 1.50:
+                surge_risk = "HIGH"
+            elif level_val >= 1.00:
+                surge_risk = "MODERATE"
+            else:
+                surge_risk = "LOW"
+
+            tide_state_str = "Live Gauge Telemetry"
+            if "chao_phraya_estuary_predicted_tide" in summary_parameters:
+                tide_state_str = summary_parameters["chao_phraya_estuary_predicted_tide"]["value"]
+
+            paknam = {
+                "water_level_msl": level_val,
+                "tide_state": tide_state_str,
+                "surge_risk": surge_risk,
+                "buffer_remaining_meters": buffer_rem,
+                "flood_wall_threshold_msl": threshold,
+                "period": param_rt.get("period"),
+                "status": "SUCCESS",
+                "message": "Pak Nam tide gauge telemetry active."
+            }
+        except (ValueError, KeyError):
+            pass
+
+    return paknam
 
 
 def compute_zones(tc):
@@ -668,7 +764,7 @@ def main():
 
     teleconnections = extract_numeric_teleconnections(all_summary_parameters)
     dams = extract_dams_data(all_summary_parameters)
-    paknam_gauge = extract_paknam_gauge()
+    paknam_gauge = extract_paknam_gauge(all_summary_parameters)
     zones = compute_zones(teleconnections)
 
     output_payload = {
@@ -682,9 +778,9 @@ def main():
         "teleconnections": teleconnections,
         "dams": dams,
         "paknam_gauge": paknam_gauge,
-        "zones": zones,
         "summary_parameters": all_summary_parameters,
-        "results": results
+        "results": results,
+        "zones": zones
     }
 
     if not is_live:
