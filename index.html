@@ -284,26 +284,26 @@
     <!-- Main Dashboard Workspace -->
     <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[600px]">
         
-        <!-- Left Sidebar: NORTHERN DAM STORAGE & PAK NAM SEA LEVEL GAUGE -->
-        <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-y-auto border border-slate-800/80 shadow-2xl space-y-4 p-4">
+        <!-- Left Sidebar: FULL THAILAND DAM STORAGE & PAK NAM SEA LEVEL GAUGE -->
+        <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-y-auto border border-slate-800/80 shadow-2xl space-y-4 p-4 max-h-[850px]">
             
-            <!-- SECTION 1: NORTHERN DAM STORAGE CAPACITY -->
+            <!-- SECTION 1: ALL THAILAND DAM STORAGE CAPACITIES -->
             <div class="space-y-3 border-b border-slate-800/80 pb-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-water text-cyan-400"></i>
-                        Upper Chao Phraya Dams
+                        Thailand Upstream Reservoirs
                     </h2>
                     <span id="dam-combined-badge" class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                        Combined: --%
+                        Chao Phraya 4-Dam: --%
                     </span>
                 </div>
-                <p class="text-[11px] text-slate-400">
-                    Northern upstream reservoir retention levels feeding the Chao Phraya River basin.
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    Upstream reservoir retention and usable capacity feeding Chao Phraya and Mae Klong basins (BKK & Samut Prakan salinity and flood buffer).
                 </p>
 
-                <!-- Bhumibol Dam Card -->
-                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-2">
+                <!-- 1. Bhumibol Dam -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-1.5">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-xs font-bold text-slate-200">Bhumibol Dam</h3>
@@ -313,17 +313,17 @@
                             --%
                         </span>
                     </div>
-                    <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
                         <div id="dam-bhumibol-bar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-700" style="width: 0%;"></div>
                     </div>
                     <div class="flex justify-between text-[10px] font-mono text-slate-400">
-                        <span>Capacity: 13,462 MCM</span>
+                        <span id="dam-bhumibol-unit">Cap: 13,462 MCM</span>
                         <span id="dam-bhumibol-val" class="font-bold text-slate-200">--% Storage</span>
                     </div>
                 </div>
 
-                <!-- Sirikit Dam Card -->
-                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-2">
+                <!-- 2. Sirikit Dam -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-1.5">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-xs font-bold text-slate-200">Sirikit Dam</h3>
@@ -333,14 +333,95 @@
                             --%
                         </span>
                     </div>
-                    <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
                         <div id="dam-sirikit-bar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700" style="width: 0%;"></div>
                     </div>
                     <div class="flex justify-between text-[10px] font-mono text-slate-400">
-                        <span>Capacity: 9,510 MCM</span>
+                        <span id="dam-sirikit-unit">Cap: 9,510 MCM</span>
                         <span id="dam-sirikit-val" class="font-bold text-slate-200">--% Storage</span>
                     </div>
                 </div>
+
+                <!-- 3. Kwai Noi Bamrung Dan Dam -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200">Kwai Noi Bamrung Dan Dam</h3>
+                            <p class="text-[10px] text-slate-400">Kwai Noi River (Phitsanulok)</p>
+                        </div>
+                        <span id="dam-kwai_noi-status" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-950/80 text-amber-400 border border-amber-800/60">
+                            --%
+                        </span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                        <div id="dam-kwai_noi-bar" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700" style="width: 0%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                        <span id="dam-kwai_noi-unit">Cap: 939 MCM</span>
+                        <span id="dam-kwai_noi-val" class="font-bold text-slate-200">--% Storage</span>
+                    </div>
+                </div>
+
+                <!-- 4. Pasak Jolasid Dam -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200">Pasak Jolasid Dam</h3>
+                            <p class="text-[10px] text-slate-400">Pasak River (Lopburi/Eastern BKK)</p>
+                        </div>
+                        <span id="dam-pasak-status" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-950/80 text-rose-400 border border-rose-800/60">
+                            --%
+                        </span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                        <div id="dam-pasak-bar" class="h-full bg-gradient-to-r from-rose-500 to-red-600 rounded-full transition-all duration-700" style="width: 0%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                        <span id="dam-pasak-unit">Cap: 872 MCM</span>
+                        <span id="dam-pasak-val" class="font-bold text-slate-200">--% Storage</span>
+                    </div>
+                </div>
+
+                <!-- 5. Srinagarind Dam (Mae Klong) -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200">Srinagarind Dam</h3>
+                            <p class="text-[10px] text-slate-400">Mae Klong Basin (Kanchanaburi)</p>
+                        </div>
+                        <span id="dam-srinagarind-status" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-950/80 text-rose-400 border border-rose-800/60">
+                            --%
+                        </span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                        <div id="dam-srinagarind-bar" class="h-full bg-gradient-to-r from-rose-500 to-red-600 rounded-full transition-all duration-700" style="width: 0%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                        <span id="dam-srinagarind-unit">Cap: 17,745 MCM</span>
+                        <span id="dam-srinagarind-val" class="font-bold text-slate-200">--% Storage</span>
+                    </div>
+                </div>
+
+                <!-- 6. Vajiralongkorn Dam (Mae Klong) -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800/80 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200">Vajiralongkorn Dam</h3>
+                            <p class="text-[10px] text-slate-400">Mae Klong Basin (Kanchanaburi)</p>
+                        </div>
+                        <span id="dam-vajiralongkorn-status" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-950/80 text-rose-400 border border-rose-800/60">
+                            --%
+                        </span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800 relative">
+                        <div id="dam-vajiralongkorn-bar" class="h-full bg-gradient-to-r from-rose-500 to-red-600 rounded-full transition-all duration-700" style="width: 0%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                        <span id="dam-vajiralongkorn-unit">Cap: 8,860 MCM</span>
+                        <span id="dam-vajiralongkorn-val" class="font-bold text-slate-200">--% Storage</span>
+                    </div>
+                </div>
+
             </div>
 
             <!-- SECTION 2: PAK NAM GULF SEA LEVEL ELEVATION GAUGE -->
@@ -579,7 +660,7 @@
                 </div>
             </div>
 
-            <!-- NOAA Live Walker Telemetry Factors Explanation Card -->
+            <!-- RESTORED: NOAA LIVE WALKER TELEMETRY FACTORS EXPLANATION CARD WITH DATA RANGES & COLOR CODING -->
             <div class="glass-panel p-4 rounded-xl shadow-xl space-y-3 border border-slate-800/80">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
                     <i class="fa-solid fa-book-open text-cyan-400"></i>
@@ -587,44 +668,80 @@
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                     
+                    <!-- Factor 1 -->
                     <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
-                        <div class="font-bold text-cyan-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-wind text-cyan-400"></i>
-                            850 hPa Trade Wind Anomaly (CPAC850)
+                        <div class="flex items-center justify-between">
+                            <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-wind text-cyan-400"></i>
+                                850 hPa Trade Wind Anomaly (CPAC850)
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-cyan-400 border border-slate-700">Range: -10 to +10 m/s</span>
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Measures lower-troposphere zonal wind anomaly across the Central Pacific (175°W–140°W) at ~1.5 km altitude. Per NOAA CPC index conventions, <strong>positive values indicate easterly wind anomalies</strong> and <strong>negative values indicate westerly wind anomalies</strong>.
+                            Measures lower-troposphere zonal wind anomaly across the Central Pacific (175°W–140°W) at ~1.5 km altitude. Per NOAA CPC index conventions:
                         </p>
+                        <ul class="text-[10px] space-y-1 text-slate-400 font-mono">
+                            <li><span class="text-cyan-400 font-bold">&gt; +1.5 m/s (La Niña Signal):</span> Strong easterly trade winds push warm ocean water westward toward Southeast Asia, amplifying monsoon rainfall in Northern/Central Thailand.</li>
+                            <li><span class="text-amber-400 font-bold">&lt; -1.5 m/s (El Niño Signal):</span> Westerly wind anomalies weaken trade winds, suppressing monsoon moisture transport and elevating drought risk.</li>
+                            <li><span class="text-slate-300 font-bold">-1.5 to +1.5 m/s:</span> Neutral trade wind conditions.</li>
+                        </ul>
                     </div>
 
+                    <!-- Factor 2 -->
                     <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
-                        <div class="font-bold text-cyan-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-arrows-left-right-to-line text-cyan-400"></i>
-                            Tahiti-Darwin Southern Oscillation Index (SOI)
+                        <div class="flex items-center justify-between">
+                            <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-arrows-left-right-to-line text-cyan-400"></i>
+                                Tahiti-Darwin Southern Oscillation Index (SOI)
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-cyan-400 border border-slate-700">Range: -3.0 to +3.0</span>
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Calculates standardized air pressure differences between Tahiti (East Pacific) and Darwin, Australia (West Pacific). Standardized monthly values typically range from <strong>-3.0 to +3.0</strong>.
+                            Calculates standardized air pressure differences between Tahiti (East Pacific) and Darwin, Australia (West Pacific). Standardized monthly values:
                         </p>
+                        <ul class="text-[10px] space-y-1 text-slate-400 font-mono">
+                            <li><span class="text-cyan-400 font-bold">&gt; +0.8 (La Niña Phase):</span> High pressure over East Pacific and low pressure over Indonesia/Thailand drives Walker cell rising branch directly over the Gulf of Thailand.</li>
+                            <li><span class="text-amber-400 font-bold">&lt; -0.8 (El Niño Phase):</span> Low pressure shifts eastward into the Central Pacific, creating atmospheric subsidence and dry conditions over Indochina.</li>
+                            <li><span class="text-slate-300 font-bold">-0.8 to +0.8:</span> Neutral atmospheric pressure gradient.</li>
+                        </ul>
                     </div>
 
+                    <!-- Factor 3 -->
                     <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
-                        <div class="font-bold text-cyan-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-cloud-sun-rain text-cyan-400"></i>
-                            Central Pacific OLR Anomaly (Outgoing Longwave Radiation)
+                        <div class="flex items-center justify-between">
+                            <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-cloud-sun-rain text-cyan-400"></i>
+                                Central Pacific OLR Anomaly (Outgoing Longwave)
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-cyan-400 border border-slate-700">Range: -50 to +50 W/m²</span>
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Measures thermal radiation emitted into space from the equatorial atmosphere. Anomaly values typically range from <strong>-50 W/m² to +50 W/m²</strong>.
+                            Measures thermal radiation emitted into space from the equatorial atmosphere (160°E–160°W). Anomaly values:
                         </p>
+                        <ul class="text-[10px] space-y-1 text-slate-400 font-mono">
+                            <li><span class="text-cyan-400 font-bold">&gt; +10 W/m² (Suppressed CPAC Cloudiness):</span> Clear skies in Central Pacific correspond to enhanced convection and heavy monsoon cloud buildup over Thailand.</li>
+                            <li><span class="text-amber-400 font-bold">&lt; -10 W/m² (Enhanced CPAC Cloudiness):</span> Deep convective clouds shift eastward to Central Pacific, starving the Asian monsoon of moisture.</li>
+                            <li><span class="text-slate-300 font-bold">-10 to +10 W/m²:</span> Normal equatorial cloud coverage.</li>
+                        </ul>
                     </div>
 
+                    <!-- Factor 4 -->
                     <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-2">
-                        <div class="font-bold text-cyan-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-temperature-three-quarters text-cyan-400"></i>
-                            0-300m Upper Ocean Heat Content Anomaly
+                        <div class="flex items-center justify-between">
+                            <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-temperature-three-quarters text-cyan-400"></i>
+                                0-300m Upper Ocean Heat Content Anomaly
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-cyan-400 border border-slate-700">Range: -4.0 to +4.0 °C</span>
                         </div>
                         <p class="text-slate-300 leading-relaxed text-[11px]">
-                            Quantifies total thermal energy stored in the upper 300 meters of the Equatorial Pacific. Anomaly values typically range from <strong>-4.0 °C to +4.0 °C</strong>.
+                            Quantifies total thermal energy stored in the upper 300 meters of the Equatorial Pacific ocean (180°W–100°W):
                         </p>
+                        <ul class="text-[10px] space-y-1 text-slate-400 font-mono">
+                            <li><span class="text-cyan-400 font-bold">&lt; -0.5 °C (Subsurface Cold Pool):</span> Thermocline shallowing in East Pacific sustains La Niña conditions and prolonged wet spells in Greater Bangkok.</li>
+                            <li><span class="text-amber-400 font-bold">&gt; +0.5 °C (Subsurface Warm Pool):</span> Subsurface warm kelvin waves propagate eastward, maintaining El Niño warming and lower dam inflows.</li>
+                            <li><span class="text-slate-300 font-bold">-0.5 to +0.5 °C:</span> Normal subsurface oceanic thermal state.</li>
+                        </ul>
                     </div>
 
                 </div>
@@ -845,45 +962,57 @@
                     document.getElementById('teleconnection-text').innerText = topBarText;
                 }
 
-                // POPULATE NORTHERN DAMS TELEMETRY (GRACEFUL NULL HANDLING)
+                // POPULATE ALL 6 THAILAND DAMS + COMBINED STORAGE TELEMETRY (GRACEFUL NULL HANDLING)
                 if (liveData.dams) {
                     APP_STATE.dams = liveData.dams;
                     const dams = liveData.dams;
 
                     const combinedStr = (dams.combined_chao_phraya_storage_pct !== null && dams.combined_chao_phraya_storage_pct !== undefined)
-                        ? `Combined: ${dams.combined_chao_phraya_storage_pct}%`
-                        : 'Combined: N/A';
+                        ? `Chao Phraya 4-Dam: ${dams.combined_chao_phraya_storage_pct}%`
+                        : 'Chao Phraya 4-Dam: N/A';
                     document.getElementById('dam-combined-badge').innerText = combinedStr;
 
-                    if (dams.bhumibol && dams.bhumibol.current_storage_pct !== null && dams.bhumibol.current_storage_pct !== undefined) {
-                        const bPct = dams.bhumibol.current_storage_pct;
-                        document.getElementById('dam-bhumibol-val').innerText = `${bPct}% Storage`;
-                        document.getElementById('dam-bhumibol-status').innerText = dams.bhumibol.status || 'N/A';
-                        document.getElementById('dam-bhumibol-bar').style.width = `${Math.min(100, bPct)}%`;
-                    } else {
-                        document.getElementById('dam-bhumibol-val').innerText = 'Data Unavailable';
-                        document.getElementById('dam-bhumibol-status').innerText = 'N/A';
-                        document.getElementById('dam-bhumibol-bar').style.width = '0%';
-                    }
+                    const damKeys = ['bhumibol', 'sirikit', 'kwai_noi', 'pasak', 'srinagarind', 'vajiralongkorn'];
+                    
+                    damKeys.forEach(k => {
+                        const valEl = document.getElementById(`dam-${k}-val`);
+                        const statusEl = document.getElementById(`dam-${k}-status`);
+                        const barEl = document.getElementById(`dam-${k}-bar`);
 
-                    if (dams.sirikit && dams.sirikit.current_storage_pct !== null && dams.sirikit.current_storage_pct !== undefined) {
-                        const sPct = dams.sirikit.current_storage_pct;
-                        document.getElementById('dam-sirikit-val').innerText = `${sPct}% Storage`;
-                        document.getElementById('dam-sirikit-status').innerText = dams.sirikit.status || 'N/A';
-                        document.getElementById('dam-sirikit-bar').style.width = `${Math.min(100, sPct)}%`;
-                    } else {
-                        document.getElementById('dam-sirikit-val').innerText = 'Data Unavailable';
-                        document.getElementById('dam-sirikit-status').innerText = 'N/A';
-                        document.getElementById('dam-sirikit-bar').style.width = '0%';
-                    }
+                        if (dams[k] && dams[k].current_storage_pct !== null && dams[k].current_storage_pct !== undefined) {
+                            const pct = dams[k].current_storage_pct;
+                            if (valEl) valEl.innerText = `${pct.toFixed(1)}% Storage`;
+                            if (statusEl) statusEl.innerText = dams[k].status || `${pct.toFixed(1)}%`;
+                            if (barEl) barEl.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+
+                            // Dynamic Color Coding based on Storage Level
+                            if (barEl) {
+                                if (pct >= 90.0) {
+                                    barEl.className = 'h-full bg-gradient-to-r from-rose-500 to-red-600 rounded-full transition-all duration-700';
+                                } else if (pct >= 80.0) {
+                                    barEl.className = 'h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-700';
+                                } else if (pct >= 30.0) {
+                                    barEl.className = 'h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-700';
+                                } else {
+                                    barEl.className = 'h-full bg-gradient-to-r from-amber-600 to-yellow-500 rounded-full transition-all duration-700';
+                                }
+                            }
+                        } else {
+                            if (valEl) valEl.innerText = 'Data Unavailable';
+                            if (statusEl) statusEl.innerText = 'N/A';
+                            if (barEl) barEl.style.width = '0%';
+                        }
+                    });
                 } else {
-                    document.getElementById('dam-combined-badge').innerText = 'Combined: N/A';
-                    document.getElementById('dam-bhumibol-val').innerText = 'Data Unavailable';
-                    document.getElementById('dam-bhumibol-status').innerText = 'N/A';
-                    document.getElementById('dam-bhumibol-bar').style.width = '0%';
-                    document.getElementById('dam-sirikit-val').innerText = 'Data Unavailable';
-                    document.getElementById('dam-sirikit-status').innerText = 'N/A';
-                    document.getElementById('dam-sirikit-bar').style.width = '0%';
+                    document.getElementById('dam-combined-badge').innerText = 'Chao Phraya 4-Dam: N/A';
+                    ['bhumibol', 'sirikit', 'kwai_noi', 'pasak', 'srinagarind', 'vajiralongkorn'].forEach(k => {
+                        const valEl = document.getElementById(`dam-${k}-val`);
+                        const statusEl = document.getElementById(`dam-${k}-status`);
+                        const barEl = document.getElementById(`dam-${k}-bar`);
+                        if (valEl) valEl.innerText = 'Data Unavailable';
+                        if (statusEl) statusEl.innerText = 'N/A';
+                        if (barEl) barEl.style.width = '0%';
+                    });
                 }
 
                 // POPULATE PAK NAM SEA LEVEL ELEVATION GAUGE (GRACEFUL NULL HANDLING)
