@@ -759,8 +759,9 @@
 
                 if (liveData.is_live === false || liveData.status === "FETCH_FAILED") {
                     if (alertBanner) alertBanner.classList.remove('hidden');
-                    if (alertText) alertText.innerText = liveData.error_message || 'Live telemetry could not be updated. Data has not been refreshed.';
-                    if (alertTime) alertTime.innerText = `Attempted: ${liveData.updated_at_utc ? new Date(liveData.updated_at_utc).toLocaleTimeString() : 'N/A'}`;
+                    if (alertText) alertText.innerText = liveData.error_message || 'Live telemetry could not be updated from endpoints. Data has not been updated.';
+                    const stamp = liveData.updated_at_utc || liveData.timestamp_utc;
+                    if (alertTime) alertTime.innerText = `Attempted: ${stamp ? new Date(stamp).toLocaleTimeString() : 'N/A'}`;
                     console.warn('Backend reported telemetry fetch failure:', liveData.error_message);
                     return;
                 }
