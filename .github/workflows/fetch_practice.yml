@@ -1,4 +1,4 @@
-name: Practice Fetch NOAA SST Indices
+name: Practice Fetch
 
 on:
   workflow_dispatch:
