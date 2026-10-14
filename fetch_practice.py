@@ -14,7 +14,6 @@ import time
 import re
 import urllib.request
 import urllib.error
-from html.parser import HTMLParser
 from datetime import datetime, timezone
 
 OUTPUT_FILE = "data_practice.json"
@@ -63,59 +62,10 @@ ENDPOINTS = [
 ]
 
 
-class DamHTMLTableParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.tables = []
-        self.current_table = []
-        self.current_row = []
-        self.current_cell = []
-        self.in_table = False
-        self.in_tr = False
-        self.in_cell = False
-        self.ignore_content = False
-
-    def handle_starttag(self, tag, attrs):
-        tag = tag.lower()
-        if tag in ("script", "style"):
-            self.ignore_content = True
-        elif tag == "table":
-            self.in_table = True
-            self.current_table = []
-        elif tag == "tr" and self.in_table:
-            self.in_tr = True
-            self.current_row = []
-        elif tag in ("td", "th") and self.in_tr:
-            self.in_cell = True
-            self.current_cell = []
-
-    def handle_endtag(self, tag):
-        tag = tag.lower()
-        if tag in ("script", "style"):
-            self.ignore_content = False
-        elif tag == "table":
-            self.in_table = False
-            if self.current_table:
-                self.tables.append(self.current_table)
-        elif tag == "tr" and self.in_table:
-            self.in_tr = False
-            if self.current_row:
-                self.current_table.append(self.current_row)
-        elif tag in ("td", "th") and self.in_tr:
-            self.in_cell = False
-            cell_text = " ".join("".join(self.current_cell).split())
-            if cell_text:
-                self.current_row.append(cell_text)
-
-    def handle_data(self, data):
-        if self.in_cell and not self.ignore_content:
-            self.current_cell.append(data)
-
-
 def parse_dam_storage_bkk_region(html_text):
     """
-    Parses reservoir storage from HII HTML report using exact column mapping
-    from 'dam_dump.html' for dams influencing Bangkok and Samut Prakan.
+    Parses reservoir storage directly from raw line text to handle malformed HTML
+    from HII (unclosed <tr> tags) without DOM parser dependencies.
     """
     target_dams = {
         "bhumibol": {
@@ -156,41 +106,37 @@ def parse_dam_storage_bkk_region(html_text):
         }
     }
 
-    rows = []
-    try:
-        from bs4 import BeautifulSoup
-        soup = BeautifulSoup(html_text, "html.parser")
-        for tr in soup.find_all("tr"):
-            cells = [td.get_text(strip=True) for td in tr.find_all(["td", "th"]) if td.get_text(strip=True)]
-            if cells:
-                rows.append(cells)
-    except ImportError:
-        parser = DamHTMLTableParser()
-        parser.feed(html_text)
-        for tbl in parser.tables:
-            rows.extend(tbl)
+    # Normalize line breaks and html entities
+    clean_html = html_text.replace("&nbsp;", " ").replace("<tr", "\n<tr")
 
     parsed_dams = {}
 
-    for row in rows:
-        row_str = " ".join(row).lower()
-        for dam_key, dam_meta in target_dams.items():
-            if dam_key not in parsed_dams and any(kw in row_str for kw in dam_meta["keywords"]):
-                numbers = []
-                for cell in row:
-                    matches = re.findall(r'[-+]?\d+(?:,\d{3})*(?:\.\d+)?', cell)
-                    for m in matches:
-                        try:
-                            numbers.append(float(m.replace(",", "")))
-                        except ValueError:
-                            pass
+    for line in clean_html.splitlines():
+        # Strip all HTML tags from the individual line
+        plain_text = re.sub(r"<[^>]+>", " ", line)
+        plain_text_lower = " ".join(plain_text.split()).lower()
 
-                # Matching layout: [0:Cap, 1:LastYear, 2:PresentMCM, 3:PresentPct, 4:UsableMCM, 5:UsablePct]
+        if not plain_text_lower:
+            continue
+
+        for dam_key, dam_meta in target_dams.items():
+            if dam_key not in parsed_dams and any(kw in plain_text_lower for kw in dam_meta["keywords"]):
+                # Extract all floating point / integer numbers from the plain line
+                matches = re.findall(r'[-+]?\d+(?:,\d{3})*(?:\.\d+)?', plain_text)
+                numbers = []
+                for m in matches:
+                    try:
+                        numbers.append(float(m.replace(",", "")))
+                    except ValueError:
+                        pass
+
+                # HII Number sequence per line:
+                # [0: Cap MCM, 1: LastYear MCM, 2: PresentStorage MCM, 3: PresentStorage %, 4: Usable MCM, 5: Usable %]
                 if len(numbers) >= 5:
                     cap = numbers[0]
                     storage_mcm = numbers[2]
                     storage_pct = numbers[3]
-                    usable_mcm = numbers[4] if len(numbers) >= 5 else 0.0
+                    usable_mcm = numbers[4]
 
                     parsed_dams[dam_key] = {
                         "label": dam_meta["label"],
