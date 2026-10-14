@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Endpoints Fetch Practice Verification</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success-bg: #064e3b;
+      --success-fg: #34d399;
+      --fail-bg: #7f1d1d;
+      --fail-fg: #f87171;
+      --accent: #38bdf8;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.75rem;
+    }
+
+    .meta-bar {
+      display: flex;
+      gap: 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .card-num {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-top: 0.25rem;
+    }
+
+    .results-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .result-item {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .endpoint-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0 0 0.25rem 0;
+    }
+
+    .endpoint-url {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      word-break: break-all;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .badge-success { background-color: var(--success-bg); color: var(--success-fg); }
+    .badge-fail { background-color: var(--fail-bg); color: var(--fail-fg); }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+      background: #0f172a80;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    pre {
+      background-color: #090d16;
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      color: #e2e8f0;
+      margin: 0;
+    }
+
+    .error-box {
+      color: var(--fail-fg);
+      background-color: var(--fail-bg);
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    .alert-failed {
+      background-color: var(--fail-bg);
+      border: 1px solid var(--fail-fg);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Weather Endpoints Fetch Practice Verification</h1>
+      <div class="meta-bar">
+        <span>Target Repository Diagnostic Test</span>
+        <span id="last-run">Loading...</span>
+      </div>
+    </header>
+
+    <div id="fetch-error-banner"></div>
+
+    <div class="summary-cards">
+      <div class="card">
+        <span class="detail-label">TOTAL ENDPOINTS</span>
+        <div class="card-num" id="total-cnt">-</div>
+      </div>
+      <div class="card">
+        <span class="detail-label">SUCCESSFUL FETCHES</span>
+        <div class="card-num" style="color: var(--success-fg);" id="success-cnt">-</div>
+      </div>
+      <div class="card">
+        <span class="detail-label">FAILED FETCHES</span>
+        <div class="card-num" style="color: var(--fail-fg);" id="fail-cnt">-</div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="results-container">
+      <p style="color: var(--text-muted);">Loading fetch diagnostic data...</p>
+    </div>
+  </div>
+
+  <script>
+    async function loadResults() {
+      const container = document.getElementById('results-container');
+      const banner = document.getElementById('fetch-error-banner');
+
+      try {
+        const response = await fetch('practice_results.json');
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: Failed to load practice_results.json`);
+        }
+
+        const data = await response.json();
+
+        // Render Summary Counters
+        document.getElementById('last-run').innerText = `Last Executed (UTC): ${new Date(data.timestamp_utc).toUTCString()}`;
+        document.getElementById('total-cnt').innerText = data.total_endpoints;
+        document.getElementById('success-cnt').innerText = data.successful_count;
+        document.getElementById('fail-cnt').innerText = data.failed_count;
+
+        if (data.failed_count > 0) {
+          banner.innerHTML = `
+            <div class="alert-failed">
+              <strong>Warning:</strong> ${data.failed_count} endpoint(s) failed to fetch during the last GitHub workflow run. Review details below.
+            </div>`;
+        }
+
+        container.innerHTML = '';
+
+        // Render Individual Endpoints
+        data.results.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'result-item';
+
+          const headerHTML = `
+            <div class="result-header">
+              <div>
+                <h2 class="endpoint-title">${escapeHtml(item.name)}</h2>
+                <div class="endpoint-url"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="color:inherit;">${escapeHtml(item.url)}</a></div>
+              </div>
+              <span class="badge ${item.success ? 'badge-success' : 'badge-fail'}">
+                ${item.success ? 'SUCCESS' : 'FAILED'}
+              </span>
+            </div>
+          `;
+
+          let contentHTML = '';
+          if (item.success) {
+            contentHTML = `
+              <div class="details-grid">
+                <div>
+                  <span class="detail-label">STATUS CODE</span>
+                  <strong>${item.status_code} OK</strong>
+                </div>
+                <div>
+                  <span class="detail-label">DETECTED FORMAT</span>
+                  <strong>${escapeHtml(item.data_format)}</strong>
+                </div>
+                <div>
+                  <span class="detail-label">PAYLOAD SIZE</span>
+                  <strong>${(item.size_bytes / 1024).toFixed(1)} KB</strong>
+                </div>
+                <div>
+                  <span class="detail-label">TOTAL LINES</span>
+                  <strong>${item.line_count.toLocaleString()}</strong>
+                </div>
+                <div>
+                  <span class="detail-label">LATENCY</span>
+                  <strong>${item.response_time_sec}s</strong>
+                </div>
+              </div>
+              <div>
+                <span class="detail-label" style="margin-bottom:0.25rem;">DATA FORMAT / HEADER PREVIEW (FIRST NON-EMPTY LINES)</span>
+                <pre>${escapeHtml(item.sample_preview.join('\n'))}</pre>
+              </div>
+            `;
+          } else {
+            contentHTML = `
+              <div class="error-box">
+                <strong>Fetch Failure Cause:</strong> ${escapeHtml(item.error || 'Unknown error occurred')}
+              </div>
+            `;
+          }
+
+          card.innerHTML = headerHTML + contentHTML;
+          container.appendChild(card);
+        });
+
+      } catch (err) {
+        banner.innerHTML = `
+          <div class="alert-failed">
+            <strong>Data Fetch Error:</strong> Unable to display practice results. Verify that <code>fetch_practice.py</code> has executed successfully and generated <code>practice_results.json</code>.<br>
+            <small style="opacity: 0.8;">Details: ${escapeHtml(err.message)}</small>
+          </div>`;
+        container.innerHTML = '';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    window.addEventListener('DOMContentLoaded', loadResults);
+  </script>
+</body>
+</html>
