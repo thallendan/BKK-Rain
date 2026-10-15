@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-14T11:14:09.286481+00:00",
+  "timestamp_utc": "2026-10-15T10:53:42.541815+00:00",
   "total_endpoints": 8,
   "successful_count": 8,
   "failed_count": 0,
@@ -13,9 +13,9 @@
     },
     "mjo_phase_amp": {
       "label": "MJO (Phase & Amplitude)",
-      "value": "Phase 1 (Amp 1.44)",
+      "value": "Phase 1 (Amp 1.39)",
       "unit": "index",
-      "period": "2026-10-12",
+      "period": "2026-10-13",
       "description": "Madden-Julian Oscillation Index"
     },
     "iod_dmi_index": {
@@ -55,50 +55,50 @@
     },
     "chao_phraya_4dam_combined": {
       "label": "Chao Phraya 4-Dam Combined Storage",
-      "value": "75.7%",
-      "unit": "18,773 / 24,783 MCM (Usable: 12,065 MCM)",
+      "value": "75.8%",
+      "unit": "18,790 / 24,783 MCM (Usable: 12,083 MCM)",
       "period": "Latest Report",
       "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
     },
     "dam_bhumibol": {
       "label": "Bhumibol Dam (Ping River)",
       "value": "70.0%",
-      "unit": "9,411 / 13,462 MCM (Usable: 5,611 MCM)",
+      "unit": "9,431 / 13,462 MCM (Usable: 5,631 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_sirikit": {
       "label": "Sirikit Dam (Nan River)",
       "value": "82.0%",
-      "unit": "7,765 / 9,510 MCM (Usable: 4,915 MCM)",
+      "unit": "7,767 / 9,510 MCM (Usable: 4,917 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_kwai_noi": {
       "label": "Kwai Noi Bamrung Dan Dam",
       "value": "84.0%",
-      "unit": "785 / 939 MCM (Usable: 742 MCM)",
+      "unit": "788 / 939 MCM (Usable: 745 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Mid-Basin Flow Regulation"
     },
     "dam_pasak": {
       "label": "Pasak Jolasid Dam (Pasak River)",
-      "value": "93.0%",
-      "unit": "812 / 872 MCM (Usable: 797 MCM)",
+      "value": "92.0%",
+      "unit": "804 / 872 MCM (Usable: 790 MCM)",
       "period": "Latest Report",
       "description": "Lower Chao Phraya / Eastern BKK Flow Buffer"
     },
     "dam_srinagarind": {
       "label": "Srinagarind Dam (Mae Klong Basin)",
       "value": "98.0%",
-      "unit": "17,337 / 17,745 MCM (Usable: 7,072 MCM)",
+      "unit": "17,432 / 17,745 MCM (Usable: 7,167 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
     "dam_vajiralongkorn": {
       "label": "Vajiralongkorn Dam (Mae Klong Basin)",
       "value": "97.0%",
-      "unit": "8,606 / 8,860 MCM (Usable: 5,594 MCM)",
+      "unit": "8,591 / 8,860 MCM (Usable: 5,579 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     }
@@ -111,7 +111,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.377,
+      "response_time_sec": 0.415,
       "size_bytes": 39272,
       "line_count": 538,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -134,9 +134,9 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.426,
-      "size_bytes": 2735420,
-      "line_count": 19129,
+      "response_time_sec": 1.212,
+      "size_bytes": 2735563,
+      "line_count": 19130,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
       "sample_preview": [
         " RMM values up to \"real time\". 19740601-20131231: Both SST1 variability (ENSO) and 120-day mean have been removed in these RMM values; 20140101-: Only the 120-day has been removed.",
@@ -157,7 +157,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.214,
+      "response_time_sec": 0.173,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -180,7 +180,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.349,
+      "response_time_sec": 0.374,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -203,7 +203,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.354,
+      "response_time_sec": 0.336,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -226,7 +226,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.349,
+      "response_time_sec": 0.375,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -249,7 +249,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.371,
+      "response_time_sec": 0.289,
       "size_bytes": 23053,
       "line_count": 575,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -272,14 +272,14 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.365,
-      "size_bytes": 52049,
+      "response_time_sec": 1.137,
+      "size_bytes": 52054,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
         "<html>",
         "\t<head>",
-        "\t\t<title>Summary table of large reservoir storage conditions14  2569</title>",
+        "\t\t<title>Summary table of large reservoir storage conditions15  2569</title>",
         "\t\t<META http-equiv='Content-Type' content='text/html;charset=UTF-8'>",
         "<style type='text/css'>",
         "body {  font-family: Arial, Helvetica, sans-serif; font-size: 8pt}",
