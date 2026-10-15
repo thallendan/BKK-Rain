@@ -3,7 +3,7 @@
 fetch_rain_practice.py
 
 Fetches live 24-hour rainfall telemetry from ThaiWater v3 public API:
-https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain_24
+https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain_24h
 
 Saves:
 1. 'rain_dump.json' - Full raw JSON response payload.
@@ -18,7 +18,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
-RAIN_URL = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain_24"
+RAIN_URL = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain_24h"
 
 
 def main():
