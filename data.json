@@ -1,6 +1,6 @@
 {
-  "timestamp_utc": "2026-10-26T11:56:44.493582+00:00",
-  "updated_at_utc": "2026-10-26T11:56:44.493582+00:00",
+  "timestamp_utc": "2026-10-26T18:08:30.392454+00:00",
+  "updated_at_utc": "2026-10-26T18:08:30.392454+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
@@ -8,7 +8,7 @@
   "failed_count": 0,
   "teleconnections": {
     "enso": 2.84,
-    "iod": 0.15,
+    "iod": 0.54,
     "mjo_phase": 2,
     "mjo_amplitude": 1.13,
     "cpac850_trade_winds": -3.0,
@@ -44,12 +44,12 @@
     }
   },
   "paknam_gauge": {
-    "water_level_msl": 0.739,
+    "water_level_msl": -1.027,
     "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
     "surge_risk": "LOW",
-    "buffer_remaining_meters": 1.061,
+    "buffer_remaining_meters": 2.827,
     "flood_wall_threshold_msl": 1.8,
-    "period": "2026-10-26 18:50",
+    "period": "2026-10-27 01:00",
     "status": "SUCCESS",
     "message": "Pak Nam tide gauge telemetry active."
   },
@@ -70,9 +70,9 @@
     },
     "iod_dmi_index": {
       "label": "Indian Ocean Dipole (DMI)",
-      "value": "+0.15",
+      "value": "+0.54",
       "unit": "°C",
-      "period": "2026-May",
+      "period": "2026-Jul",
       "description": "Equatorial Indian Ocean SST Gradient"
     },
     "cpac850_wind_index": {
@@ -154,9 +154,9 @@
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "+0.739",
+      "value": "-1.027",
       "unit": "m MSL",
-      "period": "2026-10-26 18:50",
+      "period": "2026-10-27 01:00",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -175,7 +175,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.377,
+      "response_time_sec": 0.21,
       "size_bytes": 39272,
       "line_count": 538,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -198,7 +198,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.422,
+      "response_time_sec": 0.487,
       "size_bytes": 2737136,
       "line_count": 19141,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -221,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.221,
+      "response_time_sec": 0.226,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -244,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.445,
+      "response_time_sec": 0.235,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -267,7 +267,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.425,
+      "response_time_sec": 0.197,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -290,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.524,
+      "response_time_sec": 0.208,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -313,7 +313,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.41,
+      "response_time_sec": 0.154,
       "size_bytes": 23053,
       "line_count": 575,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -336,7 +336,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 0.882,
+      "response_time_sec": 1.865,
       "size_bytes": 52048,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
@@ -359,8 +359,8 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 7.161,
-      "size_bytes": 70225,
+      "response_time_sec": 9.058,
+      "size_bytes": 70227,
       "line_count": 1031,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
@@ -385,8 +385,8 @@
       "lon": 100.5,
       "mjo_effect": -7.5,
       "enso_effect": -34.1,
-      "iod_effect": -1.2,
-      "net_anomaly": -42.8,
+      "iod_effect": -4.3,
+      "net_anomaly": -45.9,
       "mechanics": "Lower basin urban flood vulnerability driven by upstream river discharge and tidal backflow."
     },
     {
@@ -397,8 +397,8 @@
       "lon": 98.97,
       "mjo_effect": -6.1,
       "enso_effect": -37.5,
-      "iod_effect": -1.5,
-      "net_anomaly": -45.1,
+      "iod_effect": -5.4,
+      "net_anomaly": -49.0,
       "mechanics": "Northern mountain catchments feeding Bhumibol Reservoir."
     },
     {
@@ -409,8 +409,8 @@
       "lon": 100.56,
       "mjo_effect": -6.8,
       "enso_effect": -37.5,
-      "iod_effect": -1.4,
-      "net_anomaly": -45.7,
+      "iod_effect": -4.9,
+      "net_anomaly": -49.2,
       "mechanics": "Northeastern headwater catchments feeding Sirikit Dam reservoir storage."
     },
     {
@@ -421,8 +421,8 @@
       "lon": 101.1,
       "mjo_effect": -6.8,
       "enso_effect": -30.7,
-      "iod_effect": -1.7,
-      "net_anomaly": -39.2,
+      "iod_effect": -5.9,
+      "net_anomaly": -43.4,
       "mechanics": "Mid-basin flood risk zone and agricultural buffer for Greater Bangkok."
     },
     {
@@ -433,8 +433,8 @@
       "lon": 99.53,
       "mjo_effect": -5.4,
       "enso_effect": -34.1,
-      "iod_effect": -1.8,
-      "net_anomaly": -41.3,
+      "iod_effect": -6.5,
+      "net_anomaly": -46.0,
       "mechanics": "Western headwater system providing freshwater push for Bangkok salinity suppression."
     },
     {
@@ -445,8 +445,8 @@
       "lon": 101.2,
       "mjo_effect": -8.1,
       "enso_effect": -27.3,
-      "iod_effect": -1.4,
-      "net_anomaly": -36.8,
+      "iod_effect": -4.9,
+      "net_anomaly": -40.3,
       "mechanics": "Eastern Gulf coastal monsoon surge region."
     }
   ]
