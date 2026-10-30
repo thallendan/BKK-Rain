@@ -1,6 +1,6 @@
 {
-  "timestamp_utc": "2026-10-29T18:17:31.127086+00:00",
-  "updated_at_utc": "2026-10-29T18:17:31.127086+00:00",
+  "timestamp_utc": "2026-10-30T03:42:51.514596+00:00",
+  "updated_at_utc": "2026-10-30T03:42:51.514596+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
@@ -10,7 +10,7 @@
     "enso": 2.84,
     "iod": 0.54,
     "mjo_phase": 2,
-    "mjo_amplitude": 1.4,
+    "mjo_amplitude": 1.39,
     "cpac850_trade_winds": -3.0,
     "soi": -2.0,
     "olr": -1.0,
@@ -23,16 +23,16 @@
       "status": "71.0%"
     },
     "sirikit": {
-      "current_storage_pct": 82.0,
-      "status": "82.0%"
+      "current_storage_pct": 81.0,
+      "status": "81.0%"
     },
     "kwai_noi": {
       "current_storage_pct": 86.0,
       "status": "86.0%"
     },
     "pasak": {
-      "current_storage_pct": 93.0,
-      "status": "93.0%"
+      "current_storage_pct": 94.0,
+      "status": "94.0%"
     },
     "srinagarind": {
       "current_storage_pct": 98.0,
@@ -44,12 +44,12 @@
     }
   },
   "paknam_gauge": {
-    "water_level_msl": -1.377,
+    "water_level_msl": 1.642,
     "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
-    "surge_risk": "LOW",
-    "buffer_remaining_meters": 3.177,
+    "surge_risk": "HIGH",
+    "buffer_remaining_meters": 0.158,
     "flood_wall_threshold_msl": 1.8,
-    "period": "2026-10-30 01:10",
+    "period": "2026-10-30 10:40",
     "status": "SUCCESS",
     "message": "Pak Nam tide gauge telemetry active."
   },
@@ -63,9 +63,9 @@
     },
     "mjo_phase_amp": {
       "label": "MJO (Phase & Amplitude)",
-      "value": "Phase 2 (Amp 1.40)",
+      "value": "Phase 2 (Amp 1.39)",
       "unit": "index",
-      "period": "2026-10-27",
+      "period": "2026-10-28",
       "description": "Madden-Julian Oscillation Index"
     },
     "iod_dmi_index": {
@@ -106,57 +106,57 @@
     "chao_phraya_4dam_combined": {
       "label": "Chao Phraya 4-Dam Combined Storage",
       "value": "76.5%",
-      "unit": "18,966 / 24,783 MCM (Usable: 12,259 MCM)",
+      "unit": "18,964 / 24,783 MCM (Usable: 12,256 MCM)",
       "period": "Latest Report",
       "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
     },
     "dam_bhumibol": {
       "label": "Bhumibol Dam (Ping River)",
       "value": "71.0%",
-      "unit": "9,586 / 13,462 MCM (Usable: 5,786 MCM)",
+      "unit": "9,589 / 13,462 MCM (Usable: 5,789 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_sirikit": {
       "label": "Sirikit Dam (Nan River)",
-      "value": "82.0%",
-      "unit": "7,758 / 9,510 MCM (Usable: 4,908 MCM)",
+      "value": "81.0%",
+      "unit": "7,749 / 9,510 MCM (Usable: 4,899 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_kwai_noi": {
       "label": "Kwai Noi Bamrung Dan Dam",
       "value": "86.0%",
-      "unit": "809 / 939 MCM (Usable: 766 MCM)",
+      "unit": "811 / 939 MCM (Usable: 768 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Mid-Basin Flow Regulation"
     },
     "dam_pasak": {
       "label": "Pasak Jolasid Dam (Pasak River)",
-      "value": "93.0%",
-      "unit": "813 / 872 MCM (Usable: 799 MCM)",
+      "value": "94.0%",
+      "unit": "815 / 872 MCM (Usable: 800 MCM)",
       "period": "Latest Report",
       "description": "Lower Chao Phraya / Eastern BKK Flow Buffer"
     },
     "dam_srinagarind": {
       "label": "Srinagarind Dam (Mae Klong Basin)",
       "value": "98.0%",
-      "unit": "17,474 / 17,745 MCM (Usable: 7,209 MCM)",
+      "unit": "17,445 / 17,745 MCM (Usable: 7,180 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
     "dam_vajiralongkorn": {
       "label": "Vajiralongkorn Dam (Mae Klong Basin)",
       "value": "97.0%",
-      "unit": "8,591 / 8,860 MCM (Usable: 5,579 MCM)",
+      "unit": "8,583 / 8,860 MCM (Usable: 5,571 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "-1.377",
+      "value": "+1.642",
       "unit": "m MSL",
-      "period": "2026-10-30 01:10",
+      "period": "2026-10-30 10:40",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -175,7 +175,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.149,
+      "response_time_sec": 0.293,
       "size_bytes": 39272,
       "line_count": 538,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -198,9 +198,9 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.52,
-      "size_bytes": 2737565,
-      "line_count": 19144,
+      "response_time_sec": 0.737,
+      "size_bytes": 2737708,
+      "line_count": 19145,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
       "sample_preview": [
         " RMM values up to \"real time\". 19740601-20131231: Both SST1 variability (ENSO) and 120-day mean have been removed in these RMM values; 20140101-: Only the 120-day has been removed.",
@@ -221,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.235,
+      "response_time_sec": 0.128,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -244,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.211,
+      "response_time_sec": 0.294,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -267,7 +267,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.192,
+      "response_time_sec": 0.226,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -290,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.131,
+      "response_time_sec": 0.215,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -313,7 +313,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.189,
+      "response_time_sec": 0.236,
       "size_bytes": 23053,
       "line_count": 575,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -336,14 +336,14 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.167,
-      "size_bytes": 52060,
+      "response_time_sec": 1.798,
+      "size_bytes": 52061,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
         "<html>",
         "\t<head>",
-        "\t\t<title>Summary table of large reservoir storage conditions29  2569</title>",
+        "\t\t<title>Summary table of large reservoir storage conditions30  2569</title>",
         "\t\t<META http-equiv='Content-Type' content='text/html;charset=UTF-8'>",
         "<style type='text/css'>",
         "body {  font-family: Arial, Helvetica, sans-serif; font-size: 8pt}",
@@ -359,8 +359,8 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 7.022,
-      "size_bytes": 70227,
+      "response_time_sec": 7.223,
+      "size_bytes": 70225,
       "line_count": 1031,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
@@ -395,10 +395,10 @@
       "basin": "Upper Chao Phraya Basin",
       "lat": 17.24,
       "lon": 98.97,
-      "mjo_effect": -7.6,
+      "mjo_effect": -7.5,
       "enso_effect": -37.5,
       "iod_effect": -5.4,
-      "net_anomaly": -50.5,
+      "net_anomaly": -50.4,
       "mechanics": "Northern mountain catchments feeding Bhumibol Reservoir."
     },
     {
@@ -407,10 +407,10 @@
       "basin": "Upper Chao Phraya Basin",
       "lat": 17.76,
       "lon": 100.56,
-      "mjo_effect": -8.4,
+      "mjo_effect": -8.3,
       "enso_effect": -37.5,
       "iod_effect": -4.9,
-      "net_anomaly": -50.8,
+      "net_anomaly": -50.7,
       "mechanics": "Northeastern headwater catchments feeding Sirikit Dam reservoir storage."
     },
     {
@@ -419,10 +419,10 @@
       "basin": "Pasak Basin / Chao Phraya Confluence",
       "lat": 14.8,
       "lon": 101.1,
-      "mjo_effect": -8.4,
+      "mjo_effect": -8.3,
       "enso_effect": -30.7,
       "iod_effect": -5.9,
-      "net_anomaly": -45.0,
+      "net_anomaly": -44.9,
       "mechanics": "Mid-basin flood risk zone and agricultural buffer for Greater Bangkok."
     },
     {
@@ -443,10 +443,10 @@
       "basin": "Bang Pakong / Eastern Gulf Basin",
       "lat": 13.0,
       "lon": 101.2,
-      "mjo_effect": -10.1,
+      "mjo_effect": -10.0,
       "enso_effect": -27.3,
       "iod_effect": -4.9,
-      "net_anomaly": -42.3,
+      "net_anomaly": -42.2,
       "mechanics": "Eastern Gulf coastal monsoon surge region."
     }
   ]
