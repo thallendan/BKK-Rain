@@ -1,6 +1,6 @@
 {
-  "timestamp_utc": "2026-11-01T03:29:08.976111+00:00",
-  "updated_at_utc": "2026-11-01T03:29:08.976111+00:00",
+  "timestamp_utc": "2026-11-01T12:23:37.428325+00:00",
+  "updated_at_utc": "2026-11-01T12:23:37.428325+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
@@ -14,7 +14,7 @@
     "cpac850_trade_winds": -3.0,
     "soi": -2.0,
     "olr": -1.0,
-    "ocean_heat_content": 2.93
+    "ocean_heat_content": 2.94
   },
   "dams": {
     "combined_chao_phraya_storage_pct": 76.4,
@@ -44,12 +44,12 @@
     }
   },
   "paknam_gauge": {
-    "water_level_msl": 1.49,
+    "water_level_msl": 1.093,
     "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
     "surge_risk": "MODERATE",
-    "buffer_remaining_meters": 0.31,
+    "buffer_remaining_meters": 0.707,
     "flood_wall_threshold_msl": 1.8,
-    "period": "2026-11-01 10:20",
+    "period": "2026-11-01 19:20",
     "status": "SUCCESS",
     "message": "Pak Nam tide gauge telemetry active."
   },
@@ -98,9 +98,9 @@
     },
     "pacific_heat_content": {
       "label": "Pacific Upper 300m Heat Content",
-      "value": "+2.93",
+      "value": "+2.94",
       "unit": "°C anomaly",
-      "period": "2026-09",
+      "period": "2026-10",
       "description": "Equatorial Subsurface Ocean Heat Anomaly (160E-80W)"
     },
     "chao_phraya_4dam_combined": {
@@ -154,9 +154,9 @@
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "+1.490",
+      "value": "+1.093",
       "unit": "m MSL",
-      "period": "2026-11-01 10:20",
+      "period": "2026-11-01 19:20",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -175,7 +175,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.331,
+      "response_time_sec": 0.068,
       "size_bytes": 39272,
       "line_count": 538,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -198,7 +198,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.689,
+      "response_time_sec": 0.444,
       "size_bytes": 2737994,
       "line_count": 19147,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -221,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.208,
+      "response_time_sec": 0.217,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -244,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.338,
+      "response_time_sec": 0.093,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -267,7 +267,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.277,
+      "response_time_sec": 0.066,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -290,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.283,
+      "response_time_sec": 0.066,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -313,9 +313,9 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.276,
-      "size_bytes": 23053,
-      "line_count": 575,
+      "response_time_sec": 0.168,
+      "size_bytes": 23093,
+      "line_count": 576,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
       "sample_preview": [
         "Equtorial Upper 300m temperature Average anomaly based on 1981-2010 Climatology (deg C)",
@@ -336,7 +336,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 2.059,
+      "response_time_sec": 1.851,
       "size_bytes": 52048,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
@@ -359,8 +359,8 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 7.526,
-      "size_bytes": 70224,
+      "response_time_sec": 8.003,
+      "size_bytes": 70225,
       "line_count": 1031,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
