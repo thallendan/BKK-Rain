@@ -1,11 +1,11 @@
 {
-  "timestamp_utc": "2026-11-04T13:31:20.344957+00:00",
-  "updated_at_utc": "2026-11-04T13:31:20.344957+00:00",
+  "timestamp_utc": "2026-11-04T23:01:39.584251+00:00",
+  "updated_at_utc": "2026-11-04T23:01:39.584251+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
-  "successful_count": 8,
-  "failed_count": 1,
+  "successful_count": 9,
+  "failed_count": 0,
   "teleconnections": {
     "enso": 3.25,
     "iod": 0.54,
@@ -44,14 +44,14 @@
     }
   },
   "paknam_gauge": {
-    "water_level_msl": null,
-    "tide_state": "Data Unavailable",
-    "surge_risk": "N/A",
-    "buffer_remaining_meters": null,
+    "water_level_msl": -0.304,
+    "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
+    "surge_risk": "LOW",
+    "buffer_remaining_meters": 2.104,
     "flood_wall_threshold_msl": 1.8,
-    "period": null,
-    "status": "DATA_UNAVAILABLE",
-    "message": "Pak Nam tide gauge endpoint is not available."
+    "period": "2026-11-05 06:00",
+    "status": "SUCCESS",
+    "message": "Pak Nam tide gauge telemetry active."
   },
   "summary_parameters": {
     "enso_nino34_anom": {
@@ -151,6 +151,20 @@
       "unit": "8,556 / 8,860 MCM (Usable: 5,544 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
+    },
+    "chao_phraya_estuary_realtime_level": {
+      "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
+      "value": "-0.304",
+      "unit": "m MSL",
+      "period": "2026-11-05 06:00",
+      "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
+    },
+    "chao_phraya_estuary_predicted_tide": {
+      "label": "Chao Phraya Estuary Daily Tide Bounds (Fort Phrachulachomklao)",
+      "value": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
+      "unit": "m MSL (Time)",
+      "period": "Today Forecast",
+      "description": "Royal Thai Navy Predictive Tide Extremes (Station N03)"
     }
   },
   "results": [
@@ -161,7 +175,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.321,
+      "response_time_sec": 0.417,
       "size_bytes": 39345,
       "line_count": 539,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -184,7 +198,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.411,
+      "response_time_sec": 0.496,
       "size_bytes": 2738423,
       "line_count": 19150,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -207,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.232,
+      "response_time_sec": 0.171,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -230,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.321,
+      "response_time_sec": 0.416,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -253,7 +267,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.32,
+      "response_time_sec": 0.334,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -276,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.389,
+      "response_time_sec": 0.377,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -299,7 +313,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.244,
+      "response_time_sec": 0.372,
       "size_bytes": 23093,
       "line_count": 576,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -322,7 +336,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.656,
+      "response_time_sec": 1.886,
       "size_bytes": 52042,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
@@ -342,15 +356,24 @@
       "key": "chao_phraya_tide",
       "name": "Chao Phraya Estuary Sea Level & Tide (Fort Phrachulachomklao)",
       "url": "https://tiwrmdev.hii.or.th/v3/sealevel",
-      "success": false,
-      "status_code": null,
-      "content_type": "Unknown",
-      "response_time_sec": null,
-      "size_bytes": 0,
-      "line_count": 0,
-      "data_format": "N/A",
-      "sample_preview": [],
-      "error": "Connection timed out (20s limit)"
+      "success": true,
+      "status_code": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "response_time_sec": 13.469,
+      "size_bytes": 70226,
+      "line_count": 1031,
+      "data_format": "HTML Document (Web Report)",
+      "sample_preview": [
+        "<!DOCTYPE html>",
+        "<html lang=\"en\">",
+        "    <head>",
+        "        <meta charset=\"utf-8\" />",
+        "        <title>",
+        "                        Thaiwater.net",
+        "                    </title>",
+        "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+      ],
+      "error": null
     }
   ],
   "zones": [
