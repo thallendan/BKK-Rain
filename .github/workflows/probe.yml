@@ -1,0 +1,38 @@
+name: Probe endpoints
+
+on:
+  workflow_dispatch:   # adds a "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write      # lets the job commit the report back to the repo
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run probe
+        env:
+          PROBE_LABEL: github
+        run: |
+          mkdir -p probe
+          python probe_endpoints.py probe/probe_github.json
+
+      - name: Upload report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe_github
+          path: probe/probe_github.json
+
+      - name: Commit report to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add probe/probe_github.json
+          git diff --cached --quiet || git commit -m "Update probe report"
+          git push
