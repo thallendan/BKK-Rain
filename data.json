@@ -1,6 +1,6 @@
 {
-  "timestamp_utc": "2026-11-09T03:49:44.730323+00:00",
-  "updated_at_utc": "2026-11-09T03:49:44.730323+00:00",
+  "timestamp_utc": "2026-11-09T14:46:47.120695+00:00",
+  "updated_at_utc": "2026-11-09T14:46:47.120695+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
@@ -14,7 +14,7 @@
     "cpac850_trade_winds": -3.4,
     "soi": -1.1,
     "olr": -1.0,
-    "ocean_heat_content": 2.92
+    "ocean_heat_content": 2.91
   },
   "dams": {
     "combined_chao_phraya_storage_pct": 76.2,
@@ -44,12 +44,12 @@
     }
   },
   "paknam_gauge": {
-    "water_level_msl": 0.633,
+    "water_level_msl": -0.714,
     "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
     "surge_risk": "LOW",
-    "buffer_remaining_meters": 1.167,
+    "buffer_remaining_meters": 2.514,
     "flood_wall_threshold_msl": 1.8,
-    "period": "2026-11-09 10:40",
+    "period": "2026-11-09 21:40",
     "status": "SUCCESS",
     "message": "Pak Nam tide gauge telemetry active."
   },
@@ -98,7 +98,7 @@
     },
     "pacific_heat_content": {
       "label": "Pacific Upper 300m Heat Content",
-      "value": "+2.92",
+      "value": "+2.91",
       "unit": "°C anomaly",
       "period": "2026-10",
       "description": "Equatorial Subsurface Ocean Heat Anomaly (160E-80W)"
@@ -154,9 +154,9 @@
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "+0.633",
+      "value": "-0.714",
       "unit": "m MSL",
-      "period": "2026-11-09 10:40",
+      "period": "2026-11-09 21:40",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -175,7 +175,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.273,
+      "response_time_sec": 0.364,
       "size_bytes": 39345,
       "line_count": 539,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -198,7 +198,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.36,
+      "response_time_sec": 0.617,
       "size_bytes": 2739138,
       "line_count": 19155,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -221,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.184,
+      "response_time_sec": 0.173,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -244,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.266,
+      "response_time_sec": 0.335,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -267,7 +267,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.2,
+      "response_time_sec": 0.333,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -290,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.179,
+      "response_time_sec": 0.359,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -313,7 +313,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.187,
+      "response_time_sec": 0.361,
       "size_bytes": 23093,
       "line_count": 576,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -336,7 +336,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.742,
+      "response_time_sec": 1.612,
       "size_bytes": 52053,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
@@ -359,8 +359,8 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 7.378,
-      "size_bytes": 70225,
+      "response_time_sec": 7.619,
+      "size_bytes": 70226,
       "line_count": 1031,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
