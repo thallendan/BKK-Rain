@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangkok Real-Time Rain Gauge & Telemetry Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#131e32',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        },
+                        rain: {
+                            dry: '#64748b',
+                            light: '#38bdf8',
+                            moderate: '#2563eb',
+                            heavy: '#7c3aed',
+                            extreme: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Chart.js for Station Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080d1a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Glassmorphism card effects */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Leaflet Static Theme Overrides */
+        .leaflet-container {
+            background: #1a202c !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: rgba(15, 23, 42, 0.92) !important;
+            backdrop-filter: blur(10px);
+            color: #f8fafc !important;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            border-radius: 12px !important;
+        }
+
+        .leaflet-popup-content {
+            margin: 12px 16px !important;
+            line-height: 1.5;
+        }
+
+        /* Pulse Animation Keyframes for Rain Gauges */
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.9;
+            }
+            80%, 100% {
+                transform: scale(2.6);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse-ring-severe {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            80%, 100% {
+                transform: scale(3.2);
+                opacity: 0;
+            }
+        }
+
+        .marker-pulse {
+            position: absolute;
+            border-radius: 50%;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            pointer-events: none;
+        }
+
+        .marker-pulse-severe {
+            position: absolute;
+            border-radius: 50%;
+            animation: pulse-ring-severe 1.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            pointer-events: none;
+        }
+
+        /* Gauge Dot Icon Container */
+        .gauge-marker-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gauge-marker-dot {
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .gauge-marker-container:hover .gauge-marker-dot {
+            transform: scale(1.3);
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="glass-panel sticky top-0 z-50 border-b border-slate-800/80 px-4 py-3 lg:px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            
+            <!-- Brand Title & Live Status -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-lg shadow-blue-500/20 text-white">
+                        <i class="fa-solid fa-cloud-showers-heavy text-xl animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                            Bangkok RainWatch
+                            <span class="text-xs font-normal px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">BMA Telemetry</span>
+                        </h1>
+                        <p class="text-xs text-slate-400 flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span id="data-source-label">Connecting to live feed...</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button toggle for sidebar -->
+                <button id="mobile-toggle-btn" class="md:hidden p-2 text-slate-300 hover:text-white bg-slate-800 rounded-lg">
+                    <i class="fa-solid fa-list-ul"></i>
+                </button>
+            </div>
+
+            <!-- Controls: Timeframe Selector, Refresh, Scenario Simulator & Clock -->
+            <div class="flex flex-wrap items-center gap-2.5">
+                
+                <!-- Timeframe Selector -->
+                <div class="bg-slate-900/90 p-1 rounded-xl border border-slate-800 flex items-center text-xs font-medium">
+                    <button id="btn-tf-15m" class="tf-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold shadow-sm transition-all">
+                        15-Min Rate
+                    </button>
+                    <button id="btn-tf-1h" class="tf-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all">
+                        1-Hour
+                    </button>
+                    <button id="btn-tf-24h" class="tf-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all">
+                        24-Hour Total
+                    </button>
+                </div>
+
+                <!-- Simulation Dropdown Preset -->
+                <div class="relative">
+                    <select id="scenario-select" class="bg-slate-800/90 hover:bg-slate-800 text-slate-200 text-xs rounded-xl px-3 py-2 border border-slate-700/80 focus:outline-none focus:border-blue-500 cursor-pointer transition">
+                        <option value="live">📡 Live Network Data</option>
+                        <option value="monsoon">🌩️ Monsoon Heavy Downpour</option>
+                        <option value="scattered">🌦️ Scattered Afternoon Rain</option>
+                        <option value="clear">☀️ Dry / Clear Sky</option>
+                    </select>
+                </div>
+
+                <!-- Refresh Button & Countdown -->
+                <button id="refresh-btn" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 hover:text-white px-3 py-2 rounded-xl border border-slate-700/70 text-xs font-medium flex items-center gap-2 transition">
+                    <i id="refresh-icon" class="fa-solid fa-rotate text-blue-400"></i>
+                    <span id="countdown-text">300s</span>
+                </button>
+
+                <!-- Clock ICT -->
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-300">
+                    <i class="fa-regular fa-clock text-blue-400"></i>
+                    <span id="ict-clock" class="font-mono">--:--:-- ICT</span>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- KPI Summary Cards Banner -->
+    <section class="max-w-7xl mx-auto w-full px-4 pt-4 pb-2">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            
+            <!-- KPI 1: Active Stations -->
+            <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">BMA Stations</p>
+                    <h3 id="kpi-total-stations" class="text-xl md:text-2xl font-bold text-white mt-0.5">--</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Automated Telemetry</p>
+                </div>
+                <div class="p-3 bg-slate-800/80 rounded-xl text-blue-400">
+                    <i class="fa-solid fa-tower-cell text-lg"></i>
+                </div>
+            </div>
+
+            <!-- KPI 2: Active Rain Count -->
+            <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Active Rainfall</p>
+                    <h3 id="kpi-raining-count" class="text-xl md:text-2xl font-bold text-sky-400 mt-0.5">--</h3>
+                    <p id="kpi-raining-pct" class="text-[11px] text-slate-400 mt-0.5">--% of Network</p>
+                </div>
+                <div class="p-3 bg-sky-950/60 rounded-xl text-sky-400 border border-sky-800/40">
+                    <i class="fa-solid fa-cloud-rain text-lg"></i>
+                </div>
+            </div>
+
+            <!-- KPI 3: Max Rainfall Volume -->
+            <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Max Rainfall</p>
+                    <h3 id="kpi-max-rain" class="text-xl md:text-2xl font-bold text-indigo-400 mt-0.5">-- <span class="text-xs font-normal">mm</span></h3>
+                    <p id="kpi-max-label" class="text-[11px] text-slate-400 mt-0.5">Selected Period</p>
+                </div>
+                <div class="p-3 bg-indigo-950/60 rounded-xl text-indigo-400 border border-indigo-800/40">
+                    <i class="fa-solid fa-gauge-high text-lg"></i>
+                </div>
+            </div>
+
+            <!-- KPI 4: Peak District -->
+            <div class="glass-card p-3.5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Peak District</p>
+                    <h3 id="kpi-peak-district" class="text-lg md:text-xl font-bold text-emerald-400 mt-0.5 truncate max-w-[130px]">--</h3>
+                    <p id="kpi-peak-district-th" class="text-[11px] text-slate-400 mt-0.5 truncate">Bangkok Zone</p>
+                </div>
+                <div class="p-3 bg-emerald-950/60 rounded-xl text-emerald-400 border border-emerald-800/40">
+                    <i class="fa-solid fa-location-dot text-lg"></i>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Main Dashboard Container -->
+    <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[580px]">
+        
+        <!-- Left Sidebar: Station Leaderboard & Search -->
+        <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl transition-all duration-300">
+            
+            <!-- Sidebar Header & Search -->
+            <div class="p-3.5 border-b border-slate-800/80 bg-slate-900/80 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-ol text-blue-400"></i>
+                        Station Telemetry
+                    </h2>
+                    <span id="station-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">0 Stations</span>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+                    <input id="search-input" type="text" placeholder="Search station or district..." 
+                           class="w-full bg-slate-950/80 text-xs text-slate-200 placeholder-slate-500 pl-8 pr-8 py-2 rounded-xl border border-slate-800 focus:outline-none focus:border-blue-500 transition">
+                    <button id="clear-search-btn" class="hidden absolute right-3 top-2.5 text-slate-500 hover:text-slate-300 text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Filter Tabs -->
+                <div class="flex items-center gap-1 bg-slate-950/50 p-1 rounded-xl border border-slate-800/60 text-xs">
+                    <button id="filter-all" class="filter-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-blue-400 transition">All</button>
+                    <button id="filter-raining" class="filter-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition">Raining</button>
+                    <button id="filter-heavy" class="filter-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition">Heavy (2mm+)</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Station List -->
+            <div id="station-list" class="flex-1 overflow-y-auto p-2 space-y-1.5 max-h-[480px] md:max-h-none">
+                <!-- Station items rendered dynamically via JavaScript -->
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/90 text-center text-[11px] text-slate-500 flex items-center justify-between">
+                <span>Refreshes every 5 mins</span>
+                <span id="last-update-time">Updated: Just now</span>
+            </div>
+        </aside>
+
+        <!-- Right Main Content: Leaflet Static Map Workspace -->
+        <section class="flex-1 flex flex-col glass-panel rounded-2xl overflow-hidden border border-slate-800/80 relative min-h-[420px]">
+            
+            <!-- Map Container -->
+            <div id="map" class="w-full h-full min-h-[450px] z-10"></div>
+
+            <!-- Floating Map Controls & Overlays -->
+            <div class="absolute top-4 right-4 z-20 flex flex-col gap-2">
+                <button id="recenter-map-btn" title="Recenter Map on Bangkok" class="p-2.5 bg-slate-900/90 hover:bg-slate-800 text-slate-200 rounded-xl border border-slate-700/80 shadow-lg backdrop-blur-md transition">
+                    <i class="fa-solid fa-crosshairs text-blue-400"></i>
+                </button>
+            </div>
+
+            <!-- Map Floating Legend Overlay -->
+            <div class="absolute bottom-4 right-4 z-20 glass-panel p-3 rounded-2xl border border-slate-800/90 shadow-2xl max-w-[210px] text-xs">
+                <div class="flex items-center justify-between mb-2 pb-1 border-b border-slate-800">
+                    <span class="font-bold text-slate-200 flex items-center gap-1.5">
+                        <i class="fa-solid fa-droplet text-blue-400"></i> Rain Scale
+                    </span>
+                    <span id="legend-mode-tag" class="text-[10px] text-slate-400">15-Min</span>
+                </div>
+                
+                <div id="legend-items" class="space-y-1.5">
+                    <!-- Legend rows dynamically updated based on timeframe -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Station Detail Modal -->
+    <div id="station-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300 opacity-0">
+        <div class="glass-panel bg-slate-900/95 border border-slate-700/80 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4 relative overflow-hidden transform scale-95 transition-all duration-300" id="modal-card">
+            
+            <!-- Close Button -->
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="flex items-start gap-3">
+                <div id="modal-icon-box" class="p-3 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
+                    <i class="fa-solid fa-location-dot text-2xl"></i>
+                </div>
+                <div>
+                    <h3 id="modal-station-name" class="text-lg font-bold text-white">--</h3>
+                    <p id="modal-district-name" class="text-xs text-slate-400">-- District, Bangkok</p>
+                    <p id="modal-coords" class="text-[11px] font-mono text-slate-500 mt-0.5">Lat: --, Lon: --</p>
+                </div>
+            </div>
+
+            <!-- Telemetry Metrics Grid -->
+            <div class="grid grid-cols-3 gap-2.5 pt-2">
+                <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-center">
+                    <p class="text-[11px] text-slate-400 font-medium">15-Min Rate</p>
+                    <p id="modal-val-15m" class="text-base font-bold text-sky-400 mt-0.5">-- <span class="text-xs font-normal">mm</span></p>
+                </div>
+                <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-center">
+                    <p class="text-[11px] text-slate-400 font-medium">1-Hour Total</p>
+                    <p id="modal-val-1h" class="text-base font-bold text-blue-400 mt-0.5">-- <span class="text-xs font-normal">mm</span></p>
+                </div>
+                <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-center">
+                    <p class="text-[11px] text-slate-400 font-medium">24-Hour Total</p>
+                    <p id="modal-val-24h" class="text-base font-bold text-indigo-400 mt-0.5">-- <span class="text-xs font-normal">mm</span></p>
+                </div>
+            </div>
+
+            <!-- Risk Status Banner -->
+            <div id="modal-risk-banner" class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <i id="modal-risk-icon" class="fa-solid fa-shield-halved text-emerald-400"></i>
+                    <div>
+                        <span class="text-xs text-slate-400 block">Flood Risk Assessment</span>
+                        <span id="modal-risk-label" class="text-xs font-bold text-emerald-400">Normal / Safe</span>
+                    </div>
+                </div>
+                <span id="modal-last-ping" class="text-[10px] text-slate-400 font-mono">Last ping: --</span>
+            </div>
+
+            <!-- Chart Analytics -->
+            <div class="space-y-1.5">
+                <h4 class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                    <span>Rain per Interval (last 24 h)</span>
+                    <span class="text-[10px] text-slate-500 font-normal">Estimated Trend</span>
+                </h4>
+                <div class="h-36 w-full bg-slate-950/50 p-2 rounded-xl border border-slate-800">
+                    <canvas id="modalChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-1">
+                <button id="modal-flyto-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-map-pin"></i> Center on Map
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript Application Engine -->
+    <script>
+        // Live data: written every 5 min by the Thai Lambda -> S3 -> CloudFront
+        // (change if your CloudFront domain / key differs)
+        const BMA_RAIN_URL = "https://d2jyi6rznjny0r.cloudfront.net/bma-rain-latest.json";
+
+        // Global Application State
+        const APP_STATE = {
+            timeframe: '15m', // '15m', '1h', '24h'
+            activeFilter: 'all', // 'all', 'raining', 'heavy'
+            searchQuery: '',
+            activeScenario: 'live', // 'live', 'monsoon', 'scattered', 'clear'
+            stations: [],
+            map: null,
+            markersGroup: null,
+            activeModalStation: null,
+            modalChartInstance: null,
+            autoRefreshSeconds: 120,
+            timerInterval: null,
+            bangkokBounds: {
+                minLat: 13.40, maxLat: 14.05,
+                minLon: 100.20, maxLon: 101.00
+            }
+        };
+
+        // Authentic BMA Rain Gauge Network Dataset (45+ Stations)
+        const BANGKOK_STATION_TEMPLATES = [
+            { id: "BMA01", en: "Don Mueang Telemetry Center", th: "ศูนย์วัดน้ำฝนดอนเมือง", district_en: "Don Mueang", district_th: "ดอนเมือง", lat: 13.9130, lon: 100.6042 },
+            { id: "BMA02", en: "Chatuchak Park Polder", th: "สถานีวัดน้ำฝนสวนจตุจักร", district_en: "Chatuchak", district_th: "จตุจักร", lat: 13.8030, lon: 100.5538 },
+            { id: "BMA03", en: "Bang Na Drainage Pumping", th: "สถานีสูบน้ำบางนา", district_en: "Bang Na", district_th: "บางนา", lat: 13.6682, lon: 100.6050 },
+            { id: "BMA04", en: "Watthana Canal Station", th: "สถานีวัดน้ำคลองแสนแสบวัฒนา", district_en: "Watthana", district_th: "วัฒนา", lat: 13.7422, lon: 100.5858 },
+            { id: "BMA05", en: "Phra Nakhon City Hall", th: "ศาลาว่าการกรุงเทพมหานคร", district_en: "Phra Nakhon", district_th: "พระนคร", lat: 13.7538, lon: 100.5014 },
+            { id: "BMA06", en: "Lat Krabang Industrial Polder", th: "สถานีวัดน้ำลาดกระบัง", district_en: "Lat Krabang", district_th: "ลาดกระบัง", lat: 13.7250, lon: 100.7780 },
+            { id: "BMA07", en: "Nong Chok Flood Control", th: "ศูนย์ป้องกันน้ำท่วมหนองจอก", district_en: "Nong Chok", district_th: "หนองจอก", lat: 13.8580, lon: 100.8620 },
+            { id: "BMA08", en: "Khlong Sam Wa Control", th: "สถานีวัดน้ำคลองสามวา", district_en: "Khlong Sam Wa", district_th: "คลองสามวา", lat: 13.8650, lon: 100.7300 },
+            { id: "BMA09", en: "Sai Mai Flood Gate", th: "ประตูระบายน้ำสายไหม", district_en: "Sai Mai", district_th: "สายไหม", lat: 13.9190, lon: 100.6450 },
+            { id: "BMA10", en: "Min Buri Pumping Gate", th: "สถานีสูบน้ำมีนบุรี", district_en: "Min Buri", district_th: "มีนบุรี", lat: 13.8130, lon: 100.7480 },
+            { id: "BMA11", en: "Bang Khen Canal Gate", th: "สถานีวัดน้ำบางเขน", district_en: "Bang Khen", district_th: "บางเขน", lat: 13.8720, lon: 100.5950 },
+            { id: "BMA12", en: "Dusit Royal Canal Station", th: "สถานีวัดน้ำดุสิต", district_en: "Dusit", district_th: "ดุสิต", lat: 13.7760, lon: 100.5200 },
+            { id: "BMA13", en: "Ratchathewi Victory Monument", th: "สถานีวัดน้ำราชเทวี", district_en: "Ratchathewi", district_th: "ราชเทวี", lat: 13.7620, lon: 100.5370 },
+            { id: "BMA14", en: "Pathum Wan Saen Saeb Gate", th: "สถานีวัดน้ำปทุมวัน", district_en: "Pathum Wan", district_th: "ปทุมวัน", lat: 13.7460, lon: 100.5350 },
+            { id: "BMA15", en: "Bang Rak Chao Phraya Polder", th: "สถานีสูบน้ำบางรัก", district_en: "Bang Rak", district_th: "บางรัก", lat: 13.7280, lon: 100.5250 },
+            { id: "BMA16", en: "Sathorn Canal Station", th: "สถานีสูบน้ำคลองสาทร", district_en: "Sathorn", district_th: "สาทร", lat: 13.7210, lon: 100.5310 },
+            { id: "BMA17", en: "Khlong Toei Port Gauge", th: "สถานีวัดน้ำท่าเรือคลองเตย", district_en: "Khlong Toei", district_th: "คลองเตย", lat: 13.7080, lon: 100.5820 },
+            { id: "BMA18", en: "Huai Khwang Drainage", th: "สถานีสูบน้ำห้วยขวาง", district_en: "Huai Khwang", district_th: "ห้วยขวาง", lat: 13.7800, lon: 100.5750 },
+            { id: "BMA19", en: "Wang Thonglang Gate", th: "สถานีวัดน้ำวังทองหลาง", district_en: "Wang Thonglang", district_th: "วังทองหลาง", lat: 13.7880, lon: 100.6080 },
+            { id: "BMA20", en: "Bang Kapi Lam Sali", th: "สถานีสูบน้ำบางกะปิ", district_en: "Bang Kapi", district_th: "บางกะปิ", lat: 13.7650, lon: 100.6420 },
+            { id: "BMA21", en: "Saphan Sung Station", th: "สถานีวัดน้ำสะพานสูง", district_en: "Saphan Sung", district_th: "สะพานสูง", lat: 13.7710, lon: 100.6850 },
+            { id: "BMA22", en: "Prawet Buri Rom Station", th: "สถานีวัดน้ำประเวศ", district_en: "Prawet", district_th: "ประเวศ", lat: 13.7180, lon: 100.6950 },
+            { id: "BMA23", en: "Suan Luang Polder", th: "สถานีสูบน้ำสวนหลวง", district_en: "Suan Luang", district_th: "สวนหลวง", lat: 13.7320, lon: 100.6480 },
+            { id: "BMA24", en: "Chom Thong Dao Khanong Gate", th: "สถานีสูบน้ำจอมทอง", district_en: "Chom Thong", district_th: "จอมทอง", lat: 13.6820, lon: 100.4780 },
+            { id: "BMA25", en: "Bang Khuntien Coastal Gauge", th: "สถานีวัดน้ำบางขุนเทียน", district_en: "Bang Khuntien", district_th: "บางขุนเทียน", lat: 13.5820, lon: 100.4350 },
+            { id: "BMA26", en: "Thung Kru Control Station", th: "สถานีวัดน้ำทุ่งครุ", district_en: "Thung Kru", district_th: "ทุ่งครุ", lat: 13.6420, lon: 100.5050 },
+            { id: "BMA27", en: "Rat Burana Pumping Gate", th: "สถานีสูบน้ำราษฎร์บูรณะ", district_en: "Rat Burana", district_th: "ราษฎร์บูรณะ", lat: 13.6810, lon: 100.5020 },
+            { id: "BMA28", en: "Yan Nawa Chao Phraya station", th: "สถานีวัดน้ำยานนาวา", district_en: "Yan Nawa", district_th: "ยานนาวา", lat: 13.6980, lon: 100.5420 },
+            { id: "BMA29", en: "Bang Kho Laem Station", th: "สถานีสูบน้ำบางคอแหลม", district_en: "Bang Kho Laem", district_th: "บางคอแหลม", lat: 13.7020, lon: 100.5080 },
+            { id: "BMA30", en: "Thon Buri Canal Gate", th: "สถานีวัดน้ำธนบุรี", district_en: "Thon Buri", district_th: "ธนบุรี", lat: 13.7250, lon: 100.4850 },
+            { id: "BMA31", en: "Bangkok Yai Canal Gate", th: "สถานีสูบน้ำบางกอกใหญ่", district_en: "Bangkok Yai", district_th: "บางกอกใหญ่", lat: 13.7420, lon: 100.4720 },
+            { id: "BMA32", en: "Bangkok Noi Canal Station", th: "สถานีวัดน้ำบางกอกน้อย", district_en: "Bangkok Noi", district_th: "บางกอกน้อย", lat: 13.7650, lon: 100.4750 },
+            { id: "BMA33", en: "Bang Phlat Polder", th: "สถานีสูบน้ำบางพลัด", district_en: "Bang Phlat", district_th: "บางพลัด", lat: 13.7920, lon: 100.4920 },
+            { id: "BMA34", en: "Taling Chan Canal Gate", th: "สถานีวัดน้ำตลิ่งชัน", district_en: "Taling Chan", district_th: "ตลิ่งชัน", lat: 13.7780, lon: 100.4480 },
+            { id: "BMA35", en: "Thawi Wattana Flood Gate", th: "ประตูระบายน้ำทวีวัฒนา", district_en: "Thawi Wattana", district_th: "ทวีวัฒนา", lat: 13.7850, lon: 100.3450 },
+            { id: "BMA36", en: "Phasi Charoen Canal Gate", th: "สถานีสูบน้ำภาษีเจริญ", district_en: "Phasi Charoen", district_th: "ภาษีเจริญ", lat: 13.7220, lon: 100.4350 },
+            { id: "BMA37", en: "Bang Khae Pumping Gate", th: "สถานีสูบน้ำบางแค", district_en: "Bang Khae", district_th: "บางแค", lat: 13.7120, lon: 100.3920 },
+            { id: "BMA38", en: "Nong Khaem Wastewater Center", th: "สถานีวัดน้ำหนองแขม", district_en: "Nong Khaem", district_th: "หนองแขม", lat: 13.7050, lon: 100.3480 },
+            { id: "BMA39", en: "Bang Bon Drainage Station", th: "สถานีวัดน้ำบางบอน", district_en: "Bang Bon", district_th: "บางบอน", lat: 13.6620, lon: 100.3820 },
+            { id: "BMA40", en: "Lak Si Government Complex", th: "สถานีวัดน้ำหลักสี่", district_en: "Lak Si", district_th: "หลักสี่", lat: 13.8880, lon: 100.5650 },
+            { id: "BMA41", en: "Bueng Kum Water Gate", th: "สถานีวัดน้ำบึงกุ่ม", district_en: "Bueng Kum", district_th: "บึงกุ่ม", lat: 13.8050, lon: 100.6650 },
+            { id: "BMA42", en: "Khan Na Yao Canal Control", th: "สถานีวัดน้ำคันนายาว", district_en: "Khan Na Yao", district_th: "คันนายาว", lat: 13.8250, lon: 100.6850 }
+        ];
+
+        // Initialize Map with Static Local Image Overlay
+        function initMap() {
+            const bkkCenter = [13.7563, 100.5018];
+            
+            APP_STATE.map = L.map('map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView(bkkCenter, 11);
+
+            // Add Zoom Control at top-left
+            L.control.zoom({ position: 'topleft' }).addTo(APP_STATE.map);
+
+            // Static local image overlay replacing external online tile server APIs
+            const imageBounds = [
+                [13.50, 100.25], // South-West Lat, Lon corner
+                [13.98, 100.90]  // North-East Lat, Lon corner
+            ];
+            L.imageOverlay('bangkok_map.png', imageBounds, { opacity: 0.95 }).addTo(APP_STATE.map);
+
+            // Create Layer Group for dynamic weather markers
+            APP_STATE.markersGroup = L.layerGroup().addTo(APP_STATE.map);
+
+            // Set Max Bounds for Bangkok area
+            const southWest = L.latLng(APP_STATE.bangkokBounds.minLat, APP_STATE.bangkokBounds.minLon);
+            const northEast = L.latLng(APP_STATE.bangkokBounds.maxLat, APP_STATE.bangkokBounds.maxLon);
+            APP_STATE.map.setMaxBounds(L.latLngBounds(southWest, northEast));
+
+            // Recenter Button Action
+            document.getElementById('recenter-map-btn').addEventListener('click', () => {
+                APP_STATE.map.flyTo(bkkCenter, 11, { duration: 1.2 });
+            });
+        }
+
+        // Data Fetching & Scenario Management Engine
+        async function loadStationData() {
+            updateRefreshIcon(true);
+
+            if (APP_STATE.activeScenario === 'live') {
+                const label = document.getElementById('data-source-label');
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
+                    const response = await fetch(BMA_RAIN_URL, { signal: controller.signal, cache: 'no-store' });
+                    clearTimeout(timeoutId);
+                    if (!response.ok) throw new Error("HTTP " + response.status);
+                    const json = await response.json();
+                    parseBmaData(json);
+                    const ageMin = Math.round((Date.now() - new Date(json.newest_reading_utc || json.generated_utc)) / 60000);
+                    if (ageMin > 20) {
+                        label.innerText = `Live BMA gauges - delayed (${ageMin} min old)`;
+                        label.className = "text-amber-400 font-medium";
+                    } else {
+                        label.innerText = `Live: BMA rain gauges (${json.fresh_count} reporting)`;
+                        label.className = "text-emerald-400 font-medium";
+                    }
+                } catch (err) {
+                    // Never invent data in live mode: keep the last good readings and say so.
+                    console.warn("Live BMA feed failed:", err);
+                    label.innerText = APP_STATE.stations.length ? "Live feed unavailable - showing last data" : "Live feed unavailable";
+                    label.className = "text-red-400 font-medium";
+                }
+            } else {
+                generateSimulatedData(APP_STATE.activeScenario);
+                document.getElementById('data-source-label').innerText = `Scenario Active: ${getScenarioLabel(APP_STATE.activeScenario)}`;
+                document.getElementById('data-source-label').className = "text-amber-400 font-medium";
+            }
+
+            // Update UI components
+            renderDashboard();
+            updateRefreshIcon(false);
+            document.getElementById('last-update-time').innerText = "Updated: " + new Date().toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        function parseBmaData(json) {
+            const list = (json.stations || []).filter(st => !st.stale).map(st => ({
+                ...st,
+                district_en: st.district_en || "Bangkok",
+                district_th: st.district_th || "กรุงเทพฯ",
+                rain_15m: st.rain_15m ?? 0,
+                rain_1h: st.rain_1h ?? 0,
+                rain_24h: st.rain_24h ?? 0
+            }));
+            if (list.length < 10) throw new Error("Too few fresh gauges: " + list.length);
+            APP_STATE.stations = list;
+        }
+
+        function generateSimulatedData(scenario) {
+            APP_STATE.stations = BANGKOK_STATION_TEMPLATES.map(tpl => {
+                let r15m = 0, r1h = 0, r24h = 0;
+
+                if (scenario === 'monsoon') {
+                    const isStormZone = ['Chatuchak', 'Don Mueang', 'Phra Nakhon', 'Ratchathewi', 'Watthana', 'Bang Na', 'Huai Khwang', 'Bang Khen'].includes(tpl.district_en);
+                    r15m = isStormZone ? (Math.random() * 14 + 4) : (Math.random() * 3);
+                    r1h = r15m * (Math.random() * 1.5 + 2.5);
+                    r24h = r1h * (Math.random() * 2 + 3) + Math.random() * 20;
+                } else if (scenario === 'scattered') {
+                    const isRainZone = ['Lat Krabang', 'Min Buri', 'Nong Chok', 'Bang Na', 'Prawet', 'Bang Khuntien'].includes(tpl.district_en);
+                    r15m = isRainZone ? (Math.random() * 6.5 + 0.5) : 0;
+                    r1h = r15m * (Math.random() * 1.2 + 2);
+                    r24h = r1h * 3 + (Math.random() * 8);
+                } else if (scenario === 'clear') {
+                    r15m = 0;
+                    r1h = 0;
+                    r24h = Math.random() < 0.2 ? Number((Math.random() * 1.5).toFixed(1)) : 0;
+                }
+
+                return {
+                    ...tpl,
+                    rain_15m: Number(r15m.toFixed(1)),
+                    rain_1h: Number(r1h.toFixed(1)),
+                    rain_24h: Number(r24h.toFixed(1)),
+                    last_updated: new Date().toISOString()
+                };
+            });
+        }
+
+        // Color Scale & Threshold Helpers
+        function getRainThresholds(tf) {
+            if (tf === '15m') {
+                return { light: 0.1, mod: 2.0, heavy: 8.0, extreme: 15.0 };
+            } else if (tf === '1h') {
+                return { light: 0.5, mod: 10.0, heavy: 30.0, extreme: 60.0 };
+            } else {
+                return { light: 1.0, mod: 20.0, heavy: 60.0, extreme: 120.0 };
+            }
+        }
+
+        function getRainVal(station, tf) {
+            if (tf === '15m') return station.rain_15m;
+            if (tf === '1h') return station.rain_1h;
+            return station.rain_24h;
+        }
+
+        function getRainColor(val, tf) {
+            const t = getRainThresholds(tf);
+            if (val <= 0) return '#64748b';
+            if (val < t.mod) return '#38bdf8';
+            if (val < t.heavy) return '#2563eb';
+            if (val < t.extreme) return '#7c3aed';
+            return '#ef4444';
+        }
+
+        function getMarkerRadius(val, tf) {
+            if (val <= 0) return 6;
+            const t = getRainThresholds(tf);
+            if (val < t.mod) return 9;
+            if (val < t.heavy) return 13;
+            if (val < t.extreme) return 17;
+            return 22;
+        }
+
+        // Render Stations on Leaflet Static Map
+        function renderMapMarkers() {
+            if (!APP_STATE.map || !APP_STATE.markersGroup) return;
+
+            APP_STATE.markersGroup.clearLayers();
+
+            const tf = APP_STATE.timeframe;
+            const thresholds = getRainThresholds(tf);
+
+            APP_STATE.stations.forEach(st => {
+                const val = getRainVal(st, tf);
+                const color = getRainColor(val, tf);
+                const radius = getMarkerRadius(val, tf);
+                const isHeavy = val >= thresholds.heavy;
+                const isExtreme = val >= thresholds.extreme;
+
+                let pulseHtml = '';
+                if (isExtreme) {
+                    pulseHtml = `<div class="marker-pulse-severe" style="width: ${radius * 2.8}px; height: ${radius * 2.8}px; background-color: rgba(239, 68, 68, 0.45); top: -${radius * 0.4}px; left: -${radius * 0.4}px;"></div>`;
+                } else if (isHeavy || val > thresholds.mod) {
+                    pulseHtml = `<div class="marker-pulse" style="width: ${radius * 2.4}px; height: ${radius * 2.4}px; background-color: ${color}70; top: -${radius * 0.2}px; left: -${radius * 0.2}px;"></div>`;
+                }
+
+                const iconHtml = `
+                    <div class="gauge-marker-container">
+                        ${pulseHtml}
+                        <div class="gauge-marker-dot" style="width: ${radius * 2}px; height: ${radius * 2}px; background-color: ${color};"></div>
+                    </div>
+                `;
+
+                const customIcon = L.divIcon({
+                    html: iconHtml,
+                    className: 'custom-gauge-icon',
+                    iconSize: [radius * 2, radius * 2],
+                    iconAnchor: [radius, radius]
+                });
+
+                const marker = L.marker([st.lat, st.lon], { icon: customIcon });
+
+                const popupContent = `
+                    <div class="space-y-2 min-w-[200px]">
+                        <div class="border-b border-slate-800 pb-1.5">
+                            <h4 class="font-bold text-sm text-white">${st.en}</h4>
+                            <p class="text-xs text-slate-400">${st.district_en} District (${st.district_th})</p>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 text-center py-1 bg-slate-950/50 rounded-lg">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">15m</span>
+                                <span class="text-xs font-bold ${st.rain_15m > 0 ? 'text-sky-400' : 'text-slate-400'}">${st.rain_15m}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">1h</span>
+                                <span class="text-xs font-bold ${st.rain_1h > 0 ? 'text-blue-400' : 'text-slate-400'}">${st.rain_1h}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block">24h</span>
+                                <span class="text-xs font-bold ${st.rain_24h > 0 ? 'text-indigo-400' : 'text-slate-400'}">${st.rain_24h}</span>
+                            </div>
+                        </div>
+                        <button onclick="openStationModal('${st.id}')" class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg transition text-center">
+                            View Station Telemetry
+                        </button>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent);
+                marker.on('click', () => {
+                    APP_STATE.map.flyTo([st.lat, st.lon], 13, { duration: 0.8 });
+                });
+
+                APP_STATE.markersGroup.addLayer(marker);
+            });
+        }
+
+        // Render Dashboard KPIs & Leaderboard
+        function renderDashboard() {
+            const tf = APP_STATE.timeframe;
+            const stations = APP_STATE.stations;
+
+            const total = stations.length;
+            const raining = stations.filter(s => getRainVal(s, tf) > 0);
+            const rainingCount = raining.length;
+            const rainingPct = total > 0 ? Math.round((rainingCount / total) * 100) : 0;
+
+            let maxStation = stations.reduce((max, s) => getRainVal(s, tf) > getRainVal(max, tf) ? s : max, stations[0] || { rain_15m:0, rain_1h:0, rain_24h:0 });
+            const maxVal = maxStation ? getRainVal(maxStation, tf) : 0;
+
+            document.getElementById('kpi-total-stations').innerText = total;
+            document.getElementById('kpi-raining-count').innerText = rainingCount;
+            document.getElementById('kpi-raining-pct').innerText = `${rainingPct}% of Network`;
+            document.getElementById('kpi-max-rain').innerHTML = `${maxVal} <span class="text-xs font-normal">mm</span>`;
+            
+            if (maxVal > 0 && maxStation) {
+                document.getElementById('kpi-peak-district').innerText = maxStation.district_en;
+                document.getElementById('kpi-peak-district-th').innerText = maxStation.district_th;
+            } else {
+                document.getElementById('kpi-peak-district').innerText = "None";
+                document.getElementById('kpi-peak-district-th').innerText = "Dry Sky";
+            }
+
+            renderStationList();
+            renderMapMarkers();
+            renderLegend();
+        }
+
+        function renderStationList() {
+            const container = document.getElementById('station-list');
+            const tf = APP_STATE.timeframe;
+            const query = APP_STATE.searchQuery.toLowerCase();
+            const thresholds = getRainThresholds(tf);
+
+            let list = APP_STATE.stations.filter(s => {
+                const matchSearch = s.en.toLowerCase().includes(query) || 
+                                    s.district_en.toLowerCase().includes(query) || 
+                                    s.district_th.includes(query);
+                
+                const val = getRainVal(s, tf);
+                if (APP_STATE.activeFilter === 'raining') return matchSearch && val > 0;
+                if (APP_STATE.activeFilter === 'heavy') return matchSearch && val >= thresholds.mod;
+                return matchSearch;
+            });
+
+            list.sort((a, b) => getRainVal(b, tf) - getRainVal(a, tf));
+
+            document.getElementById('station-count-badge').innerText = `${list.length} Stations`;
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-500 text-xs">
+                        <i class="fa-solid fa-cloud-sun text-2xl mb-2 text-slate-600 block"></i>
+                        No stations match your criteria
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map((st, rank) => {
+                const val = getRainVal(st, tf);
+                const color = getRainColor(val, tf);
+
+                return `
+                    <div onclick="selectStationFromList('${st.id}')" 
+                         class="glass-card hover:bg-slate-800/80 p-2.5 rounded-xl border border-slate-800/80 cursor-pointer transition flex items-center justify-between group">
+                        
+                        <div class="flex items-center gap-2.5 overflow-hidden">
+                            <span class="text-[11px] font-mono text-slate-500 w-4 text-center group-hover:text-blue-400 font-bold">${rank + 1}</span>
+                            <div class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${color}; shadow: 0 0 6px ${color}"></div>
+                            <div class="truncate">
+                                <h4 class="text-xs font-semibold text-slate-200 group-hover:text-blue-400 truncate transition">${st.en}</h4>
+                                <p class="text-[10px] text-slate-400 truncate">${st.district_en} (${st.district_th})</p>
+                            </div>
+                        </div>
+
+                        <div class="text-right shrink-0">
+                            <span class="text-xs font-bold ${val > 0 ? 'text-white' : 'text-slate-500'} font-mono">${val}</span>
+                            <span class="text-[10px] text-slate-400 block">mm</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderLegend() {
+            const tf = APP_STATE.timeframe;
+            const t = getRainThresholds(tf);
+            const container = document.getElementById('legend-items');
+            
+            let labelSuffix = tf === '15m' ? '/ 15m' : (tf === '1h' ? '/ 1h' : '24h Total');
+            document.getElementById('legend-mode-tag').innerText = tf.toUpperCase();
+
+            const legendData = [
+                { label: `Dry (0 mm)`, color: '#64748b' },
+                { label: `< ${t.mod} mm ${labelSuffix}`, color: '#38bdf8' },
+                { label: `${t.mod} - ${t.heavy} mm`, color: '#2563eb' },
+                { label: `${t.heavy} - ${t.extreme} mm`, color: '#7c3aed' },
+                { label: `> ${t.extreme} mm (Heavy)`, color: '#ef4444' }
+            ];
+
+            container.innerHTML = legendData.map(item => `
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${item.color}"></span>
+                    <span class="text-[11px] text-slate-300 truncate">${item.label}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectStationFromList(id) {
+            const station = APP_STATE.stations.find(s => s.id === id);
+            if (!station) return;
+
+            APP_STATE.map.flyTo([station.lat, station.lon], 14, { duration: 1.0 });
+
+            APP_STATE.markersGroup.eachLayer(layer => {
+                if (layer.getLatLng().lat === station.lat && layer.getLatLng().lng === station.lon) {
+                    layer.openPopup();
+                }
+            });
+        }
+
+        function openStationModal(id) {
+            const station = APP_STATE.stations.find(s => s.id === id);
+            if (!station) return;
+
+            APP_STATE.activeModalStation = station;
+
+            document.getElementById('modal-station-name').innerText = station.en;
+            document.getElementById('modal-district-name').innerText = `${station.district_en} District (${station.district_th}), Bangkok`;
+            document.getElementById('modal-coords').innerText = `Lat: ${station.lat.toFixed(4)}, Lon: ${station.lon.toFixed(4)}`;
+            
+            document.getElementById('modal-val-15m').innerText = `${station.rain_15m} mm`;
+            document.getElementById('modal-val-1h').innerText = `${station.rain_1h} mm`;
+            document.getElementById('modal-val-24h').innerText = `${station.rain_24h} mm`;
+
+            const r15 = station.rain_15m;
+            let riskLevel = "Normal / Clear";
+            let riskColor = "text-emerald-400";
+            let riskIcon = "fa-shield-halved text-emerald-400";
+
+            if (r15 >= 12.0 || station.rain_1h >= 50.0) {
+                riskLevel = "FLASH FLOOD WARNING";
+                riskColor = "text-red-400";
+                riskIcon = "fa-triangle-exclamation text-red-400 animate-bounce";
+            } else if (r15 >= 5.0 || station.rain_1h >= 20.0) {
+                riskLevel = "Polder Drainage Advisory";
+                riskColor = "text-amber-400";
+                riskIcon = "fa-triangle-exclamation text-amber-400";
+            } else if (r15 > 0) {
+                riskLevel = "Light Rain Monitoring";
+                riskColor = "text-sky-400";
+                riskIcon = "fa-cloud-rain text-sky-400";
+            }
+
+            document.getElementById('modal-risk-label').innerText = riskLevel;
+            document.getElementById('modal-risk-label').className = `text-xs font-bold ${riskColor}`;
+            document.getElementById('modal-risk-icon').className = `fa-solid ${riskIcon}`;
+            document.getElementById('modal-last-ping').innerText = `Ping: ${new Date(station.last_updated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+
+            renderStationChart(station);
+
+            const modal = document.getElementById('station-modal');
+            const card = document.getElementById('modal-card');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('station-modal');
+            const card = document.getElementById('modal-card');
+            modal.classList.add('opacity-0');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function renderStationChart(station) {
+            const ctx = document.getElementById('modalChart').getContext('2d');
+            
+            if (APP_STATE.modalChartInstance) {
+                APP_STATE.modalChartInstance.destroy();
+            }
+
+            let labels, data;
+            if (station.rain_12h !== undefined && station.rain_12h !== null) {
+                // Real BMA windows -> rain that fell in each interval (mm)
+                const d = (a, b) => Number(Math.max(0, (a ?? 0) - (b ?? 0)).toFixed(1));
+                labels = ['12-24h', '6-12h', '3-6h', '1-3h', '30-60m', '15-30m', '5-15m', '0-5m'];
+                data = [d(station.rain_24h, station.rain_12h), d(station.rain_12h, station.rain_6h),
+                        d(station.rain_6h, station.rain_3h), d(station.rain_3h, station.rain_1h),
+                        d(station.rain_1h, station.rain_30m), d(station.rain_30m, station.rain_15m),
+                        d(station.rain_15m, station.rain_5m), Number((station.rain_5m ?? 0).toFixed(1))];
+            } else {
+                // Demo scenarios only (no real breakdown available)
+                const total24 = station.rain_24h;
+                labels = ['-18h', '-12h', '-6h', '-3h', '-1h', 'Now'];
+                data = [0.1, 0.25, 0.45, 0.70, 0.88, 1].map(f => Number((total24 * f).toFixed(1)));
+            }
+
+            APP_STATE.modalChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Rain per interval (mm)',
+                        data: data,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#38bdf8'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#64748b', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#64748b', font: { size: 10 } },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function initEventListeners() {
+            document.getElementById('btn-tf-15m').addEventListener('click', (e) => switchTimeframe('15m', e.target));
+            document.getElementById('btn-tf-1h').addEventListener('click', (e) => switchTimeframe('1h', e.target));
+            document.getElementById('btn-tf-24h').addEventListener('click', (e) => switchTimeframe('24h', e.target));
+
+            document.getElementById('scenario-select').addEventListener('change', (e) => {
+                APP_STATE.activeScenario = e.target.value;
+                loadStationData();
+            });
+
+            document.getElementById('filter-all').addEventListener('click', (e) => switchFilter('all', e.target));
+            document.getElementById('filter-raining').addEventListener('click', (e) => switchFilter('raining', e.target));
+            document.getElementById('filter-heavy').addEventListener('click', (e) => switchFilter('heavy', e.target));
+
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search-btn');
+
+            searchInput.addEventListener('input', (e) => {
+                APP_STATE.searchQuery = e.target.value;
+                clearBtn.classList.toggle('hidden', !e.target.value);
+                renderStationList();
+            });
+
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                APP_STATE.searchQuery = '';
+                clearBtn.classList.add('hidden');
+                renderStationList();
+            });
+
+            document.getElementById('refresh-btn').addEventListener('click', () => {
+                APP_STATE.autoRefreshSeconds = 120;
+                loadStationData();
+            });
+
+            document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+            document.getElementById('station-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'station-modal') closeModal();
+            });
+
+            document.getElementById('modal-flyto-btn').addEventListener('click', () => {
+                if (APP_STATE.activeModalStation) {
+                    selectStationFromList(APP_STATE.activeModalStation.id);
+                    closeModal();
+                }
+            });
+
+            document.getElementById('mobile-toggle-btn').addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar-panel');
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        function switchTimeframe(tf, btnElement) {
+            APP_STATE.timeframe = tf;
+            document.querySelectorAll('.tf-btn').forEach(b => {
+                b.className = 'tf-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all';
+            });
+            btnElement.className = 'tf-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold shadow-sm transition-all';
+            renderDashboard();
+        }
+
+        function switchFilter(filter, tabElement) {
+            APP_STATE.activeFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(t => {
+                t.className = 'filter-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition';
+            });
+            tabElement.className = 'filter-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-blue-400 transition';
+            renderStationList();
+        }
+
+        function updateRefreshIcon(loading) {
+            const icon = document.getElementById('refresh-icon');
+            if (loading) {
+                icon.classList.add('fa-spin');
+            } else {
+                icon.classList.remove('fa-spin');
+            }
+        }
+
+        function getScenarioLabel(sc) {
+            if (sc === 'monsoon') return 'Monsoon Downpour';
+            if (sc === 'scattered') return 'Scattered Rain';
+            if (sc === 'clear') return 'Dry Sky';
+            return 'Live Network';
+        }
+
+        function startClockAndTimers() {
+            setInterval(() => {
+                const now = new Date();
+                const ictStr = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Bangkok', hour12: false }) + ' ICT';
+                document.getElementById('ict-clock').innerText = ictStr;
+            }, 1000);
+
+            APP_STATE.timerInterval = setInterval(() => {
+                APP_STATE.autoRefreshSeconds--;
+                if (APP_STATE.autoRefreshSeconds <= 0) {
+                    APP_STATE.autoRefreshSeconds = 120;
+                    loadStationData();
+                }
+                document.getElementById('countdown-text').innerText = `${APP_STATE.autoRefreshSeconds}s`;
+            }, 1000);
+        }
+
+        window.onload = function() {
+            initMap();
+            initEventListeners();
+            startClockAndTimers();
+            loadStationData();
+        };
+    </script>
+</body>
+</html>
