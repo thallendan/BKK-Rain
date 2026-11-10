@@ -1,11 +1,11 @@
 {
-  "timestamp_utc": "2026-11-10T01:00:06.999928+00:00",
-  "updated_at_utc": "2026-11-10T01:00:06.999928+00:00",
+  "timestamp_utc": "2026-11-10T14:00:04.886482+00:00",
+  "updated_at_utc": "2026-11-10T14:00:04.886482+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
-  "successful_count": 7,
-  "failed_count": 2,
+  "successful_count": 9,
+  "failed_count": 0,
   "teleconnections": {
     "enso": 3.25,
     "iod": 0.54,
@@ -17,41 +17,41 @@
     "ocean_heat_content": 2.91
   },
   "dams": {
-    "combined_chao_phraya_storage_pct": null,
+    "combined_chao_phraya_storage_pct": 76.3,
     "bhumibol": {
-      "current_storage_pct": null,
-      "status": "N/A"
+      "current_storage_pct": 72.0,
+      "status": "72.0%"
     },
     "sirikit": {
-      "current_storage_pct": null,
-      "status": "N/A"
+      "current_storage_pct": 80.0,
+      "status": "80.0%"
     },
     "kwai_noi": {
-      "current_storage_pct": null,
-      "status": "N/A"
+      "current_storage_pct": 90.0,
+      "status": "90.0%"
     },
     "pasak": {
-      "current_storage_pct": null,
-      "status": "N/A"
+      "current_storage_pct": 97.0,
+      "status": "97.0%"
     },
     "srinagarind": {
-      "current_storage_pct": null,
-      "status": "N/A"
+      "current_storage_pct": 98.0,
+      "status": "98.0%"
     },
     "vajiralongkorn": {
-      "current_storage_pct": null,
-      "status": "N/A"
+      "current_storage_pct": 96.0,
+      "status": "96.0%"
     }
   },
   "paknam_gauge": {
-    "water_level_msl": null,
-    "tide_state": "Data Unavailable",
-    "surge_risk": "N/A",
-    "buffer_remaining_meters": null,
+    "water_level_msl": -0.568,
+    "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
+    "surge_risk": "LOW",
+    "buffer_remaining_meters": 2.368,
     "flood_wall_threshold_msl": 1.8,
-    "period": null,
-    "status": "DATA_UNAVAILABLE",
-    "message": "Pak Nam tide gauge endpoint is not available."
+    "period": "2026-11-10 20:50",
+    "status": "SUCCESS",
+    "message": "Pak Nam tide gauge telemetry active."
   },
   "summary_parameters": {
     "enso_nino34_anom": {
@@ -102,6 +102,69 @@
       "unit": "°C anomaly",
       "period": "2026-10",
       "description": "Equatorial Subsurface Ocean Heat Anomaly (160E-80W)"
+    },
+    "chao_phraya_4dam_combined": {
+      "label": "Chao Phraya 4-Dam Combined Storage",
+      "value": "76.3%",
+      "unit": "18,899 / 24,783 MCM (Usable: 12,191 MCM)",
+      "period": "Latest Report",
+      "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
+    },
+    "dam_bhumibol": {
+      "label": "Bhumibol Dam (Ping River)",
+      "value": "72.0%",
+      "unit": "9,646 / 13,462 MCM (Usable: 5,846 MCM)",
+      "period": "Latest Report",
+      "description": "Chao Phraya Upper Basin Headwater Storage"
+    },
+    "dam_sirikit": {
+      "label": "Sirikit Dam (Nan River)",
+      "value": "80.0%",
+      "unit": "7,562 / 9,510 MCM (Usable: 4,712 MCM)",
+      "period": "Latest Report",
+      "description": "Chao Phraya Upper Basin Headwater Storage"
+    },
+    "dam_kwai_noi": {
+      "label": "Kwai Noi Bamrung Dan Dam",
+      "value": "90.0%",
+      "unit": "847 / 939 MCM (Usable: 804 MCM)",
+      "period": "Latest Report",
+      "description": "Chao Phraya Mid-Basin Flow Regulation"
+    },
+    "dam_pasak": {
+      "label": "Pasak Jolasid Dam (Pasak River)",
+      "value": "97.0%",
+      "unit": "844 / 872 MCM (Usable: 829 MCM)",
+      "period": "Latest Report",
+      "description": "Lower Chao Phraya / Eastern BKK Flow Buffer"
+    },
+    "dam_srinagarind": {
+      "label": "Srinagarind Dam (Mae Klong Basin)",
+      "value": "98.0%",
+      "unit": "17,407 / 17,745 MCM (Usable: 7,142 MCM)",
+      "period": "Latest Report",
+      "description": "Western Diversion & Samut Prakan Salinity Repulsion"
+    },
+    "dam_vajiralongkorn": {
+      "label": "Vajiralongkorn Dam (Mae Klong Basin)",
+      "value": "96.0%",
+      "unit": "8,549 / 8,860 MCM (Usable: 5,537 MCM)",
+      "period": "Latest Report",
+      "description": "Western Diversion & Samut Prakan Salinity Repulsion"
+    },
+    "chao_phraya_estuary_realtime_level": {
+      "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
+      "value": "-0.568",
+      "unit": "m MSL",
+      "period": "2026-11-10 20:50",
+      "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
+    },
+    "chao_phraya_estuary_predicted_tide": {
+      "label": "Chao Phraya Estuary Daily Tide Bounds (Fort Phrachulachomklao)",
+      "value": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
+      "unit": "m MSL (Time)",
+      "period": "Today Forecast",
+      "description": "Royal Thai Navy Predictive Tide Extremes (Station N03)"
     }
   },
   "results": [
@@ -112,7 +175,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.337,
+      "response_time_sec": 0.365,
       "size_bytes": 39345,
       "line_count": 539,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -135,7 +198,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.38,
+      "response_time_sec": 0.604,
       "size_bytes": 2739281,
       "line_count": 19156,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -158,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 1.427,
+      "response_time_sec": 0.164,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -181,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.341,
+      "response_time_sec": 0.32,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -204,7 +267,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.361,
+      "response_time_sec": 0.28,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -227,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.334,
+      "response_time_sec": 0.398,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -250,7 +313,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.333,
+      "response_time_sec": 0.322,
       "size_bytes": 23093,
       "line_count": 576,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -270,29 +333,47 @@
       "key": "dam_storage",
       "name": "Thailand Dam Storage (HII/RID)",
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
-      "success": false,
-      "status_code": null,
-      "content_type": "Unknown",
-      "response_time_sec": null,
-      "size_bytes": 0,
-      "line_count": 0,
-      "data_format": "N/A",
-      "sample_preview": [],
-      "error": "Fetch failed: Remote end closed connection without response"
+      "success": true,
+      "status_code": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "response_time_sec": 1.588,
+      "size_bytes": 52064,
+      "line_count": 189,
+      "data_format": "HTML Document (Web Report)",
+      "sample_preview": [
+        "<html>",
+        "\t<head>",
+        "\t\t<title>Summary table of large reservoir storage conditions10  2569</title>",
+        "\t\t<META http-equiv='Content-Type' content='text/html;charset=UTF-8'>",
+        "<style type='text/css'>",
+        "body {  font-family: Arial, Helvetica, sans-serif; font-size: 8pt}",
+        "td   {  font-family: Arial, Helvetica, sans-serif; font-size: 8pt;}",
+        ".button {"
+      ],
+      "error": null
     },
     {
       "key": "chao_phraya_tide",
       "name": "Chao Phraya Estuary Sea Level & Tide (Fort Phrachulachomklao)",
       "url": "https://tiwrmdev.hii.or.th/v3/sealevel",
-      "success": false,
-      "status_code": null,
-      "content_type": "Unknown",
-      "response_time_sec": null,
-      "size_bytes": 0,
-      "line_count": 0,
-      "data_format": "N/A",
-      "sample_preview": [],
-      "error": "Fetch failed: Remote end closed connection without response"
+      "success": true,
+      "status_code": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "response_time_sec": 7.445,
+      "size_bytes": 70227,
+      "line_count": 1031,
+      "data_format": "HTML Document (Web Report)",
+      "sample_preview": [
+        "<!DOCTYPE html>",
+        "<html lang=\"en\">",
+        "    <head>",
+        "        <meta charset=\"utf-8\" />",
+        "        <title>",
+        "                        Thaiwater.net",
+        "                    </title>",
+        "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+      ],
+      "error": null
     }
   ],
   "zones": [
