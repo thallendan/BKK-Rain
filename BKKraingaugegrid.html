@@ -283,6 +283,28 @@
         </div>
     </section>
 
+    <!-- Rain Trend Panel (live mode only; data from the Lambda's rolling history) -->
+    <section id="trend-panel" class="hidden max-w-7xl mx-auto w-full px-4 pb-1">
+        <div class="glass-card rounded-2xl p-3.5 flex flex-col md:flex-row md:items-center gap-3">
+            <div class="flex items-center gap-3 md:w-72 shrink-0">
+                <div class="p-3 bg-slate-800/80 rounded-xl text-slate-300"><i class="fa-solid fa-chart-line text-lg"></i></div>
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Rain Trend <span id="trend-asof" class="text-slate-500"></span></p>
+                    <h3 id="trend-status" class="text-lg font-bold text-white">--</h3>
+                </div>
+            </div>
+            <div class="flex-1 text-xs space-y-1">
+                <p id="trend-text" class="text-slate-200"></p>
+                <p id="trend-move" class="text-slate-400"></p>
+                <p class="text-[10px] text-slate-500">Estimate from BMA gauges only; rain outside the network is not seen until it arrives.</p>
+            </div>
+            <div class="md:w-56 shrink-0">
+                <svg id="trend-spark" viewBox="0 0 200 40" class="w-full h-10"></svg>
+                <p id="trend-spark-cap" class="text-[10px] text-slate-500">Gauges wet, last 3 h</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Main Dashboard Container -->
     <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[580px]">
         
@@ -457,6 +479,8 @@
         const APP_STATE = {
             timeframe: '15m', // any key of TF_CONFIG
             lastReading: null,
+            trend: null,
+            trendLayer: null,
             activeFilter: 'all', // 'all', 'raining', 'heavy'
             searchQuery: '',
             activeScenario: 'live', // 'live', 'monsoon', 'scattered', 'clear'
@@ -610,6 +634,7 @@
             if (list.length < 10) throw new Error("Too few fresh gauges: " + list.length);
             APP_STATE.stations = list;
             APP_STATE.lastReading = json.newest_reading_utc || json.generated_utc;
+            APP_STATE.trend = json.trend || null;
         }
 
         function generateSimulatedData(scenario) {
@@ -767,6 +792,7 @@
                 renderStationList();
                 renderMapMarkers();
                 renderLegend();
+                renderTrend();
                 return;
             }
             const raining = stations.filter(s => getRainVal(s, tf) > 0);
@@ -793,6 +819,7 @@
             renderStationList();
             renderMapMarkers();
             renderLegend();
+            renderTrend();
         }
 
         function renderStationList() {
@@ -850,6 +877,93 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // ---- Rain trend panel (status, movement, sparkline, map arrow) ----
+        const TREND_STYLE = {
+            dry: ['Dry', 'text-slate-400'], starting: ['Starting', 'text-sky-400'], building: ['Building', 'text-amber-400'],
+            steady: ['Steady', 'text-blue-400'], easing: ['Easing', 'text-emerald-400'], ended: ['Ended', 'text-slate-400'],
+            collecting: ['Collecting data', 'text-slate-400']
+        };
+
+        function moveText(m) {
+            if (!m) return 'Movement: not enough rain to track yet.';
+            if (m.speed_kmh === undefined) return 'Movement: ' + (m.note || 'unclear') + '.';
+            const parts = [];
+            if (m.over_centre) parts.push('Rain centre is over the city centre now');
+            else if (m.toward) parts.push(`Heading ${m.toward} at ~${Math.round(m.speed_kmh)} km/h`);
+            else parts.push('Nearly stationary');
+            if (!m.over_centre) parts.push(`rain centre ${m.dist_to_centre_km} km from city centre`);
+            if (m.approaching_centre && m.eta_min !== null) parts.push(`could reach the centre in ~${m.eta_min} min`);
+            return parts.join(', ') + ` (${m.confidence} confidence).`;
+        }
+
+        function renderSpark(series) {
+            const svg = document.getElementById('trend-spark');
+            const cap = document.getElementById('trend-spark-cap');
+            if (!series || series.length < 2) { svg.innerHTML = ''; cap.innerText = 'Gauges wet, last 3 h'; return; }
+            const ts = series.map(p => new Date(p.t).getTime());
+            const span = (ts[ts.length - 1] - ts[0]) || 1;
+            const maxY = Math.max(5, ...series.map(p => p.wet));
+            const pts = series.map((p, i) => [((ts[i] - ts[0]) / span) * 196 + 2, 36 - (p.wet / maxY) * 32]);
+            const last = pts[pts.length - 1];
+            svg.innerHTML = `<line x1="2" y1="36" x2="198" y2="36" stroke="#334155" stroke-width="1"/>` +
+                `<polyline points="${pts.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}" fill="none" stroke="#38bdf8" stroke-width="1.6"/>` +
+                `<circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="#38bdf8"/>`;
+            cap.innerText = `Gauges wet, last ${Math.round(span / 60000)} min (peak ${Math.max(...series.map(p => p.wet))})`;
+        }
+
+        function renderTrendMap(tr) {
+            if (!APP_STATE.map) return;
+            if (!APP_STATE.trendLayer) APP_STATE.trendLayer = L.layerGroup().addTo(APP_STATE.map);
+            APP_STATE.trendLayer.clearLayers();
+            if (!tr) return;
+            const m = tr.movement;
+            const now = (m && m.centroid_now) || (tr.windows && tr.windows[0] && tr.windows[0].centroid);
+            if (!now) return;
+            if (m && m.centroid_before && m.speed_kmh !== undefined) {
+                APP_STATE.trendLayer.addLayer(L.polyline([m.centroid_before, m.centroid_now], { color: '#f59e0b', weight: 3, dashArray: '6 6', opacity: 0.9 }));
+                if (m.bearing_deg !== undefined) {
+                    const icon = L.divIcon({
+                        className: '',
+                        html: `<i class="fa-solid fa-location-arrow" style="color:#f59e0b;font-size:22px;display:block;transform:rotate(${m.bearing_deg - 45}deg);text-shadow:0 0 6px #000"></i>`,
+                        iconSize: [22, 22], iconAnchor: [11, 11]
+                    });
+                    APP_STATE.trendLayer.addLayer(L.marker(m.centroid_now, { icon, interactive: false, keyboard: false }));
+                    return;
+                }
+            }
+            APP_STATE.trendLayer.addLayer(L.circleMarker(now, { radius: 9, color: '#f59e0b', weight: 2, fillOpacity: 0.15, interactive: false }));
+        }
+
+        function renderTrend() {
+            const panel = document.getElementById('trend-panel');
+            const tr = APP_STATE.trend;
+            if (APP_STATE.activeScenario !== 'live' || APP_STATE.stations.length === 0) {
+                panel.classList.add('hidden');
+                renderTrendMap(null);
+                return;
+            }
+            panel.classList.remove('hidden');
+            const status = document.getElementById('trend-status');
+            if (!tr) {
+                status.innerText = 'Unavailable';
+                status.className = 'text-lg font-bold text-slate-400';
+                document.getElementById('trend-text').innerText = 'Trend data is not available right now. Gauge readings above are still live.';
+                document.getElementById('trend-move').innerText = '';
+                document.getElementById('trend-asof').innerText = '';
+                renderSpark(null);
+                renderTrendMap(null);
+                return;
+            }
+            const [name, cls] = TREND_STYLE[tr.status] || [tr.status, 'text-white'];
+            status.innerText = name;
+            status.className = 'text-lg font-bold ' + cls;
+            document.getElementById('trend-asof').innerText = '- as of ' + fmtICT(tr.as_of) + ' ICT';
+            document.getElementById('trend-text').innerText = tr.status_text || '';
+            document.getElementById('trend-move').innerText = tr.status === 'dry' || tr.status === 'collecting' ? '' : moveText(tr.movement);
+            renderSpark(tr.series);
+            renderTrendMap(tr.status === 'dry' || tr.status === 'ended' || tr.status === 'collecting' ? null : tr);
         }
 
         function renderLegend() {
