@@ -200,17 +200,7 @@
             <div class="flex flex-wrap items-center gap-2.5">
                 
                 <!-- Timeframe Selector -->
-                <div class="bg-slate-900/90 p-1 rounded-xl border border-slate-800 flex items-center text-xs font-medium">
-                    <button id="btn-tf-15m" class="tf-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold shadow-sm transition-all">
-                        15-Min Rate
-                    </button>
-                    <button id="btn-tf-1h" class="tf-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all">
-                        1-Hour
-                    </button>
-                    <button id="btn-tf-24h" class="tf-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all">
-                        24-Hour Total
-                    </button>
-                </div>
+                <div id="tf-bar" class="bg-slate-900/90 p-1 rounded-xl border border-slate-800 flex items-center text-xs font-medium overflow-x-auto max-w-full"></div>
 
                 <!-- Simulation Dropdown Preset -->
                 <div class="relative">
@@ -225,7 +215,7 @@
                 <!-- Refresh Button & Countdown -->
                 <button id="refresh-btn" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 hover:text-white px-3 py-2 rounded-xl border border-slate-700/70 text-xs font-medium flex items-center gap-2 transition">
                     <i id="refresh-icon" class="fa-solid fa-rotate text-blue-400"></i>
-                    <span id="countdown-text">300s</span>
+                    <span id="countdown-text">120s</span>
                 </button>
 
                 <!-- Clock ICT -->
@@ -334,7 +324,7 @@
 
             <!-- Sidebar Footer -->
             <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/90 text-center text-[11px] text-slate-500 flex items-center justify-between">
-                <span>Refreshes every 5 mins</span>
+                <span>Refreshes every 2 mins</span>
                 <span id="last-update-time">Updated: Just now</span>
             </div>
         </aside>
@@ -445,9 +435,28 @@
         // (change if your CloudFront domain / key differs)
         const BMA_RAIN_URL = "https://d2jyi6rznjny0r.cloudfront.net/bma-rain-latest.json";
 
+        // Timeframes: BMA gauges report all of these windows. Colour thresholds (mm) are mod / heavy / extreme.
+        const TF_CONFIG = {
+            '5m':  { btn: '5m',  field: 'rain_5m',        tag: '5-Min',      suffix: '/ 5m',  t: { mod: 1,  heavy: 3,  extreme: 6 } },
+            '15m': { btn: '15m', field: 'rain_15m',       tag: '15-Min',     suffix: '/ 15m', t: { mod: 2,  heavy: 8,  extreme: 15 } },
+            '30m': { btn: '30m', field: 'rain_30m',       tag: '30-Min',     suffix: '/ 30m', t: { mod: 4,  heavy: 15, extreme: 30 } },
+            '1h':  { btn: '1h',  field: 'rain_1h',        tag: '1-Hour',     suffix: '/ 1h',  t: { mod: 10, heavy: 30, extreme: 60 } },
+            '3h':  { btn: '3h',  field: 'rain_3h',        tag: '3-Hour',     suffix: '/ 3h',  t: { mod: 15, heavy: 45, extreme: 90 } },
+            '6h':  { btn: '6h',  field: 'rain_6h',        tag: '6-Hour',     suffix: '/ 6h',  t: { mod: 20, heavy: 50, extreme: 100 } },
+            '12h': { btn: '12h', field: 'rain_12h',       tag: '12-Hour',    suffix: '/ 12h', t: { mod: 20, heavy: 55, extreme: 110 } },
+            '24h': { btn: '24h', field: 'rain_24h',       tag: '24-Hour',    suffix: '24h Total', t: { mod: 20, heavy: 60, extreme: 120 } },
+            '7am': { btn: 'Since 7am', field: 'since_0700', tag: 'Since 07:00', suffix: 'since 07:00', t: { mod: 20, heavy: 60, extreme: 120 } }
+        };
+
+        function fmtICT(iso) {
+            if (!iso) return '--:--';
+            return new Date(iso).toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' });
+        }
+
         // Global Application State
         const APP_STATE = {
-            timeframe: '15m', // '15m', '1h', '24h'
+            timeframe: '15m', // any key of TF_CONFIG
+            lastReading: null,
             activeFilter: 'all', // 'all', 'raining', 'heavy'
             searchQuery: '',
             activeScenario: 'live', // 'live', 'monsoon', 'scattered', 'clear'
@@ -558,17 +567,21 @@
                     const json = await response.json();
                     parseBmaData(json);
                     const ageMin = Math.round((Date.now() - new Date(json.newest_reading_utc || json.generated_utc)) / 60000);
+                    const t = fmtICT(APP_STATE.lastReading);
                     if (ageMin > 20) {
-                        label.innerText = `Live BMA gauges - delayed (${ageMin} min old)`;
+                        label.innerText = `Live data delayed - last reading ${t} ICT (${ageMin} min ago)`;
                         label.className = "text-amber-400 font-medium";
                     } else {
-                        label.innerText = `Live: BMA rain gauges (${json.fresh_count} reporting)`;
+                        label.innerText = `Live: ${json.fresh_count} of ${json.count} gauges reporting - last reading ${t} ICT`;
                         label.className = "text-emerald-400 font-medium";
                     }
                 } catch (err) {
                     // Never invent data in live mode: keep the last good readings and say so.
                     console.warn("Live BMA feed failed:", err);
-                    label.innerText = APP_STATE.stations.length ? "Live feed unavailable - showing last data" : "Live feed unavailable";
+                    if (APP_STATE.stations.some(st => st._demo)) APP_STATE.stations = [];   // never show demo data as live
+                    label.innerText = APP_STATE.stations.length
+                        ? `Live feed unavailable - showing data from ${fmtICT(APP_STATE.lastReading)} ICT`
+                        : "Live feed unavailable - no data";
                     label.className = "text-red-400 font-medium";
                 }
             } else {
@@ -580,7 +593,9 @@
             // Update UI components
             renderDashboard();
             updateRefreshIcon(false);
-            document.getElementById('last-update-time').innerText = "Updated: " + new Date().toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('last-update-time').innerText = APP_STATE.activeScenario === 'live'
+                ? (APP_STATE.stations.length ? `Last reading: ${fmtICT(APP_STATE.lastReading)} ICT` : 'No data')
+                : "Updated: " + new Date().toLocaleTimeString('en-US', { hour12: false });
         }
 
         function parseBmaData(json) {
@@ -594,6 +609,7 @@
             }));
             if (list.length < 10) throw new Error("Too few fresh gauges: " + list.length);
             APP_STATE.stations = list;
+            APP_STATE.lastReading = json.newest_reading_utc || json.generated_utc;
         }
 
         function generateSimulatedData(scenario) {
@@ -621,6 +637,13 @@
                     rain_15m: Number(r15m.toFixed(1)),
                     rain_1h: Number(r1h.toFixed(1)),
                     rain_24h: Number(r24h.toFixed(1)),
+                    rain_5m: Number((r15m / 3).toFixed(1)),
+                    rain_30m: Number(Math.min(r1h, r15m * 2).toFixed(1)),
+                    rain_3h: Number((r1h + (r24h - r1h) * 0.2).toFixed(1)),
+                    rain_6h: Number((r1h + (r24h - r1h) * 0.4).toFixed(1)),
+                    rain_12h: Number((r1h + (r24h - r1h) * 0.7).toFixed(1)),
+                    since_0700: Number((r24h * 0.8).toFixed(1)),
+                    _demo: true,
                     last_updated: new Date().toISOString()
                 };
             });
@@ -628,19 +651,12 @@
 
         // Color Scale & Threshold Helpers
         function getRainThresholds(tf) {
-            if (tf === '15m') {
-                return { light: 0.1, mod: 2.0, heavy: 8.0, extreme: 15.0 };
-            } else if (tf === '1h') {
-                return { light: 0.5, mod: 10.0, heavy: 30.0, extreme: 60.0 };
-            } else {
-                return { light: 1.0, mod: 20.0, heavy: 60.0, extreme: 120.0 };
-            }
+            return { light: 0.1, ...TF_CONFIG[tf].t };
         }
 
         function getRainVal(station, tf) {
-            if (tf === '15m') return station.rain_15m;
-            if (tf === '1h') return station.rain_1h;
-            return station.rain_24h;
+            const v = station[TF_CONFIG[tf].field];
+            return v === undefined || v === null ? 0 : v;
         }
 
         function getRainColor(val, tf) {
@@ -741,6 +757,18 @@
             const stations = APP_STATE.stations;
 
             const total = stations.length;
+            if (total === 0) {
+                document.getElementById('kpi-total-stations').innerText = '--';
+                document.getElementById('kpi-raining-count').innerText = '--';
+                document.getElementById('kpi-raining-pct').innerText = 'No data';
+                document.getElementById('kpi-max-rain').innerHTML = '-- <span class="text-xs font-normal">mm</span>';
+                document.getElementById('kpi-peak-district').innerText = 'No data';
+                document.getElementById('kpi-peak-district-th').innerText = 'Feed unavailable';
+                renderStationList();
+                renderMapMarkers();
+                renderLegend();
+                return;
+            }
             const raining = stations.filter(s => getRainVal(s, tf) > 0);
             const rainingCount = raining.length;
             const rainingPct = total > 0 ? Math.round((rainingCount / total) * 100) : 0;
@@ -748,6 +776,7 @@
             let maxStation = stations.reduce((max, s) => getRainVal(s, tf) > getRainVal(max, tf) ? s : max, stations[0] || { rain_15m:0, rain_1h:0, rain_24h:0 });
             const maxVal = maxStation ? getRainVal(maxStation, tf) : 0;
 
+            document.getElementById('kpi-max-label').innerText = TF_CONFIG[tf].tag + ' peak';
             document.getElementById('kpi-total-stations').innerText = total;
             document.getElementById('kpi-raining-count').innerText = rainingCount;
             document.getElementById('kpi-raining-pct').innerText = `${rainingPct}% of Network`;
@@ -791,7 +820,7 @@
                 container.innerHTML = `
                     <div class="text-center py-8 text-slate-500 text-xs">
                         <i class="fa-solid fa-cloud-sun text-2xl mb-2 text-slate-600 block"></i>
-                        No stations match your criteria
+                        ${APP_STATE.stations.length === 0 ? 'No data - live feed unavailable' : 'No stations match your criteria'}
                     </div>
                 `;
                 return;
@@ -828,8 +857,8 @@
             const t = getRainThresholds(tf);
             const container = document.getElementById('legend-items');
             
-            let labelSuffix = tf === '15m' ? '/ 15m' : (tf === '1h' ? '/ 1h' : '24h Total');
-            document.getElementById('legend-mode-tag').innerText = tf.toUpperCase();
+            let labelSuffix = TF_CONFIG[tf].suffix;
+            document.getElementById('legend-mode-tag').innerText = TF_CONFIG[tf].tag;
 
             const legendData = [
                 { label: `Dry (0 mm)`, color: '#64748b' },
@@ -929,7 +958,7 @@
             }
 
             let labels, data;
-            if (station.rain_12h !== undefined && station.rain_12h !== null) {
+            if (!station._demo && station.rain_12h != null) {
                 // Real BMA windows -> rain that fell in each interval (mm)
                 const d = (a, b) => Number(Math.max(0, (a ?? 0) - (b ?? 0)).toFixed(1));
                 labels = ['12-24h', '6-12h', '3-6h', '1-3h', '30-60m', '15-30m', '5-15m', '0-5m'];
@@ -982,9 +1011,7 @@
         }
 
         function initEventListeners() {
-            document.getElementById('btn-tf-15m').addEventListener('click', (e) => switchTimeframe('15m', e.target));
-            document.getElementById('btn-tf-1h').addEventListener('click', (e) => switchTimeframe('1h', e.target));
-            document.getElementById('btn-tf-24h').addEventListener('click', (e) => switchTimeframe('24h', e.target));
+            buildTimeframeBar();
 
             document.getElementById('scenario-select').addEventListener('change', (e) => {
                 APP_STATE.activeScenario = e.target.value;
@@ -1034,12 +1061,24 @@
             });
         }
 
-        function switchTimeframe(tf, btnElement) {
-            APP_STATE.timeframe = tf;
-            document.querySelectorAll('.tf-btn').forEach(b => {
-                b.className = 'tf-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all';
+        const TF_ON = 'tf-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold shadow-sm transition-all whitespace-nowrap';
+        const TF_OFF = 'tf-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 transition-all whitespace-nowrap';
+
+        function buildTimeframeBar() {
+            const bar = document.getElementById('tf-bar');
+            bar.innerHTML = Object.entries(TF_CONFIG).map(([k, c]) =>
+                `<button data-tf="${k}" class="${k === APP_STATE.timeframe ? TF_ON : TF_OFF}">${c.btn}</button>`).join('');
+            bar.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-tf]');
+                if (btn) switchTimeframe(btn.dataset.tf);
             });
-            btnElement.className = 'tf-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold shadow-sm transition-all';
+        }
+
+        function switchTimeframe(tf) {
+            APP_STATE.timeframe = tf;
+            document.querySelectorAll('#tf-bar [data-tf]').forEach(b => {
+                b.className = b.dataset.tf === tf ? TF_ON : TF_OFF;
+            });
             renderDashboard();
         }
 
