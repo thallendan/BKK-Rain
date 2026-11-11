@@ -1,0 +1,36 @@
+name: Outlying rain
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # every 15 min (GitHub may delay runs a few minutes)
+  workflow_dispatch:          # manual "Run workflow" button
+
+permissions:
+  contents: write
+
+concurrency:
+  group: outlying-rain
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Collect outlying rain
+        run: python outlying_rain.py
+
+      - name: Commit data/outlying_rain.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/outlying_rain.json
+          git diff --cached --quiet || git commit -m "Update outlying_rain.json"
+          git pull --rebase
+          git push
