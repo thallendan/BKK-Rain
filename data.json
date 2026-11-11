@@ -1,6 +1,6 @@
 {
-  "timestamp_utc": "2026-11-10T22:40:39.864435+00:00",
-  "updated_at_utc": "2026-11-10T22:40:39.864435+00:00",
+  "timestamp_utc": "2026-11-11T03:54:18.897762+00:00",
+  "updated_at_utc": "2026-11-11T03:54:18.897762+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
@@ -10,7 +10,7 @@
     "enso": 3.25,
     "iod": 0.54,
     "mjo_phase": 2,
-    "mjo_amplitude": 2.83,
+    "mjo_amplitude": 3.06,
     "cpac850_trade_winds": -3.4,
     "soi": -1.1,
     "olr": -1.0,
@@ -44,12 +44,12 @@
     }
   },
   "paknam_gauge": {
-    "water_level_msl": 1.311,
+    "water_level_msl": 0.957,
     "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
-    "surge_risk": "MODERATE",
-    "buffer_remaining_meters": 0.489,
+    "surge_risk": "LOW",
+    "buffer_remaining_meters": 0.843,
     "flood_wall_threshold_msl": 1.8,
-    "period": "2026-11-11 05:40",
+    "period": "2026-11-11 10:50",
     "status": "SUCCESS",
     "message": "Pak Nam tide gauge telemetry active."
   },
@@ -63,9 +63,9 @@
     },
     "mjo_phase_amp": {
       "label": "MJO (Phase & Amplitude)",
-      "value": "Phase 2 (Amp 2.83)",
+      "value": "Phase 2 (Amp 3.06)",
       "unit": "index",
-      "period": "2026-11-08",
+      "period": "2026-11-09",
       "description": "Madden-Julian Oscillation Index"
     },
     "iod_dmi_index": {
@@ -154,9 +154,9 @@
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "+1.311",
+      "value": "+0.957",
       "unit": "m MSL",
-      "period": "2026-11-11 05:40",
+      "period": "2026-11-11 10:50",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -198,9 +198,9 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.466,
-      "size_bytes": 2739281,
-      "line_count": 19156,
+      "response_time_sec": 0.419,
+      "size_bytes": 2739424,
+      "line_count": 19157,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
       "sample_preview": [
         " RMM values up to \"real time\". 19740601-20131231: Both SST1 variability (ENSO) and 120-day mean have been removed in these RMM values; 20140101-: Only the 120-day has been removed.",
@@ -221,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.241,
+      "response_time_sec": 0.872,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -244,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.159,
+      "response_time_sec": 0.16,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -290,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.154,
+      "response_time_sec": 0.161,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -313,7 +313,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.057,
+      "response_time_sec": 0.049,
       "size_bytes": 23093,
       "line_count": 576,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -336,7 +336,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.76,
+      "response_time_sec": 1.095,
       "size_bytes": 52064,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
@@ -359,7 +359,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 8.142,
+      "response_time_sec": 7.523,
       "size_bytes": 70225,
       "line_count": 1031,
       "data_format": "HTML Document (Web Report)",
@@ -383,10 +383,10 @@
       "basin": "Lower Chao Phraya Basin",
       "lat": 13.75,
       "lon": 100.5,
-      "mjo_effect": -18.7,
+      "mjo_effect": -20.2,
       "enso_effect": -39.0,
       "iod_effect": -4.3,
-      "net_anomaly": -62.0,
+      "net_anomaly": -63.5,
       "mechanics": "Lower basin urban flood vulnerability driven by upstream river discharge and tidal backflow."
     },
     {
@@ -395,10 +395,10 @@
       "basin": "Upper Chao Phraya Basin",
       "lat": 17.24,
       "lon": 98.97,
-      "mjo_effect": -15.3,
+      "mjo_effect": -16.5,
       "enso_effect": -42.9,
       "iod_effect": -5.4,
-      "net_anomaly": -63.6,
+      "net_anomaly": -64.8,
       "mechanics": "Northern mountain catchments feeding Bhumibol Reservoir."
     },
     {
@@ -407,10 +407,10 @@
       "basin": "Upper Chao Phraya Basin",
       "lat": 17.76,
       "lon": 100.56,
-      "mjo_effect": -17.0,
+      "mjo_effect": -18.4,
       "enso_effect": -42.9,
       "iod_effect": -4.9,
-      "net_anomaly": -64.8,
+      "net_anomaly": -66.2,
       "mechanics": "Northeastern headwater catchments feeding Sirikit Dam reservoir storage."
     },
     {
@@ -419,10 +419,10 @@
       "basin": "Pasak Basin / Chao Phraya Confluence",
       "lat": 14.8,
       "lon": 101.1,
-      "mjo_effect": -17.0,
+      "mjo_effect": -18.4,
       "enso_effect": -35.1,
       "iod_effect": -5.9,
-      "net_anomaly": -58.0,
+      "net_anomaly": -59.4,
       "mechanics": "Mid-basin flood risk zone and agricultural buffer for Greater Bangkok."
     },
     {
@@ -431,10 +431,10 @@
       "basin": "Mae Klong River Basin",
       "lat": 14.02,
       "lon": 99.53,
-      "mjo_effect": -13.6,
+      "mjo_effect": -14.7,
       "enso_effect": -39.0,
       "iod_effect": -6.5,
-      "net_anomaly": -59.1,
+      "net_anomaly": -60.2,
       "mechanics": "Western headwater system providing freshwater push for Bangkok salinity suppression."
     },
     {
@@ -443,10 +443,10 @@
       "basin": "Bang Pakong / Eastern Gulf Basin",
       "lat": 13.0,
       "lon": 101.2,
-      "mjo_effect": -20.4,
+      "mjo_effect": -22.0,
       "enso_effect": -31.2,
       "iod_effect": -4.9,
-      "net_anomaly": -56.5,
+      "net_anomaly": -58.1,
       "mechanics": "Eastern Gulf coastal monsoon surge region."
     }
   ]
