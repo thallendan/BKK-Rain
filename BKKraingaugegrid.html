@@ -481,9 +481,8 @@
         // (change if your CloudFront domain / key differs)
         const BMA_RAIN_URL = "https://d2jyi6rznjny0r.cloudfront.net/bma-rain-latest.json";
 
-        // Outlying stations (20-150 km ring), written every 15 min by the GitHub workflow outlying_rain.yml.
-        // EDIT: replace YOUR-REPO with the name of the repo that holds data/outlying_rain.json
-        const OUTLYING_URL = "https://raw.githubusercontent.com/thallendan/BKK-Rain/main/data/outlying_rain.json";
+        // Outlying stations (20-150 km ring), written every 10 min by the Thai Lambda -> S3 -> CloudFront
+        const OUTLYING_URL = "https://d2jyi6rznjny0r.cloudfront.net/outlying-rain-latest.json";
 
         // Timeframes: BMA gauges report all of these windows. Colour thresholds (mm) are mod / heavy / extreme.
         const TF_CONFIG = {
