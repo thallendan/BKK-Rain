@@ -1,8 +1,6 @@
 name: Outlying rain
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"   # every 15 min (GitHub may delay runs a few minutes)
   workflow_dispatch:          # manual "Run workflow" button
 
 permissions:
