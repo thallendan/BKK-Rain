@@ -305,6 +305,30 @@
         </div>
     </section>
 
+    <!-- Outlying Rain Panel (stations 20-150 km from Bangkok; live mode only) -->
+    <section id="outlying-panel" class="hidden max-w-7xl mx-auto w-full px-4 pb-1">
+        <div class="glass-card rounded-2xl p-3.5 flex flex-col md:flex-row md:items-center gap-3">
+            <div class="flex items-center gap-3 md:w-72 shrink-0">
+                <div class="p-3 bg-slate-800/80 rounded-xl text-slate-300"><i class="fa-solid fa-satellite-dish text-lg"></i></div>
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Outlying Rain (20-150 km) <span id="out-asof" class="text-slate-500"></span></p>
+                    <h3 id="out-status" class="text-lg font-bold text-white">--</h3>
+                </div>
+            </div>
+            <div class="flex-1 text-xs space-y-1">
+                <p id="out-text" class="text-slate-200"></p>
+                <p id="out-counts" class="text-slate-400"></p>
+                <p id="out-nearest" class="text-slate-400"></p>
+                <p id="out-sectors" class="text-slate-400"></p>
+                <p id="out-warn" class="text-amber-400 hidden"></p>
+            </div>
+            <div class="md:w-52 shrink-0 mx-auto">
+                <svg id="out-polar" viewBox="0 0 220 220" class="w-full max-w-[220px] h-auto"></svg>
+                <p class="text-[10px] text-slate-500 text-center">Wet stations around Bangkok (N up, rings 50/100/150 km)</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Main Dashboard Container -->
     <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[580px]">
         
@@ -457,6 +481,10 @@
         // (change if your CloudFront domain / key differs)
         const BMA_RAIN_URL = "https://d2jyi6rznjny0r.cloudfront.net/bma-rain-latest.json";
 
+        // Outlying stations (20-150 km ring), written every 15 min by the GitHub workflow outlying_rain.yml.
+        // EDIT: replace YOUR-REPO with the name of the repo that holds data/outlying_rain.json
+        const OUTLYING_URL = "https://raw.githubusercontent.com/thallendan/YOUR-REPO/main/data/outlying_rain.json";
+
         // Timeframes: BMA gauges report all of these windows. Colour thresholds (mm) are mod / heavy / extreme.
         const TF_CONFIG = {
             '5m':  { btn: '5m',  field: 'rain_5m',        tag: '5-Min',      suffix: '/ 5m',  t: { mod: 1,  heavy: 3,  extreme: 6 } },
@@ -480,6 +508,8 @@
             timeframe: '15m', // any key of TF_CONFIG
             lastReading: null,
             trend: null,
+            outlying: null,
+            outlyingError: false,
             trendLayer: null,
             activeFilter: 'all', // 'all', 'raining', 'heavy'
             searchQuery: '',
@@ -617,6 +647,7 @@
             // Update UI components
             renderDashboard();
             updateRefreshIcon(false);
+            if (APP_STATE.activeScenario === 'live') loadOutlying();      // independent of the BMA feed; never blocks it
             document.getElementById('last-update-time').innerText = APP_STATE.activeScenario === 'live'
                 ? (APP_STATE.stations.length ? `Last reading: ${fmtICT(APP_STATE.lastReading)} ICT` : 'No data')
                 : "Updated: " + new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -793,6 +824,7 @@
                 renderMapMarkers();
                 renderLegend();
                 renderTrend();
+                renderOutlying();
                 return;
             }
             const raining = stations.filter(s => getRainVal(s, tf) > 0);
@@ -820,6 +852,7 @@
             renderMapMarkers();
             renderLegend();
             renderTrend();
+            renderOutlying();
         }
 
         function renderStationList() {
@@ -964,6 +997,103 @@
             document.getElementById('trend-move').innerText = tr.status === 'dry' || tr.status === 'collecting' ? '' : moveText(tr.movement);
             renderSpark(tr.series);
             renderTrendMap(tr.status === 'dry' || tr.status === 'ended' || tr.status === 'collecting' ? null : tr);
+        }
+
+        // ---- Outlying rain panel ----
+        async function loadOutlying() {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                const response = await fetch(OUTLYING_URL, { signal: controller.signal, cache: 'no-store' });
+                clearTimeout(timeoutId);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                APP_STATE.outlying = await response.json();
+                APP_STATE.outlyingError = false;
+            } catch (err) {
+                console.warn('Outlying feed failed:', err);
+                APP_STATE.outlyingError = true;          // keep any older data, flagged below
+            }
+            renderOutlying();
+        }
+
+        const OUT_STYLE = {
+            collecting: ['Collecting data', 'text-slate-400'], steady: ['Steady', 'text-blue-400'],
+            approaching: ['Approaching', 'text-amber-400'], receding: ['Receding', 'text-emerald-400'],
+            arrived: ['At Bangkok edge', 'text-red-400']
+        };
+        const SECTOR_ANGLE = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315 };
+
+        const escHtml = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+        function outDotColor(r1) { return r1 >= 10 ? '#ef4444' : (r1 >= 5 ? '#fb923c' : (r1 >= 2 ? '#facc15' : '#38bdf8')); }
+
+        function renderOutPolar(o) {
+            const svg = document.getElementById('out-polar');
+            const cx = 110, cy = 110, R = 78;
+            const pos = (brg, km) => { const a = brg * Math.PI / 180, r = Math.min(km, 150) / 150 * R; return [cx + r * Math.sin(a), cy - r * Math.cos(a)]; };
+            let h = '';
+            [50, 100, 150].forEach(km => { h += `<circle cx="${cx}" cy="${cy}" r="${km / 150 * R}" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>`; });
+            h += `<circle cx="${cx}" cy="${cy}" r="${20 / 150 * R}" fill="#1e293b" stroke="#475569" stroke-width="1"/>`;
+            h += `<text x="${cx}" y="${cy + 3}" text-anchor="middle" font-size="8" fill="#94a3b8">BKK</text>`;
+            [['N', 0], ['E', 90], ['S', 180], ['W', 270]].forEach(([l, a]) => {
+                const [x, y] = pos(a, 150 + 22);
+                h += `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle" font-size="9" fill="#64748b">${l}</text>`;
+            });
+            (o.sectors || []).forEach(sec => {
+                if (!sec.wet) return;
+                const [x, y] = pos(SECTOR_ANGLE[sec.sector], 150 + 8);
+                if (['N', 'E', 'S', 'W'].includes(sec.sector)) return;       // cardinals already labelled; counts are in the text
+                h += `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="bold" fill="#fbbf24">${sec.wet}</text>`;
+            });
+            (o.wet_stations || []).forEach(st => {
+                const [x, y] = pos(st.brg, st.km);
+                h += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(2.2 + Math.min(st.r1 || 0, 20) / 7).toFixed(1)}" fill="${outDotColor(st.r1 || 0)}" fill-opacity="0.85"><title>${escHtml(st.name || 'Station')} ${escHtml(st.km)} km ${escHtml(st.dir)}: ${escHtml(st.r1)} mm/h</title></circle>`;
+            });
+            const nw = o.summary && o.summary.nearest_wet;
+            if (nw) {
+                const hit = (o.wet_stations || []).find(s => s.km === nw.km && s.dir === nw.dir);
+                if (hit) { const [x, y] = pos(hit.brg, hit.km); h += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="none" stroke="#f8fafc" stroke-width="1.2"/>`; }
+            }
+            svg.innerHTML = h;
+        }
+
+        function renderOutlying() {
+            const panel = document.getElementById('outlying-panel');
+            if (APP_STATE.activeScenario !== 'live') { panel.classList.add('hidden'); return; }
+            panel.classList.remove('hidden');
+            const o = APP_STATE.outlying;
+            const status = document.getElementById('out-status');
+            const warn = document.getElementById('out-warn');
+            const set = (id, v) => { document.getElementById(id).innerText = v; };
+            if (!o) {
+                status.innerText = APP_STATE.outlyingError ? 'Unavailable' : 'Loading...';
+                status.className = 'text-lg font-bold text-slate-400';
+                set('out-text', APP_STATE.outlyingError ? 'Outlying station data is not available right now. BMA gauge data above is unaffected.' : '');
+                ['out-asof', 'out-counts', 'out-nearest', 'out-sectors'].forEach(id => set(id, ''));
+                warn.classList.add('hidden');
+                document.getElementById('out-polar').innerHTML = '';
+                return;
+            }
+            const ap = o.approach || {};
+            const obsAge = Math.round((Date.now() - new Date(o.newest_obs_utc || o.generated_utc)) / 60000);
+            const genAge = Math.round((Date.now() - new Date(o.generated_utc)) / 60000);
+            const isStale = genAge > 45 || obsAge > 90;          // never present old rain movement as current
+            const [name, cls] = isStale ? ['Stale data', 'text-amber-400'] : (OUT_STYLE[ap.status] || [ap.status || '--', 'text-white']);
+            status.innerText = name;
+            status.className = 'text-lg font-bold ' + cls;
+            set('out-asof', '- readings as of ' + fmtICT(o.newest_obs_utc || o.generated_utc) + ' ICT');
+            set('out-text', isStale ? 'Not current. Last reading said: ' + (ap.text || '') : (ap.text || ''));
+            const sm = o.summary || {};
+            set('out-counts', `${sm.wet} of ${sm.stations} outlying stations wet, ${sm.heavy} heavy (10+ mm/h); max ${sm.max_1h_mm} mm/h.`);
+            const nw = sm.nearest_wet;
+            set('out-nearest', nw ? `Nearest rain: ${nw.km} km ${nw.dir}${nw.name ? ' (' + nw.name + ')' : ''}, ${nw.r1} mm/h.` : 'No rain at any outlying station right now.');
+            const top = (o.sectors || []).filter(x => x.wet > 0).sort((a, b) => b.wet - a.wet).slice(0, 4);
+            set('out-sectors', top.length ? 'Wettest directions: ' + top.map(x => `${x.sector} ${x.wet}`).join(' · ') : '');
+            if (APP_STATE.outlyingError) { warn.innerText = 'Could not refresh outlying data - showing the last copy.'; warn.classList.remove('hidden'); }
+            else if (genAge > 45) { warn.innerText = `Outlying collector has not updated for ${genAge} min.`; warn.classList.remove('hidden'); }
+            else if (obsAge > 90) { warn.innerText = `Outlying station readings are ${obsAge} min old.`; warn.classList.remove('hidden'); }
+            else warn.classList.add('hidden');
+            renderOutPolar(o);
         }
 
         function renderLegend() {
