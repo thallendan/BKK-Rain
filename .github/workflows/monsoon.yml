@@ -1,0 +1,20 @@
+name: Update monsoon data
+on:
+  schedule:
+    - cron: "15 */3 * * *"   # every 3 hours
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python fetch_monsoon.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add monsoon.json
+          git diff --cached --quiet || (git commit -m "Update monsoon.json" && git pull --rebase && git push)
