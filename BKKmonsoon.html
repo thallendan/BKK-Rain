@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BKK Monsoon Winds</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--tx:#1b2430;--mu:#667;--bd:#dde3ea}
+@media(prefers-color-scheme:dark){:root{--bg:#10151c;--card:#1a212b;--tx:#e6ebf1;--mu:#93a0b0;--bd:#2c3644}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+main{max-width:1100px;margin:auto;padding:12px}h1{font-size:1.3rem;margin:4px 0}h2{font-size:1rem;margin:0 0 8px}
+.nav a{color:#2a7fd4;margin-right:12px;font-size:.85rem}.sub{color:var(--mu);font-size:.8rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+.big{font-size:1.5rem;font-weight:700}.lbl{font-size:.75rem;color:var(--mu)}
+#map{height:430px;border-radius:10px;border:1px solid var(--bd)}
+.ctl{display:flex;gap:10px;align-items:center;margin:8px 0}.ctl input{flex:1}
+.arrow{transition:transform .2s}.chart{height:230px}
+#strip{display:flex;height:16px;border-radius:4px;overflow:hidden;margin:6px 0}#strip div{flex:1}
+.leg span{display:inline-block;margin-right:12px;font-size:.78rem}.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
+.note{font-size:.82rem;color:var(--mu)}
+</style></head><body><main>
+<div class="nav"><a href="index.html">Macro drivers</a><a href="BKKraingaugegrid.html">Rain gauges</a></div>
+<h1>Bangkok Monsoon Wind Drivers</h1>
+<div class="sub" id="upd">Loading…</div>
+<div class="grid" id="cards"></div>
+<div class="card"><h2>850 hPa wind field (~1.5 km up) <span class="sub" id="mt"></span></h2>
+<div id="map"></div>
+<div class="ctl"><button id="play">▶</button><input type="range" id="sl" min="0" value="0"><b id="sv" style="min-width:110px"></b></div>
+<div class="leg"><span><i style="background:#9aa5b1"></i>&lt;3 m/s</span><span><i style="background:#2a9d8f"></i>3–7</span><span><i style="background:#e9c46a"></i>7–12</span><span><i style="background:#e76f51"></i>12+</span><span>🌀 cyclone (GDACS)</span><span>Arrows point where wind blows <u>to</u></span></div></div>
+<div class="card" style="margin-top:10px"><h2>Core regime (Bangkok + Gulf + Andaman average)</h2>
+<div id="strip"></div><div class="leg" id="rleg"></div></div>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+<div class="card"><h2>Core 850 hPa wind &amp; Bangkok rain</h2><div class="chart"><canvas id="c1"></canvas></div></div>
+<div class="card"><h2>China high − Bay of Bengal low (hPa)</h2><div class="chart"><canvas id="c2"></canvas></div></div></div>
+<p class="note">Regimes use the 850 hPa wind direction (from): SW 200–290° = westerly monsoon from Andaman/Bay of Bengal; NE 20–90° = China/Siberian-high surge; E 90–200° = Pacific/typhoon-fed easterlies; N = continental northerlies; WEAK &lt;2.5 m/s. A bigger high–low pressure difference means a stronger NE surge. Data: Open-Meteo (GFS/ECMWF), GDACS, plus your data.json. Model output, not an official forecast.</p>
+</main>
+<script>
+const RC={SW:'#2a7fd4',NE:'#f4a261',E:'#2a9d8f',N:'#8e6bbf',WEAK:'#9aa5b1'};
+const RN={SW:'Westerly / SW monsoon',NE:'NE monsoon (China high)',E:'Easterly / SE (Pacific)',N:'Northerly (continental)',WEAK:'Weak / variable'};
+const COMP=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+const comp=d=>COMP[Math.round(d/22.5)%16];
+const bkk=(t,o)=>new Date(t+'Z').toLocaleString('en-GB',Object.assign({timeZone:'Asia/Bangkok'},o));
+const lab=t=>bkk(t,{weekday:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+const col=s=>s<3?'#9aa5b1':s<7?'#2a9d8f':s<12?'#e9c46a':'#e76f51';
+const $=id=>document.getElementById(id);
+let D,map,markers=[],timer;
+fetch('monsoon.json?'+Date.now()).then(r=>r.json()).then(init).catch(e=>$('upd').textContent='Could not load monsoon.json: '+e);
+async function init(d){D=d;
+ $('upd').textContent='Updated '+bkk(d.updated_utc,{dateStyle:'medium',timeStyle:'short'})+' Bangkok time · sources: '+Object.entries(d.sources).map(([k,v])=>(v?'✓ ':'✗ ')+k).join(', ');
+ let ctx={};try{ctx=(await (await fetch('data.json?'+Date.now())).json()).teleconnections||{}}catch(e){}
+ cards(ctx);charts();strip();grid();}
+function cards(ctx){const s=D.series,i=D.now_index,h=[];
+ if(s){const r=s.regime[i];let n=i;while(n>0&&s.regime[n-1]===r)n--;
+  const ago=i-24>=0?i-24:0,du=(s.core_u850[i]-s.core_u850[ago]).toFixed(1);
+  h.push(c('Regime now',`<span style="color:${RC[r]}">${r}</span>`,`${RN[r]} · ${i-n+1} h running`));
+  h.push(c('Core wind 850',`${s.core_spd850[i]} m/s`,`from ${comp(s.core_dir850[i])} (${s.core_dir850[i]}°) · 24h u change ${du}`));
+  const rn=s.bkk_rain_mm.slice(i,i+24).reduce((a,b)=>a+(b||0),0).toFixed(0);
+  h.push(c('Rain next 24 h (BKK)',rn+' mm','model forecast · RH850 '+s.bkk_rh850[i]+'%'));}
+ const pg=D.pressure_gradient;if(pg){const j=pg.times.findLastIndex(t=>t<=D.updated_utc.slice(0,13)+':00');
+  h.push(c('High − Low pressure',(pg.diff_hpa[j]??'–')+' hPa','China 30N110E minus BoB 15N90E'));}
+ const cy=D.cyclones[0];h.push(cy?c('Nearest cyclone',cy.km+' km',`${cy.name} · bearing ${cy.bearing}° (${comp(cy.bearing)}) · ${cy.alert}`):c('Cyclones','None','no active TC in W. Pacific/N. Indian per GDACS'));
+ if(ctx.mjo_phase!=null)h.push(c('MJO / ENSO / IOD',`P${ctx.mjo_phase} · ${ctx.mjo_amplitude}`,`Niño3.4 ${ctx.enso} · DMI ${ctx.iod} (from data.json)`));
+ $('cards').innerHTML=h.join('');}
+const c=(l,b,s)=>`<div class="card"><div class="lbl">${l}</div><div class="big">${b}</div><div class="lbl">${s}</div></div>`;
+function strip(){const s=D.series;if(!s)return;
+ $('strip').innerHTML=s.regime.map((r,i)=>`<div title="${lab(s.times[i])} ${r}" style="background:${RC[r]};${i===D.now_index?'outline:2px solid #000;z-index:1':''}"></div>`).join('');
+ $('rleg').innerHTML=Object.keys(RC).map(k=>`<span><i style="background:${RC[k]}"></i>${RN[k]}</span>`).join('')+'<span>▮ black outline = now</span>';}
+function charts(){const s=D.series;if(!s)return;const L=s.times.map(lab),n=D.now_index;
+ const nowLine={id:'now',afterDraw(ch){const x=ch.scales.x.getPixelForValue(n),a=ch.chartArea;const g=ch.ctx;g.save();g.strokeStyle='#e76f51';g.setLineDash([4,4]);g.beginPath();g.moveTo(x,a.top);g.lineTo(x,a.bottom);g.stroke();g.restore();}};
+ const opt=(y)=>({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10}}},scales:Object.assign({x:{ticks:{maxTicksLimit:7}}},y)});
+ new Chart($('c1'),{data:{labels:L,datasets:[
+  {type:'bar',label:'BKK rain mm/h',data:s.bkk_rain_mm,backgroundColor:'#5aa9e6aa',yAxisID:'r'},
+  {type:'line',label:'u850 (+W / −E)',data:s.core_u850,borderColor:'#2a7fd4',pointRadius:0,yAxisID:'y'},
+  {type:'line',label:'v850 (+S / −N)',data:s.core_v850,borderColor:'#e76f51',pointRadius:0,yAxisID:'y'}]},
+  options:opt({y:{title:{display:true,text:'m/s'}},r:{position:'right',grid:{display:false},title:{display:true,text:'mm/h'}}}),plugins:[nowLine]});
+ const pg=D.pressure_gradient;if(pg)new Chart($('c2'),{type:'line',data:{labels:pg.times.map(lab),datasets:[
+  {label:'High − Low',data:pg.diff_hpa,borderColor:'#8e6bbf',pointRadius:0,fill:true,backgroundColor:'#8e6bbf22'}]},options:opt({y:{}})});}
+function grid(){const g=D.grid;if(!g)return;
+ map=L.map('map',{scrollWheelZoom:false}).setView([15,105],4);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',opacity:.8}).addTo(map);
+ L.marker([13.75,100.5]).addTo(map).bindTooltip('Bangkok');
+ D.cyclones.forEach(t=>L.marker([t.lat,t.lon],{icon:L.divIcon({html:'<div style="font-size:26px">🌀</div>',className:'',iconSize:[26,26]})}).addTo(map).bindPopup(`<b>${t.name}</b><br>${t.title}<br>${t.km} km from BKK`));
+ const sl=$('sl');sl.max=g.times.length-1;
+ sl.value=g.times.findLastIndex(t=>t<=D.updated_utc.slice(0,13)+':00');if(sl.value<0)sl.value=0;
+ sl.oninput=()=>draw(+sl.value);draw(+sl.value);
+ $('play').onclick=()=>{if(timer){clearInterval(timer);timer=null;$('play').textContent='▶';return}
+  $('play').textContent='⏸';timer=setInterval(()=>{sl.value=(+sl.value+1)%g.times.length;draw(+sl.value)},600)};}
+function draw(k){const g=D.grid;markers.forEach(m=>m.remove());markers=[];$('sv').textContent=lab(g.times[k]);
+ g.pts.forEach(p=>{const s=p.spd[k],d=p.dir[k];if(s==null)return;
+  const html=`<svg width="30" height="30" viewBox="-15 -15 30 30" style="transform:rotate(${(d+180)%360}deg)"><path d="M0-11L5 3L0 0L-5 3Z" fill="${col(s)}" stroke="#222" stroke-width=".8"/></svg>`;
+  markers.push(L.marker([p.lat,p.lon],{icon:L.divIcon({html,className:'arrow',iconSize:[30,30]}),interactive:true}).addTo(map)
+   .bindTooltip(`${s} m/s from ${comp(d)} · MSLP ${p.p[k]??'–'} hPa`));});}
+</script></body></html>
