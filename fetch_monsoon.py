@@ -19,15 +19,15 @@ HIGH_PT, LOW_PT = (30, 110), (15, 90)        # China high vs Bay of Bengal low (
 PAST, FUT = 3, 7
 
 def get(url):
-    for i in range(3):
+    for i in range(5):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=30) as r:
                 return r.read()
         except Exception as e:
             err = e
             try: err = f"{e} {e.read().decode()[:300]}"
             except Exception: pass
-            print("retry", i + 1, err); time.sleep(5 * (i + 1))
+            print("retry", i + 1, err); time.sleep(10 * (i + 1))
     print("FAILED", url[:90], err); return None
 
 def om(points, hourly):
@@ -81,69 +81,51 @@ def cyclones():
 def main():
     now = datetime.now(timezone.utc)
     res = {"updated_utc": now.isoformat(timespec="seconds"), "sources": {}}
-    # --- index points (hourly) ---
-    names = list(PTS)
-    data = om([PTS[n] for n in names], ["wind_speed_850hPa", "wind_direction_850hPa", "wind_speed_925hPa",
-              "wind_direction_925hPa", "relative_humidity_850hPa", "pressure_msl", "precipitation"])
-    if not data:  # fallback: 850 hPa wind, MSLP and rain only (series below tolerates missing extras)
-        time.sleep(10)
-        data = om([PTS[n] for n in names], ["wind_speed_850hPa", "wind_direction_850hPa", "pressure_msl", "precipitation"])
-        if data:
-            for d in data:
-                h = d["hourly"]; z = [None] * len(h["time"])
-                for k in ("wind_speed_925hPa", "wind_direction_925hPa", "relative_humidity_850hPa"): h.setdefault(k, z)
-    res["sources"]["open_meteo_points"] = bool(data)
-    if data:
-        h0 = {n: d["hourly"] for n, d in zip(names, data)}
-        times = h0["BKK"]["time"]; n = len(times)
-        def col(p, k): return h0[p][k]
-        core_u, core_v, core_u9, core_v9 = [], [], [], []
-        for i in range(n):
-            us = [uv(col(p, "wind_speed_850hPa")[i], col(p, "wind_direction_850hPa")[i]) for p in CORE]
-            u9 = [uv(col(p, "wind_speed_925hPa")[i] or 0, col(p, "wind_direction_925hPa")[i] or 0) for p in CORE]
-            core_u.append(sum(x[0] for x in us) / 3); core_v.append(sum(x[1] for x in us) / 3)
-            core_u9.append(sum(x[0] for x in u9) / 3); core_v9.append(sum(x[1] for x in u9) / 3)
-        r1 = lambda a: [None if x is None else round(x, 1) for x in a]
-        res["series"] = {
-            "times": times,
-            "core_u850": r1(core_u), "core_v850": r1(core_v),
-            "core_spd850": r1([math.hypot(a, b) for a, b in zip(core_u, core_v)]),
-            "core_dir850": [round(from_dir(a, b)) for a, b in zip(core_u, core_v)],
-            "core_u925": r1(core_u9), "core_v925": r1(core_v9),
-            "regime": [regime(a, b) for a, b in zip(core_u, core_v)],
-            "bkk_rain_mm": col("BKK", "precipitation"),
-            "bkk_rh850": col("BKK", "relative_humidity_850hPa"),
-            "bkk_mslp": col("BKK", "pressure_msl"),
-            "scs_spd850": col("SCS", "wind_speed_850hPa"), "scs_dir850": col("SCS", "wind_direction_850hPa"),
-            "andaman_spd850": col("ANDAMAN", "wind_speed_850hPa"), "andaman_dir850": col("ANDAMAN", "wind_direction_850hPa"),
-        }
-        res["now_index"] = max(i for i, t in enumerate(times) if t <= now.strftime("%Y-%m-%dT%H:00"))
-    # --- wide grid (6-hourly) ---
-    pts = [(la, lo) for la in LATS for lo in LONS]
-    time.sleep(5); rows = []
-    for k in range(0, len(pts), 35):
-        d = om(pts[k:k + 35], ["wind_speed_850hPa", "wind_direction_850hPa", "pressure_msl"])
+    # One request shape (850 hPa wind + MSLP) for the wide grid AND the Bangkok-area index points.
+    grid_pts = [(la, lo) for la in LATS for lo in LONS]
+    names = list(PTS); allp = grid_pts + [PTS[n] for n in names]
+    rows = []
+    for k in range(0, len(allp), 37):
+        d = om(allp[k:k + 37], ["wind_speed_850hPa", "wind_direction_850hPa", "pressure_msl"])
         if not d: rows = None; break
         rows += d
+        time.sleep(3)
     res["sources"]["open_meteo_grid"] = bool(rows)
-    if rows:
-        t = rows[0]["hourly"]["time"]; idx = [i for i, x in enumerate(t) if x.endswith(("00:00", "06:00", "12:00", "18:00"))]
-        g = {"times": [t[i] for i in idx], "lats": LATS, "lons": LONS, "pts": []}
-        for (la, lo), d in zip(pts, rows):
-            h = d["hourly"]
-            g["pts"].append({"lat": la, "lon": lo,
-                "spd": [h["wind_speed_850hPa"][i] for i in idx], "dir": [h["wind_direction_850hPa"][i] for i in idx],
-                "p": [h["pressure_msl"][i] for i in idx]})
-        res["grid"] = g
-        # China high minus Bay of Bengal low, 6-hourly
-        ph = next(p for p in g["pts"] if (p["lat"], p["lon"]) == HIGH_PT)["p"]
-        pl = next(p for p in g["pts"] if (p["lat"], p["lon"]) == (LOW_PT[0], LOW_PT[1]))["p"]
-        res["pressure_gradient"] = {"times": g["times"], "china_high": ph, "bob_low": pl,
-            "diff_hpa": [None if a is None or b is None else round(a - b, 1) for a, b in zip(ph, pl)]}
-    # --- cyclones ---
+    res["sources"]["open_meteo_points"] = bool(rows)
+    if not rows: raise SystemExit("No model data retrieved; keeping previous monsoon.json")
+    gr, pr = rows[:len(grid_pts)], dict(zip(names, rows[len(grid_pts):]))
+    # --- Bangkok-area core index (hourly) ---
+    h = {n: pr[n]["hourly"] for n in names}
+    times = h["BKK"]["time"]; n = len(times)
+    cu, cv = [], []
+    for i in range(n):
+        us = [uv(h[p]["wind_speed_850hPa"][i], h[p]["wind_direction_850hPa"][i]) for p in CORE
+              if h[p]["wind_speed_850hPa"][i] is not None]
+        cu.append(sum(x[0] for x in us) / len(us) if us else 0); cv.append(sum(x[1] for x in us) / len(us) if us else 0)
+    ex = om([BKK], ["precipitation", "relative_humidity_850hPa"])   # optional extras
+    res["sources"]["open_meteo_rain"] = bool(ex)
+    eh = ex[0]["hourly"] if ex else {}
+    r1 = lambda a: [round(x, 1) for x in a]
+    res["series"] = {"times": times, "core_u850": r1(cu), "core_v850": r1(cv),
+        "core_spd850": r1([math.hypot(a, b) for a, b in zip(cu, cv)]),
+        "core_dir850": [round(from_dir(a, b)) for a, b in zip(cu, cv)],
+        "regime": [regime(a, b) for a, b in zip(cu, cv)],
+        "bkk_rain_mm": eh.get("precipitation", [None] * n), "bkk_rh850": eh.get("relative_humidity_850hPa", [None] * n),
+        "bkk_mslp": h["BKK"]["pressure_msl"]}
+    res["now_index"] = max(i for i, t in enumerate(times) if t <= now.strftime("%Y-%m-%dT%H:00"))
+    # --- wide grid (6-hourly) ---
+    t = gr[0]["hourly"]["time"]; idx = [i for i, x in enumerate(t) if x.endswith(("00:00", "06:00", "12:00", "18:00"))]
+    g = {"times": [t[i] for i in idx], "lats": LATS, "lons": LONS, "pts": []}
+    for (la, lo), d in zip(grid_pts, gr):
+        hh = d["hourly"]
+        g["pts"].append({"lat": la, "lon": lo, "spd": [hh["wind_speed_850hPa"][i] for i in idx],
+            "dir": [hh["wind_direction_850hPa"][i] for i in idx], "p": [hh["pressure_msl"][i] for i in idx]})
+    res["grid"] = g
+    ph = next(p for p in g["pts"] if (p["lat"], p["lon"]) == HIGH_PT)["p"]
+    pl = next(p for p in g["pts"] if (p["lat"], p["lon"]) == LOW_PT)["p"]
+    res["pressure_gradient"] = {"times": g["times"], "china_high": ph, "bob_low": pl,
+        "diff_hpa": [None if a is None or b is None else round(a - b, 1) for a, b in zip(ph, pl)]}
     cy = cyclones(); res["sources"]["gdacs_cyclones"] = cy is not None; res["cyclones"] = cy or []
-    if not res["sources"]["open_meteo_points"] and not res["sources"]["open_meteo_grid"]:
-        raise SystemExit("No model data retrieved; keeping previous monsoon.json")
     with open(OUT, "w") as f: json.dump(res, f, separators=(",", ":"))
     print("wrote", OUT, res["sources"])
 
