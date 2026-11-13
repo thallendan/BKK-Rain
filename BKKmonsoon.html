@@ -48,10 +48,11 @@ const $=id=>document.getElementById(id);
 let D,map,markers=[],timer;
 fetch('monsoon.json?'+Date.now()).then(r=>r.json()).then(init).catch(e=>$('upd').textContent='Could not load monsoon.json: '+e);
 async function init(d){D=d;
- $('upd').textContent='Updated '+bkk(d.updated_utc,{dateStyle:'medium',timeStyle:'short'})+' Bangkok time · sources: '+Object.entries(d.sources).map(([k,v])=>(v?'✓ ':'✗ ')+k).join(', ');
+ $('upd').textContent='Updated '+new Date(d.updated_utc).toLocaleString('en-GB',{timeZone:'Asia/Bangkok',dateStyle:'medium',timeStyle:'short'})+' Bangkok time · sources: '+Object.entries(d.sources).map(([k,v])=>(v?'✓ ':'✗ ')+k).join(', ');
  let ctx={};try{ctx=(await (await fetch('data.json?'+Date.now())).json()).teleconnections||{}}catch(e){}
  cards(ctx);charts();strip();grid();}
 function cards(ctx){const s=D.series,i=D.now_index,h=[];
+ if(!s)h.push(c('Bangkok wind series','Unavailable','Open-Meteo point request failed on the last run'));
  if(s){const r=s.regime[i];let n=i;while(n>0&&s.regime[n-1]===r)n--;
   const ago=i-24>=0?i-24:0,du=(s.core_u850[i]-s.core_u850[ago]).toFixed(1);
   h.push(c('Regime now',`<span style="color:${RC[r]}">${r}</span>`,`${RN[r]} · ${i-n+1} h running`));
