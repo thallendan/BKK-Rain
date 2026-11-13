@@ -24,7 +24,10 @@ def get(url):
             with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
                 return r.read()
         except Exception as e:
-            err = e; time.sleep(3 * (i + 1))
+            err = e
+            try: err = f"{e} {e.read().decode()[:300]}"
+            except Exception: pass
+            print("retry", i + 1, err); time.sleep(5 * (i + 1))
     print("FAILED", url[:90], err); return None
 
 def om(points, hourly):
@@ -82,6 +85,13 @@ def main():
     names = list(PTS)
     data = om([PTS[n] for n in names], ["wind_speed_850hPa", "wind_direction_850hPa", "wind_speed_925hPa",
               "wind_direction_925hPa", "relative_humidity_850hPa", "pressure_msl", "precipitation"])
+    if not data:  # fallback: 850 hPa wind, MSLP and rain only (series below tolerates missing extras)
+        time.sleep(10)
+        data = om([PTS[n] for n in names], ["wind_speed_850hPa", "wind_direction_850hPa", "pressure_msl", "precipitation"])
+        if data:
+            for d in data:
+                h = d["hourly"]; z = [None] * len(h["time"])
+                for k in ("wind_speed_925hPa", "wind_direction_925hPa", "relative_humidity_850hPa"): h.setdefault(k, z)
     res["sources"]["open_meteo_points"] = bool(data)
     if data:
         h0 = {n: d["hourly"] for n, d in zip(names, data)}
@@ -90,7 +100,7 @@ def main():
         core_u, core_v, core_u9, core_v9 = [], [], [], []
         for i in range(n):
             us = [uv(col(p, "wind_speed_850hPa")[i], col(p, "wind_direction_850hPa")[i]) for p in CORE]
-            u9 = [uv(col(p, "wind_speed_925hPa")[i], col(p, "wind_direction_925hPa")[i]) for p in CORE]
+            u9 = [uv(col(p, "wind_speed_925hPa")[i] or 0, col(p, "wind_direction_925hPa")[i] or 0) for p in CORE]
             core_u.append(sum(x[0] for x in us) / 3); core_v.append(sum(x[1] for x in us) / 3)
             core_u9.append(sum(x[0] for x in u9) / 3); core_v9.append(sum(x[1] for x in u9) / 3)
         r1 = lambda a: [None if x is None else round(x, 1) for x in a]
@@ -110,7 +120,7 @@ def main():
         res["now_index"] = max(i for i, t in enumerate(times) if t <= now.strftime("%Y-%m-%dT%H:00"))
     # --- wide grid (6-hourly) ---
     pts = [(la, lo) for la in LATS for lo in LONS]
-    rows = []
+    time.sleep(5); rows = []
     for k in range(0, len(pts), 35):
         d = om(pts[k:k + 35], ["wind_speed_850hPa", "wind_direction_850hPa", "pressure_msl"])
         if not d: rows = None; break
