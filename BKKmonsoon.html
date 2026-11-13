@@ -68,10 +68,10 @@ const c=(l,b,s)=>`<div class="card"><div class="lbl">${l}</div><div class="big">
 function strip(){const s=D.series;if(!s)return;
  $('strip').innerHTML=s.regime.map((r,i)=>`<div title="${lab(s.times[i])} ${r}" style="background:${RC[r]};${i===D.now_index?'outline:2px solid #000;z-index:1':''}"></div>`).join('');
  $('rleg').innerHTML=Object.keys(RC).map(k=>`<span><i style="background:${RC[k]}"></i>${RN[k]}</span>`).join('')+'<span>▮ black outline = now</span>';}
-function charts(){const s=D.series;if(!s)return;const L=s.times.map(lab),n=D.now_index;
+function charts(){const s=D.series||{times:[]};const L=s.times.map(lab),n=D.now_index;
  const nowLine={id:'now',afterDraw(ch){const x=ch.scales.x.getPixelForValue(n),a=ch.chartArea;const g=ch.ctx;g.save();g.strokeStyle='#e76f51';g.setLineDash([4,4]);g.beginPath();g.moveTo(x,a.top);g.lineTo(x,a.bottom);g.stroke();g.restore();}};
  const opt=(y)=>({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10}}},scales:Object.assign({x:{ticks:{maxTicksLimit:7}}},y)});
- new Chart($('c1'),{data:{labels:L,datasets:[
+ if(D.series)new Chart($('c1'),{data:{labels:L,datasets:[
   {type:'bar',label:'BKK rain mm/h',data:s.bkk_rain_mm,backgroundColor:'#5aa9e6aa',yAxisID:'r'},
   {type:'line',label:'u850 (+W / −E)',data:s.core_u850,borderColor:'#2a7fd4',pointRadius:0,yAxisID:'y'},
   {type:'line',label:'v850 (+S / −N)',data:s.core_v850,borderColor:'#e76f51',pointRadius:0,yAxisID:'y'}]},
