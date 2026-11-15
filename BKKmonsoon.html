@@ -24,7 +24,8 @@ details.ex{background:var(--card);border:1px solid var(--bd);border-radius:10px;
 details.ex summary{cursor:pointer;font-weight:600;color:#2a7fd4}details.ex h3{font-size:.9rem;margin:12px 0 2px}
 details.ex ul{margin:4px 0 4px 18px;padding:0}details.ex li{margin:2px 0}#plain{border-left:4px solid #2a7fd4;margin:10px 0}
 </style></head><body><main>
-<div class="nav"><a href="index.html">Macro drivers</a><a href="BKKraingaugegrid.html">Rain gauges</a></div>
+<div id="bkk-nav"></div>
+<script src="https://thallendan.github.io/BKK-Rain/bkk-nav.js" defer></script>
 <h1>Bangkok Monsoon Wind Drivers</h1>
 <div class="sub" id="upd">Loading…</div>
 <div class="grid" id="cards"></div>
@@ -68,7 +69,8 @@ const $=id=>document.getElementById(id);
 let D,map,markers=[],timer;
 fetch('monsoon.json?'+Date.now()).then(r=>r.json()).then(init).catch(e=>$('upd').textContent='Could not load monsoon.json: '+e);
 async function init(d){D=d;
- $('upd').textContent='Updated '+new Date(d.updated_utc).toLocaleString('en-GB',{timeZone:'Asia/Bangkok',dateStyle:'medium',timeStyle:'short'})+' Bangkok time · sources: '+Object.entries(d.sources).map(([k,v])=>(v?'✓ ':'✗ ')+k).join(', ');
+ const ageH=(Date.now()-Date.parse(d.updated_utc))/36e5;
+ $('upd').textContent='Updated '+new Date(d.updated_utc).toLocaleString('en-GB',{timeZone:'Asia/Bangkok',dateStyle:'medium',timeStyle:'short'})+' Bangkok time · sources: '+Object.entries(d.sources||{}).map(([k,v])=>(v?'✓ ':'✗ ')+k).join(', ')+(ageH>6?' · ⚠ model data is '+(ageH<48?Math.round(ageH)+' h':Math.round(ageH/24)+' days')+' old, not current':'');
  let ctx={};try{ctx=(await (await fetch('data.json?'+Date.now())).json()).teleconnections||{}}catch(e){}
  cards(ctx);charts();strip();grid();}
 const RT={SW:'moist westerly flow from the Andaman Sea, the classic rain-bringing monsoon pattern',NE:'cooler, drier air from the China high, usually fair weather in Bangkok',E:'humid air from the Pacific/South China Sea, which can bring showers and storms and is often linked to typhoons to the east',N:'dry northerly air, mostly fair and cooler',WEAK:'light, variable winds, so any rain would be local sea-breeze thunderstorms'};
