@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "generated_utc": "2026-11-15T13:37:42Z",
+  "overall": {
+    "level": "watch",
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "monsoon"
+    ]
+  },
+  "sites": {
+    "macro": {
+      "level": "watch",
+      "headline": "Monsoon -24% drier · 4-dam 76% · Pak Nam +0.76 m",
+      "details": [
+        "Bangkok-zone net teleconnection anomaly -24.4%",
+        "MJO phase 3 (amp 2.02)",
+        "Nino 3.4 +3.25 C",
+        "Chao Phraya 4-dam storage 76.5%",
+        "Near full (95%+): pasak, srinagarind, vajiralongkorn",
+        "Pak Nam tide +0.755 m MSL, surge risk LOW"
+      ],
+      "ok": true,
+      "updated_utc": "2026-11-15T13:13:19Z",
+      "max_age_min": 360,
+      "stale": false
+    },
+    "monsoon": {
+      "level": "normal",
+      "headline": "WEAK 1.9 m/s · 4 mm next 24 h · CEMPAKA-26 5765 km",
+      "details": [
+        "Regime WEAK, 850 hPa wind 1.9 m/s",
+        "Model rain for Bangkok, next 24 h: 4 mm",
+        "Nearest cyclone CEMPAKA-26 5765 km, alert Green"
+      ],
+      "ok": true,
+      "updated_utc": "2026-11-15T06:32:07Z",
+      "max_age_min": 360,
+      "stale": true
+    },
+    "gauges": {
+      "level": "normal",
+      "headline": "1 of 126 gauges wet · max 0 mm/h (Huai Khwang)",
+      "details": [
+        "126 of 129 gauges fresh",
+        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 58.5 mm",
+        "Outlying rain data is stale"
+      ],
+      "ok": true,
+      "updated_utc": "2026-11-15T13:35:00Z",
+      "max_age_min": 20,
+      "stale": false
+    },
+    "hydro": {
+      "level": "watch",
+      "headline": "klong nodes normal · Pak Nam +0.76 m",
+      "details": [
+        "15 of 15 klong nodes found, 0 offline",
+        "Pak Nam +0.755 m MSL, surge risk LOW",
+        "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
+        "C.2 Nakhon Sawan 19.59 m MSL, flow 954 m3/s"
+      ],
+      "ok": true,
+      "updated_utc": "2026-11-15T13:25:00Z",
+      "max_age_min": 120,
+      "stale": false
+    },
+    "klongs": {
+      "level": "normal",
+      "headline": "42 stations · 0 critical · 0 warning",
+      "details": [
+        "23 level sensors, 2 gates, 17 pump stations",
+        "0 level sensors reporting offline (-99)"
+      ],
+      "ok": true,
+      "updated_utc": "2026-11-15T13:35:00Z",
+      "max_age_min": 45,
+      "stale": false
+    }
+  }
+}
