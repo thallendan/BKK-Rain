@@ -1,0 +1,45 @@
+# .github/workflows/status.yml  (in the BKK-Rain repo, next to fetch_data.py)
+#
+# Rebuilds status.json from data.json, monsoon.json and the CloudFront feeds.
+# GitHub's scheduler can run late, so treat "every 10 minutes" as "roughly".
+name: Build status.json
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# One run at a time, and do not collide with your data.json workflow's commits.
+concurrency:
+  group: bkk-status
+  cancel-in-progress: false
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build status.json
+        run: python status.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add status.json
+          if git diff --cached --quiet; then
+            echo "status.json unchanged"
+          else
+            git commit -m "status: update $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+            git push
+          fi
