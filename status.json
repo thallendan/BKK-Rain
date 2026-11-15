@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-15T13:37:42Z",
+  "generated_utc": "2026-11-15T19:27:56Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
     "not_current": [
-      "monsoon"
+      "macro"
     ]
   },
   "sites": {
@@ -23,31 +23,30 @@
       "ok": true,
       "updated_utc": "2026-11-15T13:13:19Z",
       "max_age_min": 360,
-      "stale": false
+      "stale": true
     },
     "monsoon": {
       "level": "normal",
-      "headline": "WEAK 1.9 m/s · 4 mm next 24 h · CEMPAKA-26 5765 km",
+      "headline": "WEAK 1.1 m/s · 0 mm next 24 h · no cyclone",
       "details": [
-        "Regime WEAK, 850 hPa wind 1.9 m/s",
-        "Model rain for Bangkok, next 24 h: 4 mm",
-        "Nearest cyclone CEMPAKA-26 5765 km, alert Green"
+        "Regime WEAK, 850 hPa wind 1.1 m/s",
+        "Model rain for Bangkok, next 24 h: 0 mm"
       ],
       "ok": true,
-      "updated_utc": "2026-11-15T06:32:07Z",
+      "updated_utc": "2026-11-15T16:21:56Z",
       "max_age_min": 360,
-      "stale": true
+      "stale": false
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 126 gauges wet · max 0 mm/h (Huai Khwang)",
+      "headline": "0 of 126 gauges wet",
       "details": [
         "126 of 129 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 58.5 mm",
-        "Outlying rain data is stale"
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 58.5 mm",
+        "Outlying: 3 of 460 stations wet, 2 heavy, status steady"
       ],
       "ok": true,
-      "updated_utc": "2026-11-15T13:35:00Z",
+      "updated_utc": "2026-11-15T19:25:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -61,7 +60,7 @@
         "C.2 Nakhon Sawan 19.59 m MSL, flow 954 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-15T13:25:00Z",
+      "updated_utc": "2026-11-15T19:25:00Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -73,7 +72,7 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-15T13:35:00Z",
+      "updated_utc": "2026-11-15T19:35:00Z",
       "max_age_min": 45,
       "stale": false
     }
