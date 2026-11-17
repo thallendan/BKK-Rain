@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T15:05:16Z",
+  "generated_utc": "2026-11-17T15:10:30Z",
   "overall": {
     "level": "critical",
     "headline": "Critical: act on local alerts",
@@ -32,20 +32,20 @@
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T15:00:33Z",
+      "updated_utc": "2026-11-17T15:05:14Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "watch",
-      "headline": "11 of 124 gauges wet · max 8 mm/h (Huai Khwang) · rain at Bangkok edge",
+      "headline": "9 of 124 gauges wet · max 8 mm/h (Huai Khwang) · rain at Bangkok edge",
       "details": [
         "124 of 129 gauges fresh",
         "Heaviest 1 h: 7.5 mm; heaviest 24 h: 28.5 mm",
         "Outlying: 20 of 371 stations wet, 1 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T15:00:00Z",
+      "updated_utc": "2026-11-17T15:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -59,7 +59,7 @@
         "C.2 Nakhon Sawan 18.85 m MSL, flow 732 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T14:25:00Z",
+      "updated_utc": "2026-11-17T15:04:24Z",
       "max_age_min": 120,
       "stale": false
     },
