@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T13:20:21Z",
+  "generated_utc": "2026-11-17T13:25:17Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (2 feeds stale or unavailable)",
@@ -41,14 +41,14 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "3 of 125 gauges wet · max 11 mm/h (Sai Mai)",
+      "headline": "5 of 125 gauges wet · max 11 mm/h (Sai Mai)",
       "details": [
         "125 of 129 gauges fresh",
         "Heaviest 1 h: 11.0 mm; heaviest 24 h: 28.5 mm",
         "Outlying: 2 of 349 stations wet, 0 heavy, status new"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T13:15:00Z",
+      "updated_utc": "2026-11-17T13:20:00Z",
       "max_age_min": 20,
       "stale": false
     },
