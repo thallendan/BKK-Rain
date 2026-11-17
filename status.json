@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T14:15:19Z",
+  "generated_utc": "2026-11-17T14:20:22Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions",
-    "not_current": []
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -32,7 +34,7 @@
         "Nearest cyclone AKVAN-26 1444 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T14:05:18Z",
+      "updated_utc": "2026-11-17T14:15:16Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +47,7 @@
         "Outlying: 10 of 372 stations wet, 2 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T14:05:00Z",
+      "updated_utc": "2026-11-17T14:10:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -73,7 +75,7 @@
       "ok": true,
       "updated_utc": "2026-11-17T13:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
