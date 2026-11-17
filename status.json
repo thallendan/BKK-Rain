@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T14:00:38Z",
+  "generated_utc": "2026-11-17T14:05:19Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -38,14 +38,14 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "6 of 125 gauges wet · max 10 mm/h (Nong Chok) · rain at Bangkok edge",
+      "headline": "9 of 124 gauges wet · max 10 mm/h (Nong Chok) · rain at Bangkok edge",
       "details": [
-        "125 of 129 gauges fresh",
+        "124 of 129 gauges fresh",
         "Heaviest 1 h: 10.0 mm; heaviest 24 h: 28.5 mm",
         "Outlying: 10 of 375 stations wet, 2 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T13:55:00Z",
+      "updated_utc": "2026-11-17T14:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -59,7 +59,7 @@
         "C.2 Nakhon Sawan 18.85 m MSL, flow 732 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T13:25:00Z",
+      "updated_utc": "2026-11-17T14:04:25Z",
       "max_age_min": 120,
       "stale": false
     },
