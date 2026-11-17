@@ -1,6 +1,6 @@
 {
-  "timestamp_utc": "2026-11-17T01:20:08.870540+00:00",
-  "updated_at_utc": "2026-11-17T01:20:08.870540+00:00",
+  "timestamp_utc": "2026-11-17T13:16:05.846898+00:00",
+  "updated_at_utc": "2026-11-17T13:16:05.846898+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
@@ -17,7 +17,7 @@
     "ocean_heat_content": 2.91
   },
   "dams": {
-    "combined_chao_phraya_storage_pct": 76.5,
+    "combined_chao_phraya_storage_pct": 76.6,
     "bhumibol": {
       "current_storage_pct": 72.0,
       "status": "72.0%"
@@ -44,12 +44,12 @@
     }
   },
   "paknam_gauge": {
-    "water_level_msl": 0.885,
+    "water_level_msl": 0.722,
     "tide_state": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
     "surge_risk": "LOW",
-    "buffer_remaining_meters": 0.915,
+    "buffer_remaining_meters": 1.078,
     "flood_wall_threshold_msl": 1.8,
-    "period": "2026-11-17 08:10",
+    "period": "2026-11-17 20:10",
     "status": "SUCCESS",
     "message": "Pak Nam tide gauge telemetry active."
   },
@@ -105,43 +105,43 @@
     },
     "chao_phraya_4dam_combined": {
       "label": "Chao Phraya 4-Dam Combined Storage",
-      "value": "76.5%",
-      "unit": "18,969 / 24,783 MCM (Usable: 12,262 MCM)",
+      "value": "76.6%",
+      "unit": "18,972 / 24,783 MCM (Usable: 12,264 MCM)",
       "period": "Latest Report",
       "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
     },
     "dam_bhumibol": {
       "label": "Bhumibol Dam (Ping River)",
       "value": "72.0%",
-      "unit": "9,693 / 13,462 MCM (Usable: 5,893 MCM)",
+      "unit": "9,701 / 13,462 MCM (Usable: 5,901 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_sirikit": {
       "label": "Sirikit Dam (Nan River)",
       "value": "79.0%",
-      "unit": "7,493 / 9,510 MCM (Usable: 4,643 MCM)",
+      "unit": "7,483 / 9,510 MCM (Usable: 4,633 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_kwai_noi": {
       "label": "Kwai Noi Bamrung Dan Dam",
       "value": "93.0%",
-      "unit": "869 / 939 MCM (Usable: 826 MCM)",
+      "unit": "870 / 939 MCM (Usable: 827 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Mid-Basin Flow Regulation"
     },
     "dam_pasak": {
       "label": "Pasak Jolasid Dam (Pasak River)",
       "value": "105.0%",
-      "unit": "914 / 872 MCM (Usable: 900 MCM)",
+      "unit": "918 / 872 MCM (Usable: 903 MCM)",
       "period": "Latest Report",
       "description": "Lower Chao Phraya / Eastern BKK Flow Buffer"
     },
     "dam_srinagarind": {
       "label": "Srinagarind Dam (Mae Klong Basin)",
       "value": "98.0%",
-      "unit": "17,362 / 17,745 MCM (Usable: 7,097 MCM)",
+      "unit": "17,358 / 17,745 MCM (Usable: 7,093 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
@@ -154,9 +154,9 @@
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "+0.885",
+      "value": "+0.722",
       "unit": "m MSL",
-      "period": "2026-11-17 08:10",
+      "period": "2026-11-17 20:10",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -175,7 +175,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.401,
+      "response_time_sec": 0.362,
       "size_bytes": 39345,
       "line_count": 539,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -198,7 +198,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.437,
+      "response_time_sec": 0.292,
       "size_bytes": 2740282,
       "line_count": 19163,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -221,7 +221,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.227,
+      "response_time_sec": 0.166,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -244,7 +244,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.317,
+      "response_time_sec": 0.325,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -267,7 +267,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.391,
+      "response_time_sec": 0.433,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -290,7 +290,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.4,
+      "response_time_sec": 0.337,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -313,7 +313,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.249,
+      "response_time_sec": 0.277,
       "size_bytes": 23093,
       "line_count": 576,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -336,14 +336,14 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.659,
-      "size_bytes": 52055,
+      "response_time_sec": 1.647,
+      "size_bytes": 52056,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
         "<html>",
         "\t<head>",
-        "\t\t<title>Summary table of large reservoir storage conditions16  2569</title>",
+        "\t\t<title>Summary table of large reservoir storage conditions17  2569</title>",
         "\t\t<META http-equiv='Content-Type' content='text/html;charset=UTF-8'>",
         "<style type='text/css'>",
         "body {  font-family: Arial, Helvetica, sans-serif; font-size: 8pt}",
@@ -359,7 +359,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 7.986,
+      "response_time_sec": 8.005,
       "size_bytes": 70225,
       "line_count": 1031,
       "data_format": "HTML Document (Web Report)",
