@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T15:55:17Z",
+  "generated_utc": "2026-11-17T16:00:29Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -32,20 +32,20 @@
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T15:50:18Z",
+      "updated_utc": "2026-11-17T15:55:14Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "watch",
-      "headline": "0 of 123 gauges wet · max 4 mm/h (Dusit) · rain at Bangkok edge",
+      "headline": "0 of 123 gauges wet · max 3 mm/h (Dusit) · rain at Bangkok edge",
       "details": [
         "123 of 129 gauges fresh",
-        "Heaviest 1 h: 4.0 mm; heaviest 24 h: 28.5 mm",
+        "Heaviest 1 h: 3.0 mm; heaviest 24 h: 28.5 mm",
         "Outlying: 9 of 476 stations wet, 1 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T15:50:00Z",
+      "updated_utc": "2026-11-17T15:55:00Z",
       "max_age_min": 20,
       "stale": false
     },
