@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T20:00:31Z",
+  "generated_utc": "2026-11-17T20:05:18Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -25,14 +25,14 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 8.1 m/s · 2 mm next 24 h · AKVAN-26 1429 km",
+      "headline": "E 8.0 m/s · 0 mm next 24 h · AKVAN-26 1429 km",
       "details": [
-        "Regime E, 850 hPa wind 8.1 m/s",
-        "Model rain for Bangkok, next 24 h: 2 mm",
+        "Regime E, 850 hPa wind 8.0 m/s",
+        "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone AKVAN-26 1429 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T19:55:14Z",
+      "updated_utc": "2026-11-17T20:00:28Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying: 0 of 503 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T19:55:00Z",
+      "updated_utc": "2026-11-17T20:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -56,10 +56,10 @@
         "15 of 15 klong nodes found, 0 offline",
         "Pak Nam +0.441 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "C.2 Nakhon Sawan 18.85 m MSL, flow 732 m3/s"
+        "C.2 Nakhon Sawan 18.56 m MSL, flow 650 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T19:30:00Z",
+      "updated_utc": "2026-11-17T20:04:32Z",
       "max_age_min": 120,
       "stale": false
     },
