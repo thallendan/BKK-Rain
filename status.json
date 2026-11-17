@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T19:40:34Z",
+  "generated_utc": "2026-11-17T19:45:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -38,14 +38,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 124 gauges wet · max 0 mm/h (Phra Khanong)",
+      "headline": "1 of 123 gauges wet · max 0 mm/h (Phra Khanong)",
       "details": [
-        "124 of 129 gauges fresh",
+        "123 of 129 gauges fresh",
         "Heaviest 1 h: 0.5 mm; heaviest 24 h: 28.5 mm",
-        "Outlying rain data is stale"
+        "Outlying: 0 of 503 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T19:35:00Z",
+      "updated_utc": "2026-11-17T19:40:00Z",
       "max_age_min": 20,
       "stale": false
     },
