@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T16:05:18Z",
+  "generated_utc": "2026-11-17T16:10:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -25,27 +25,27 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 7.3 m/s · 2 mm next 24 h · AKVAN-26 1440 km",
+      "headline": "E 7.6 m/s · 2 mm next 24 h · AKVAN-26 1440 km",
       "details": [
-        "Regime E, 850 hPa wind 7.3 m/s",
+        "Regime E, 850 hPa wind 7.6 m/s",
         "Model rain for Bangkok, next 24 h: 2 mm",
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T15:55:14Z",
+      "updated_utc": "2026-11-17T16:05:15Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "watch",
-      "headline": "0 of 123 gauges wet · max 1 mm/h (Bang Sue) · rain at Bangkok edge",
+      "headline": "0 of 123 gauges wet · max 0 mm/h (Bang Sue) · rain at Bangkok edge",
       "details": [
         "123 of 129 gauges fresh",
-        "Heaviest 1 h: 1.0 mm; heaviest 24 h: 28.5 mm",
+        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 28.5 mm",
         "Outlying: 9 of 476 stations wet, 1 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T16:00:00Z",
+      "updated_utc": "2026-11-17T16:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
