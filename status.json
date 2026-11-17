@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T15:15:21Z",
+  "generated_utc": "2026-11-17T15:20:22Z",
   "overall": {
     "level": "critical",
-    "headline": "Critical: act on local alerts",
-    "not_current": []
+    "headline": "Critical: act on local alerts (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -32,20 +34,20 @@
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T15:10:28Z",
+      "updated_utc": "2026-11-17T15:15:17Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "watch",
-      "headline": "8 of 124 gauges wet · max 8 mm/h (Huai Khwang) · rain at Bangkok edge",
+      "headline": "4 of 123 gauges wet · max 8 mm/h (Huai Khwang) · rain at Bangkok edge",
       "details": [
-        "124 of 129 gauges fresh",
+        "123 of 129 gauges fresh",
         "Heaviest 1 h: 7.5 mm; heaviest 24 h: 28.5 mm",
         "Outlying: 20 of 345 stations wet, 1 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T15:10:00Z",
+      "updated_utc": "2026-11-17T15:15:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -73,7 +75,7 @@
       "ok": true,
       "updated_utc": "2026-11-17T14:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
