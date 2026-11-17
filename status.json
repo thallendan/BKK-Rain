@@ -1,13 +1,10 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T13:25:17Z",
+  "generated_utc": "2026-11-17T13:30:28Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions (2 feeds stale or unavailable)",
-    "not_current": [
-      "monsoon",
-      "klongs"
-    ]
+    "headline": "Watch: elevated conditions",
+    "not_current": []
   },
   "sites": {
     "macro": {
@@ -28,16 +25,16 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 5.7 m/s · 8 mm next 24 h · AKVAN-26 1462 km",
+      "headline": "E 7.1 m/s · 2 mm next 24 h · AKVAN-26 1444 km",
       "details": [
-        "Regime E, 850 hPa wind 5.7 m/s",
-        "Model rain for Bangkok, next 24 h: 8 mm",
-        "Nearest cyclone AKVAN-26 1462 km, alert Orange"
+        "Regime E, 850 hPa wind 7.1 m/s",
+        "Model rain for Bangkok, next 24 h: 2 mm",
+        "Nearest cyclone AKVAN-26 1444 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T03:53:52Z",
+      "updated_utc": "2026-11-17T13:25:22Z",
       "max_age_min": 360,
-      "stale": true
+      "stale": false
     },
     "gauges": {
       "level": "watch",
@@ -45,10 +42,10 @@
       "details": [
         "125 of 129 gauges fresh",
         "Heaviest 1 h: 11.0 mm; heaviest 24 h: 28.5 mm",
-        "Outlying: 2 of 349 stations wet, 0 heavy, status new"
+        "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T13:20:00Z",
+      "updated_utc": "2026-11-17T13:25:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -62,7 +59,7 @@
         "C.2 Nakhon Sawan 18.85 m MSL, flow 732 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T13:16:05Z",
+      "updated_utc": "2026-11-17T13:25:00Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -74,9 +71,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T12:35:00Z",
+      "updated_utc": "2026-11-17T13:35:00Z",
       "max_age_min": 45,
-      "stale": true
+      "stale": false
     }
   }
 }
