@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T13:05:50Z",
+  "generated_utc": "2026-11-17T13:10:46Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (2 feeds stale or unavailable)",
@@ -48,7 +48,7 @@
         "Outlying: 2 of 350 stations wet, 0 heavy, status new"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T13:00:00Z",
+      "updated_utc": "2026-11-17T13:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
