@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T19:55:17Z",
+  "generated_utc": "2026-11-17T20:00:31Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -25,27 +25,27 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 8.1 m/s · 2 mm next 24 h · AKVAN-26 1440 km",
+      "headline": "E 8.1 m/s · 2 mm next 24 h · AKVAN-26 1429 km",
       "details": [
         "Regime E, 850 hPa wind 8.1 m/s",
         "Model rain for Bangkok, next 24 h: 2 mm",
-        "Nearest cyclone AKVAN-26 1440 km, alert Orange"
+        "Nearest cyclone AKVAN-26 1429 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T19:45:25Z",
+      "updated_utc": "2026-11-17T19:55:14Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 122 gauges wet · max 0 mm/h (Phra Khanong)",
+      "headline": "0 of 123 gauges wet · max 0 mm/h (Phra Khanong)",
       "details": [
-        "122 of 129 gauges fresh",
+        "123 of 129 gauges fresh",
         "Heaviest 1 h: 0.5 mm; heaviest 24 h: 28.5 mm",
         "Outlying: 0 of 503 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T19:50:00Z",
+      "updated_utc": "2026-11-17T19:55:00Z",
       "max_age_min": 20,
       "stale": false
     },
