@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T22:00:31Z",
+  "generated_utc": "2026-11-17T22:05:24Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -27,14 +27,14 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 8.2 m/s · 0 mm next 24 h · AKVAN-26 1429 km",
+      "headline": "E 8.5 m/s · 0 mm next 24 h · AKVAN-26 1429 km",
       "details": [
-        "Regime E, 850 hPa wind 8.2 m/s",
+        "Regime E, 850 hPa wind 8.5 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone AKVAN-26 1429 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T21:55:13Z",
+      "updated_utc": "2026-11-17T22:00:26Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -47,7 +47,7 @@
         "Outlying: 0 of 490 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T21:55:00Z",
+      "updated_utc": "2026-11-17T22:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
