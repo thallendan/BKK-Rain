@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T17:00:32Z",
+  "generated_utc": "2026-11-17T17:05:27Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -25,14 +25,14 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 7.6 m/s · 2 mm next 24 h · AKVAN-26 1440 km",
+      "headline": "E 7.5 m/s · 2 mm next 24 h · AKVAN-26 1440 km",
       "details": [
-        "Regime E, 850 hPa wind 7.6 m/s",
+        "Regime E, 850 hPa wind 7.5 m/s",
         "Model rain for Bangkok, next 24 h: 2 mm",
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T16:55:13Z",
+      "updated_utc": "2026-11-17T17:00:27Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying: 3 of 501 stations wet, 0 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T16:50:00Z",
+      "updated_utc": "2026-11-17T17:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -59,7 +59,7 @@
         "C.2 Nakhon Sawan 18.85 m MSL, flow 732 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T16:30:00Z",
+      "updated_utc": "2026-11-17T17:04:23Z",
       "max_age_min": 120,
       "stale": false
     },
