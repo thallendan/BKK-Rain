@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T16:40:22Z",
+  "generated_utc": "2026-11-17T16:45:19Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -32,20 +32,20 @@
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T16:35:15Z",
+      "updated_utc": "2026-11-17T16:40:18Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
-      "level": "normal",
-      "headline": "0 of 124 gauges wet · max 0 mm/h (Sai Mai)",
+      "level": "watch",
+      "headline": "0 of 124 gauges wet · rain at Bangkok edge",
       "details": [
         "124 of 129 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 28.5 mm",
-        "Outlying rain data is stale"
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 28.5 mm",
+        "Outlying: 3 of 501 stations wet, 0 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T16:35:00Z",
+      "updated_utc": "2026-11-17T16:40:00Z",
       "max_age_min": 20,
       "stale": false
     },
