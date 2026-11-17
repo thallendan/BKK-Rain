@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T14:55:18Z",
+  "generated_utc": "2026-11-17T15:00:33Z",
   "overall": {
     "level": "critical",
     "headline": "Critical: act on local alerts",
@@ -32,7 +32,7 @@
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T14:50:25Z",
+      "updated_utc": "2026-11-17T14:55:14Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying: 20 of 371 stations wet, 1 heavy, status arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T14:45:00Z",
+      "updated_utc": "2026-11-17T14:55:00Z",
       "max_age_min": 20,
       "stale": false
     },
