@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-17T17:45:19Z",
+  "generated_utc": "2026-11-17T17:50:22Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -32,7 +32,7 @@
         "Nearest cyclone AKVAN-26 1440 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-17T17:40:19Z",
+      "updated_utc": "2026-11-17T17:45:17Z",
       "max_age_min": 360,
       "stale": false
     },
