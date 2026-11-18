@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-18T20:30:25Z",
+  "generated_utc": "2026-11-18T20:35:18Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -18,10 +18,10 @@
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.6%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide -0.439 m MSL, surge risk LOW"
+        "Pak Nam tide -0.443 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T20:23:04Z",
+      "updated_utc": "2026-11-18T20:30:36Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -34,7 +34,7 @@
         "Nearest cyclone AKVAN-26 1523 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T20:00:37Z",
+      "updated_utc": "2026-11-18T20:34:07Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -47,7 +47,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T20:25:00Z",
+      "updated_utc": "2026-11-18T20:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -56,12 +56,12 @@
       "headline": "klong nodes normal · Pak Nam -0.44 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam -0.439 m MSL, surge risk LOW",
+        "Pak Nam -0.443 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 18.47 m MSL, flow 625 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T20:23:04Z",
+      "updated_utc": "2026-11-18T20:30:36Z",
       "max_age_min": 120,
       "stale": false
     },
