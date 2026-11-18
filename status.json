@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-18T16:30:29Z",
+  "generated_utc": "2026-11-18T16:35:16Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -11,17 +11,17 @@
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -26% drier · 4-dam 77% · Pak Nam +0.34 m",
+      "headline": "Monsoon -26% drier · 4-dam 77% · Pak Nam +0.22 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -26.3%",
         "MJO phase 3 (amp 1.82)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.6%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.337 m MSL, surge risk LOW"
+        "Pak Nam tide +0.217 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T16:00:39Z",
+      "updated_utc": "2026-11-18T16:30:45Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -47,21 +47,21 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T16:25:00Z",
+      "updated_utc": "2026-11-18T16:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam +0.34 m",
+      "headline": "klong nodes normal · Pak Nam +0.22 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.337 m MSL, surge risk LOW",
+        "Pak Nam +0.217 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 18.47 m MSL, flow 625 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T16:04:24Z",
+      "updated_utc": "2026-11-18T16:30:45Z",
       "max_age_min": 120,
       "stale": false
     },
