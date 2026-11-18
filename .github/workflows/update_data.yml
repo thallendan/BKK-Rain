@@ -2,16 +2,22 @@ name: Sync Thailand Climate Teleconnections
 
 on:
   schedule:
-    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
-    - cron: '0 */6 * * *'
-  workflow_dispatch: # Allows manual trigger button in GitHub UI
+    # Backup schedule only. GitHub often runs this late or skips it; cron-job.org is the main trigger.
+    - cron: '7 */6 * * *'
+  workflow_dispatch: {}      # also what cron-job.org calls
 
 permissions:
   contents: write
 
+# Never run two copies at once (they would both rewrite data.json).
+concurrency:
+  group: bkk-data
+  cancel-in-progress: false
+
 jobs:
   build-and-sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout Repository
@@ -20,14 +26,29 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: Run Fetch & Hydrology Matrix Script
         run: python fetch_data.py
 
-      - name: Commit and Push if updated data.json exists
+      - name: Commit and push if data.json changed
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update telemetry data.json [skip ci]" && git push)
+          if git diff --cached --quiet; then
+            echo "data.json unchanged"
+            exit 0
+          fi
+          git commit -m "auto: update telemetry data.json [skip ci]"
+          # Other workflows (status.json, monsoon.json) push to main too, so a plain
+          # "git push" is rejected whenever one of them finishes first. Rebase and retry.
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            echo "push attempt $i failed, retrying"
+            sleep $((i * 4))
+          done
+          echo "could not push after 5 attempts"
+          exit 1
