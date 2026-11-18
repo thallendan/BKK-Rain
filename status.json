@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-18T22:55:18Z",
+  "generated_utc": "2026-11-18T23:00:30Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -38,14 +38,14 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "0 of 126 gauges wet · max 0 mm/h (Thawi Watthana) · rain approaching",
+      "headline": "0 of 126 gauges wet · rain approaching",
       "details": [
         "126 of 129 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 6.0 mm",
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 6.0 mm",
         "Outlying: 6 of 508 stations wet, 0 heavy, status approaching"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T22:50:00Z",
+      "updated_utc": "2026-11-18T22:55:00Z",
       "max_age_min": 20,
       "stale": false
     },
