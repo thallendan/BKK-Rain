@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-18T22:05:18Z",
+  "generated_utc": "2026-11-18T22:10:24Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -38,14 +38,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "2 of 126 gauges wet · max 6 mm/h (Phra Nakhon)",
+      "headline": "1 of 126 gauges wet · max 6 mm/h (Phra Nakhon)",
       "details": [
         "126 of 129 gauges fresh",
         "Heaviest 1 h: 6.0 mm; heaviest 24 h: 6.0 mm",
         "Outlying: 6 of 495 stations wet, 0 heavy, status steady"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T22:00:00Z",
+      "updated_utc": "2026-11-18T22:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
