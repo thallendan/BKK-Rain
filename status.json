@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-18T19:00:28Z",
+  "generated_utc": "2026-11-18T19:05:17Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -9,30 +9,30 @@
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -26% drier · 4-dam 77% · Pak Nam -0.19 m",
+      "headline": "Monsoon -26% drier · 4-dam 77% · Pak Nam -0.25 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -26.3%",
         "MJO phase 3 (amp 1.82)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.6%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide -0.186 m MSL, surge risk LOW"
+        "Pak Nam tide -0.254 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T18:30:40Z",
+      "updated_utc": "2026-11-18T19:00:50Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 9.5 m/s · 0 mm next 24 h · AKVAN-26 1512 km",
+      "headline": "E 9.8 m/s · 0 mm next 24 h · AKVAN-26 1512 km",
       "details": [
-        "Regime E, 850 hPa wind 9.5 m/s",
+        "Regime E, 850 hPa wind 9.8 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone AKVAN-26 1512 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T18:00:27Z",
+      "updated_utc": "2026-11-18T19:00:26Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,21 +45,21 @@
         "Outlying: 0 of 502 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T18:55:00Z",
+      "updated_utc": "2026-11-18T19:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam -0.19 m",
+      "headline": "klong nodes normal · Pak Nam -0.25 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam -0.186 m MSL, surge risk LOW",
+        "Pak Nam -0.254 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 18.47 m MSL, flow 625 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T18:30:40Z",
+      "updated_utc": "2026-11-18T19:04:23Z",
       "max_age_min": 120,
       "stale": false
     },
