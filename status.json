@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-18T03:11:02Z",
+  "generated_utc": "2026-11-18T05:00:30Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -38,14 +38,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 125 gauges wet · max 0 mm/h (Chatuchak)",
+      "headline": "0 of 122 gauges wet",
       "details": [
-        "125 of 129 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 13.0 mm",
-        "Outlying: 0 of 481 stations wet, 0 heavy, status clear"
+        "122 of 126 gauges fresh",
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 13.0 mm",
+        "Outlying: 1 of 482 stations wet, 0 heavy, status receding"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T03:05:00Z",
+      "updated_utc": "2026-11-18T04:55:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -59,7 +59,7 @@
         "C.2 Nakhon Sawan 18.47 m MSL, flow 625 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T03:04:25Z",
+      "updated_utc": "2026-11-18T04:30:00Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -71,7 +71,7 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-18T02:40:00Z",
+      "updated_utc": "2026-11-18T04:40:00Z",
       "max_age_min": 45,
       "stale": false
     }
