@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T15:05:17Z",
+  "generated_utc": "2026-11-19T15:10:22Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -38,14 +38,14 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "1 of 126 gauges wet · max 4 mm/h (Khlong Sam Wa) · rain approaching",
+      "headline": "1 of 126 gauges wet · max 3 mm/h (Khlong Sam Wa) · rain approaching",
       "details": [
         "126 of 129 gauges fresh",
-        "Heaviest 1 h: 3.5 mm; heaviest 24 h: 27.5 mm",
+        "Heaviest 1 h: 3.0 mm; heaviest 24 h: 27.5 mm",
         "Outlying: 1 of 501 stations wet, 0 heavy, status approaching"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T15:00:00Z",
+      "updated_utc": "2026-11-19T15:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
