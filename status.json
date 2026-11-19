@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T11:40:24Z",
+  "generated_utc": "2026-11-19T11:45:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -24,27 +24,27 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 9.2 m/s · 0 mm next 24 h · AKVAN-26 1633 km",
+      "headline": "E 8.4 m/s · 0 mm next 24 h · AKVAN-26 1633 km",
       "details": [
-        "Regime E, 850 hPa wind 9.2 m/s",
+        "Regime E, 850 hPa wind 8.4 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone AKVAN-26 1633 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T11:00:27Z",
+      "updated_utc": "2026-11-19T11:43:24Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 126 gauges wet · max 0 mm/h (Bangkok Noi)",
+      "headline": "0 of 126 gauges wet",
       "details": [
         "126 of 129 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 27.5 mm",
-        "Outlying rain data is stale"
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 27.5 mm",
+        "Outlying: 0 of 506 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T11:35:00Z",
+      "updated_utc": "2026-11-19T11:40:00Z",
       "max_age_min": 20,
       "stale": false
     },
