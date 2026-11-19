@@ -1,27 +1,25 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T04:30:24Z",
+  "generated_utc": "2026-11-19T04:35:18Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "headline": "Watch: elevated conditions",
+    "not_current": []
   },
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -28% drier · 4-dam 77% · Pak Nam +1.06 m",
+      "headline": "Monsoon -28% drier · 4-dam 77% · Pak Nam +1.16 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -27.5%",
         "MJO phase 3 (amp 1.69)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.6%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +1.060 m MSL, surge risk MODERATE"
+        "Pak Nam tide +1.162 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T04:00:37Z",
+      "updated_utc": "2026-11-19T04:30:34Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -40,28 +38,28 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 124 gauges wet",
+      "headline": "0 of 122 gauges wet",
       "details": [
-        "124 of 128 gauges fresh",
+        "122 of 126 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 6.0 mm",
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T04:25:00Z",
+      "updated_utc": "2026-11-19T04:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam +1.06 m",
+      "headline": "klong nodes normal · Pak Nam +1.16 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +1.060 m MSL, surge risk MODERATE",
+        "Pak Nam +1.162 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 18.24 m MSL, flow 560 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T04:04:25Z",
+      "updated_utc": "2026-11-19T04:30:34Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -73,9 +71,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T03:40:00Z",
+      "updated_utc": "2026-11-19T04:40:00Z",
       "max_age_min": 45,
-      "stale": true
+      "stale": false
     }
   }
 }
