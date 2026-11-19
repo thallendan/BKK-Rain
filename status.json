@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T20:30:28Z",
+  "generated_utc": "2026-11-19T20:35:19Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -19,7 +19,7 @@
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T20:27:07Z",
+      "updated_utc": "2026-11-19T20:30:39Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T20:25:00Z",
+      "updated_utc": "2026-11-19T20:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
