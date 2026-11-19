@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T02:55:16Z",
+  "generated_utc": "2026-11-19T03:00:31Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -45,7 +45,7 @@
         "Outlying: 7 of 510 stations wet, 1 heavy, status receding"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T02:50:00Z",
+      "updated_utc": "2026-11-19T02:55:00Z",
       "max_age_min": 20,
       "stale": false
     },
