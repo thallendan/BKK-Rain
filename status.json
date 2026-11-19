@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T04:05:15Z",
+  "generated_utc": "2026-11-19T04:10:19Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -38,9 +38,9 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "0 of 124 gauges wet · rain approaching",
+      "headline": "0 of 123 gauges wet · rain approaching",
       "details": [
-        "124 of 128 gauges fresh",
+        "123 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 6.0 mm",
         "Outlying: 4 of 485 stations wet, 0 heavy, status approaching"
       ],
@@ -59,7 +59,7 @@
         "C.2 Nakhon Sawan 18.24 m MSL, flow 560 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T04:00:37Z",
+      "updated_utc": "2026-11-19T04:04:25Z",
       "max_age_min": 120,
       "stale": false
     },
