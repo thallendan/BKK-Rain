@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T22:05:18Z",
+  "generated_utc": "2026-11-19T22:10:21Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -45,7 +45,7 @@
         "Outlying: 0 of 485 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T22:00:00Z",
+      "updated_utc": "2026-11-19T22:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -58,7 +58,7 @@
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T21:25:00Z",
+      "updated_utc": "2026-11-19T22:04:36Z",
       "max_age_min": 120,
       "stale": false
     },
