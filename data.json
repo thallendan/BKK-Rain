@@ -1,11 +1,79 @@
 {
-  "timestamp_utc": "2026-11-19T13:00:49.261211+00:00",
-  "updated_at_utc": "2026-11-19T13:00:49.261211+00:00",
+  "timestamp_utc": "2026-11-19T13:30:38.650433+00:00",
+  "updated_at_utc": "2026-11-19T13:30:38.650433+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 9,
   "successful_count": 9,
   "failed_count": 0,
+  "parsed_count": 8,
+  "usable_count": 8,
+  "source_health": {
+    "enso": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "mjo": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "iod": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "cpac850": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "soi": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "olr": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "heat_content": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "dam_storage": {
+      "fetched": true,
+      "parsed": true,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": null
+    },
+    "chao_phraya_tide": {
+      "fetched": true,
+      "parsed": false,
+      "carried": false,
+      "carried_from_utc": null,
+      "error": "Fetched, but no values could be parsed (page layout may have changed)"
+    }
+  },
+  "dams_missing": [],
   "teleconnections": {
     "enso": 3.25,
     "iod": 0.54,
@@ -161,7 +229,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.232,
+      "response_time_sec": 0.169,
       "size_bytes": 39345,
       "line_count": 539,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -184,7 +252,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.369,
+      "response_time_sec": 0.882,
       "size_bytes": 2740568,
       "line_count": 19165,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -207,7 +275,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.167,
+      "response_time_sec": 0.288,
       "size_bytes": 19861,
       "line_count": 165,
       "data_format": "Plain Text / Unformatted",
@@ -230,7 +298,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.288,
+      "response_time_sec": 0.144,
       "size_bytes": 12522,
       "line_count": 162,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -253,7 +321,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.167,
+      "response_time_sec": 0.143,
       "size_bytes": 12968,
       "line_count": 168,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -276,7 +344,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.143,
+      "response_time_sec": 0.055,
       "size_bytes": 14832,
       "line_count": 192,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -299,7 +367,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.168,
+      "response_time_sec": 0.253,
       "size_bytes": 23093,
       "line_count": 576,
       "data_format": "Fixed-Width / Space-Delimited ASCII Table",
@@ -322,7 +390,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.319,
+      "response_time_sec": 1.848,
       "size_bytes": 52064,
       "line_count": 189,
       "data_format": "HTML Document (Web Report)",
@@ -345,14 +413,15 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=utf-8",
-      "response_time_sec": 11.16,
+      "response_time_sec": 10.381,
       "size_bytes": 246,
       "line_count": 1,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
-        "<html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 4027182385816350209<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>"
+        "<html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 4027182385816353761<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>"
       ],
-      "error": null
+      "error": null,
+      "parse_error": "Fetched, but no values could be parsed (page layout may have changed)"
     }
   ],
   "zones": [
