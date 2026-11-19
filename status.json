@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T02:35:18Z",
+  "generated_utc": "2026-11-19T02:40:19Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -32,20 +32,20 @@
         "Nearest cyclone AKVAN-26 1523 km, alert Orange"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T02:00:26Z",
+      "updated_utc": "2026-11-19T02:35:43Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 125 gauges wet · max 0 mm/h (Bangkok Yai)",
+      "headline": "0 of 125 gauges wet",
       "details": [
         "125 of 129 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 6.0 mm",
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 6.0 mm",
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T02:30:00Z",
+      "updated_utc": "2026-11-19T02:35:00Z",
       "max_age_min": 20,
       "stale": false
     },
