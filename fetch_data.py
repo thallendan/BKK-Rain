@@ -16,17 +16,48 @@ Fetches live weather, climate, and hydrological data from 9 primary endpoints:
 Parses scalar teleconnection indices, reservoir storage, and Pak Nam tide gauge
 telemetry, strictly handling missing endpoints as unavailable (no simulation),
 and writes standardized output strictly to 'data.json'.
+
+Reliability behaviour (added):
+  * Per-source health is written to data.json ("source_health", "parsed_count").
+  * TLS certificates are verified, except for the hosts in VERIFY_EXEMPT_HOSTS.
+  * If a SLOW-changing source (monthly climate indices, daily dam report) fails, its last good
+    value is carried forward, labelled with "carried_from_utc" and dropped after a maximum age.
+    The live Pak Nam tide is never carried forward.
+  * If NO source could be parsed, data.json is left untouched and the script exits with an
+    error, so the workflow fails visibly instead of publishing an empty file.
 """
 
 import json
 import ssl
+import sys
 import time
 import re
 import urllib.request
 import urllib.error
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 OUTPUT_FILE = "data.json"
+
+# Hosts whose certificate problems are tolerated (the Thai government sites). Everything else
+# is verified. If another source starts failing with a certificate error, its host can be
+# added here, but prefer fixing the cause.
+VERIFY_EXEMPT_HOSTS = ("hii.or.th",)
+
+# endpoint key -> (maximum carry age in hours, parameter names or "prefix_" patterns it produces).
+# The Pak Nam tide ("chao_phraya_tide") is deliberately absent: a stale tide must never look live.
+CARRY_RULES = {
+    "enso": (240, ["enso_nino34_anom"]),
+    "mjo": (72, ["mjo_phase_amp"]),
+    "iod": (240, ["iod_dmi_index"]),
+    "cpac850": (240, ["cpac850_wind_index"]),
+    "soi": (240, ["soi_index"]),
+    "olr": (240, ["olr_index"]),
+    "heat_content": (240, ["pacific_heat_content"]),
+    "dam_storage": (72, ["chao_phraya_4dam_combined", "dam_"]),
+}
+
+DAM_KEYS = ["bhumibol", "sirikit", "kwai_noi", "pasak", "srinagarind", "vajiralongkorn"]
 
 ENDPOINTS = [
     {
@@ -215,7 +246,7 @@ def parse_dam_storage_bkk_region(html_text):
     cp_storage_sum = sum(parsed_dams[k]["storage_mcm"] for k in chao_phraya_keys if k in parsed_dams)
     cp_usable_sum = sum(parsed_dams[k]["usable_mcm"] for k in chao_phraya_keys if k in parsed_dams)
 
-    if cp_cap_sum > 0:
+    if cp_cap_sum > 0 and all(k in parsed_dams for k in chao_phraya_keys):
         cp_pct = round((cp_storage_sum / cp_cap_sum) * 100.0, 1)
         param_results["chao_phraya_4dam_combined"] = {
             "label": "Chao Phraya 4-Dam Combined Storage",
@@ -403,8 +434,10 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
 
     req = urllib.request.Request(url, headers=headers)
     ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
+    host = (urlparse(url).hostname or "").lower()
+    if any(host == h or host.endswith("." + h) for h in VERIFY_EXEMPT_HOSTS):
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
 
     diagnostic = {
         "key": key,
@@ -448,8 +481,12 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
             diagnostic["sample_preview"] = non_empty_lines[:8]
 
             parsed = extract_parameters(key, content_type, body_text)
-            if parsed:
+            if parsed and "error" in parsed and len(parsed) == 1:
+                diagnostic["parse_error"] = parsed["error"]
+            elif parsed:
                 extracted_params.update(parsed)
+            else:
+                diagnostic["parse_error"] = "Fetched, but no values could be parsed (page layout may have changed)"
 
     except urllib.error.HTTPError as e:
         diagnostic["status_code"] = e.code
@@ -743,20 +780,92 @@ def compute_zones(tc):
     return zones
 
 
+def load_previous():
+    try:
+        with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+def hours_since(iso_str):
+    if not iso_str:
+        return None
+    try:
+        d = datetime.fromisoformat(str(iso_str).replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=timezone.utc)
+        return (datetime.now(timezone.utc) - d).total_seconds() / 3600.0
+    except ValueError:
+        return None
+
+
+def param_matches(name, patterns):
+    return any(name == p or (p.endswith("_") and name.startswith(p)) for p in patterns)
+
+
+def carry_forward(prev, health, params):
+    """Re-use the last good value of slow-changing sources that failed this run (labelled, age-capped)."""
+    if not prev:
+        return
+    prev_params = prev.get("summary_parameters") or {}
+    prev_ts = prev.get("updated_at_utc") or prev.get("timestamp_utc")
+    for key, (max_hours, patterns) in CARRY_RULES.items():
+        if key not in health or health[key]["parsed"]:
+            continue
+        oldest = None
+        for name, val in prev_params.items():
+            if not isinstance(val, dict) or name in params or not param_matches(name, patterns):
+                continue
+            origin = val.get("carried_from_utc") or prev_ts
+            age = hours_since(origin)
+            if age is None or age > max_hours:
+                continue
+            carried = dict(val)
+            carried["carried_from_utc"] = origin
+            params[name] = carried
+            if oldest is None or origin < oldest:
+                oldest = origin
+        if oldest:
+            health[key]["carried"] = True
+            health[key]["carried_from_utc"] = oldest
+
+
 def main():
     print(f"Fetching live weather, climate, and hydrological telemetry from {len(ENDPOINTS)} endpoints...")
+    prev = load_previous()
     results = []
     all_summary_parameters = {}
+    health = {}
 
     for ep in ENDPOINTS:
         print(f" -> Fetching {ep['name']} ({ep['url']})")
         diag, params = fetch_endpoint(ep)
         results.append(diag)
+        health[ep["key"]] = {
+            "fetched": bool(diag["success"]),
+            # the tide only counts as parsed when the live level is present (not just the prediction)
+            "parsed": bool(params) and (ep["key"] != "chao_phraya_tide" or "chao_phraya_estuary_realtime_level" in params),
+            "carried": False,
+            "carried_from_utc": None,
+            "error": diag.get("error") or diag.get("parse_error"),
+        }
         if params:
             all_summary_parameters.update(params)
 
     successful = sum(1 for r in results if r["success"])
     failed = len(results) - successful
+    parsed_count = sum(1 for h in health.values() if h["parsed"])
+
+    for key, h in health.items():
+        print(f"    {key:18s} fetched={h['fetched']!s:5} parsed={h['parsed']!s:5} {h['error'] or ''}")
+
+    if parsed_count == 0:
+        print("ERROR: no source could be parsed. Leaving the existing data.json untouched.", file=sys.stderr)
+        return 1
+
+    carry_forward(prev, health, all_summary_parameters)
+    usable_count = sum(1 for h in health.values() if h["parsed"] or h["carried"])
 
     is_live = successful > 0
     status_code = "SUCCESS" if is_live else "FETCH_FAILED"
@@ -775,6 +884,10 @@ def main():
         "total_endpoints": len(ENDPOINTS),
         "successful_count": successful,
         "failed_count": failed,
+        "parsed_count": parsed_count,
+        "usable_count": usable_count,
+        "source_health": health,
+        "dams_missing": [k for k in DAM_KEYS if f"dam_{k}" not in all_summary_parameters],
         "teleconnections": teleconnections,
         "dams": dams,
         "paknam_gauge": paknam_gauge,
@@ -783,14 +896,13 @@ def main():
         "zones": zones
     }
 
-    if not is_live:
-        output_payload["error_message"] = "Failed to connect to live climate and hydrological data endpoints."
-
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(output_payload, f, indent=2, ensure_ascii=False)
 
-    print(f"Completed fetch. {successful}/{len(ENDPOINTS)} endpoints updated. Saved strictly to '{OUTPUT_FILE}'.")
+    print(f"Completed fetch. {parsed_count}/{len(ENDPOINTS)} sources parsed "
+          f"({usable_count} usable incl. carried forward). Saved to '{OUTPUT_FILE}'.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
