@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T04:20:20Z",
+  "generated_utc": "2026-11-19T04:25:19Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -45,7 +45,7 @@
         "Outlying: 4 of 484 stations wet, 0 heavy, status approaching"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T04:15:00Z",
+      "updated_utc": "2026-11-19T04:20:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -59,7 +59,7 @@
         "C.2 Nakhon Sawan 18.24 m MSL, flow 560 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T04:04:25Z",
+      "updated_utc": "2026-11-19T04:30:00Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -71,7 +71,7 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T03:40:00Z",
+      "updated_utc": "2026-11-19T04:40:00Z",
       "max_age_min": 45,
       "stale": false
     }
