@@ -151,6 +151,27 @@ def build_macro(dj):
     updated = parse_iso(dj.get("updated_at_utc") or dj.get("timestamp_utc"))
     level, parts, details = "normal", [], []
 
+    # Source health (written by fetch_data.py). Absent in older data.json files: then skip.
+    health = dj.get("source_health") or {}
+    parsed_n, total_n = dj.get("parsed_count"), dj.get("total_endpoints")
+    if parsed_n is not None and total_n:
+        if parsed_n < 4:
+            return site(headline=f"Only {parsed_n} of {total_n} climate sources parsed", key="macro",
+                        updated=updated, details=[f"{k}: {v.get('error') or 'no values parsed'}"
+                                                  for k, v in health.items() if not v.get("parsed")][:4])
+        missing = [k for k, v in health.items() if not v.get("parsed") and not v.get("carried")]
+        carried = [k for k, v in health.items() if v.get("carried")]
+        if missing:
+            details.append("No data from: " + ", ".join(missing))
+        if carried:
+            details.append("Using last good values (older) for: " + ", ".join(carried))
+        if parsed_n < total_n:
+            parts_suffix = f"{parsed_n}/{total_n} sources current"
+        else:
+            parts_suffix = None
+    else:
+        parts_suffix = None
+
     # Bangkok-zone net monsoon anomaly (your own teleconnection model, +/-60 % scale)
     zones = dj.get("zones") or []
     bkk = next((z for z in zones if z.get("id") == "ZONE01"), None)
@@ -200,6 +221,8 @@ def build_macro(dj):
 
     if not parts:
         return site(headline="Feed loaded but empty", key="macro", updated=updated)
+    if parts_suffix:
+        parts.append(parts_suffix)
     return site(level, " · ".join(parts), details, updated, "macro", ok=True)
 
 
