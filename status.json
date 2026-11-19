@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T07:40:21Z",
+  "generated_utc": "2026-11-19T07:45:21Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions",
-    "not_current": []
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -42,10 +44,10 @@
       "details": [
         "122 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 6.0 mm",
-        "Outlying rain data is stale"
+        "Outlying: 1 of 511 stations wet, 0 heavy, status receding"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T07:35:00Z",
+      "updated_utc": "2026-11-19T07:40:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -71,9 +73,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T07:40:00Z",
+      "updated_utc": "2026-11-19T06:40:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
