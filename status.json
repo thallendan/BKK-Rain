@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T07:05:19Z",
+  "generated_utc": "2026-11-19T07:10:26Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -16,10 +16,10 @@
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.6%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +1.216 m MSL, surge risk MODERATE"
+        "Pak Nam tide +1.215 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T07:00:40Z",
+      "updated_utc": "2026-11-19T07:08:30Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying: 1 of 485 stations wet, 0 heavy, status approaching"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T07:00:00Z",
+      "updated_utc": "2026-11-19T07:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -54,12 +54,12 @@
       "headline": "klong nodes normal · Pak Nam +1.22 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +1.216 m MSL, surge risk MODERATE",
+        "Pak Nam +1.215 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 18.24 m MSL, flow 560 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T07:04:27Z",
+      "updated_utc": "2026-11-19T07:08:30Z",
       "max_age_min": 120,
       "stale": false
     },
