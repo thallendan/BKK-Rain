@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T09:30:25Z",
+  "generated_utc": "2026-11-19T09:35:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -20,7 +20,7 @@
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T09:00:44Z",
+      "updated_utc": "2026-11-19T09:30:42Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -38,15 +38,15 @@
       "stale": false
     },
     "gauges": {
-      "level": "normal",
+      "level": "watch",
       "headline": "1 of 124 gauges wet · max 10 mm/h (Bangkok Noi)",
       "details": [
         "124 of 128 gauges fresh",
-        "Heaviest 1 h: 9.5 mm; heaviest 24 h: 22.0 mm",
+        "Heaviest 1 h: 10.0 mm; heaviest 24 h: 22.5 mm",
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T09:25:00Z",
+      "updated_utc": "2026-11-19T09:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
