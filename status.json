@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T09:25:20Z",
+  "generated_utc": "2026-11-19T09:26:46Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions",
-    "not_current": []
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -37,14 +39,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 124 gauges wet · max 9 mm/h (Bangkok Noi)",
+      "headline": "1 of 124 gauges wet · max 10 mm/h (Bangkok Noi)",
       "details": [
         "124 of 128 gauges fresh",
-        "Heaviest 1 h: 9.0 mm; heaviest 24 h: 21.5 mm",
+        "Heaviest 1 h: 9.5 mm; heaviest 24 h: 22.0 mm",
         "Outlying: 0 of 481 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T09:20:00Z",
+      "updated_utc": "2026-11-19T09:25:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -57,7 +59,7 @@
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T09:25:00Z",
+      "updated_utc": "2026-11-19T09:04:39Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -69,9 +71,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T09:35:00Z",
+      "updated_utc": "2026-11-19T08:40:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
