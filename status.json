@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T09:05:19Z",
+  "generated_utc": "2026-11-19T09:10:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -37,14 +37,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 125 gauges wet · max 9 mm/h (Bangkok Noi)",
+      "headline": "1 of 124 gauges wet · max 10 mm/h (Bangkok Noi)",
       "details": [
-        "125 of 129 gauges fresh",
-        "Heaviest 1 h: 9.0 mm; heaviest 24 h: 13.5 mm",
+        "124 of 129 gauges fresh",
+        "Heaviest 1 h: 9.5 mm; heaviest 24 h: 14.0 mm",
         "Outlying: 0 of 512 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T09:00:00Z",
+      "updated_utc": "2026-11-19T09:05:00Z",
       "max_age_min": 20,
       "stale": false
     },
