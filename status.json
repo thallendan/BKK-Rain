@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T11:15:20Z",
+  "generated_utc": "2026-11-19T11:20:21Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions",
-    "not_current": []
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -44,7 +46,7 @@
         "Outlying: 2 of 503 stations wet, 0 heavy, status new"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T11:10:00Z",
+      "updated_utc": "2026-11-19T11:15:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -71,7 +73,7 @@
       "ok": true,
       "updated_utc": "2026-11-19T10:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
