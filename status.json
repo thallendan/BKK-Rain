@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-19T12:40:21Z",
+  "generated_utc": "2026-11-19T12:45:22Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -41,7 +41,7 @@
       "details": [
         "126 of 129 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 27.5 mm",
-        "Outlying rain data is stale"
+        "Outlying: 0 of 498 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
       "updated_utc": "2026-11-19T12:35:00Z",
