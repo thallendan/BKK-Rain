@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T12:30:29Z",
+  "generated_utc": "2026-11-20T12:35:16Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -21,7 +21,7 @@
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T12:00:43Z",
+      "updated_utc": "2026-11-20T12:30:40Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -47,7 +47,7 @@
         "Outlying: 0 of 473 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T12:25:00Z",
+      "updated_utc": "2026-11-20T12:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
