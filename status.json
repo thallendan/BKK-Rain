@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T20:20:32Z",
+  "generated_utc": "2026-11-20T20:25:18Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -34,7 +34,7 @@
         "Nearest cyclone AKVAN-26 1735 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T20:00:28Z",
+      "updated_utc": "2026-11-20T20:23:59Z",
       "max_age_min": 360,
       "stale": false
     },
