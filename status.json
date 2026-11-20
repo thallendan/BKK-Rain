@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T05:25:16Z",
+  "generated_utc": "2026-11-20T05:30:25Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -39,15 +39,15 @@
       "stale": false
     },
     "gauges": {
-      "level": "watch",
-      "headline": "0 of 119 gauges wet · rain approaching",
+      "level": "normal",
+      "headline": "0 of 118 gauges wet",
       "details": [
-        "119 of 124 gauges fresh",
+        "118 of 124 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
-        "Outlying: 2 of 500 stations wet, 0 heavy, status approaching"
+        "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T05:20:00Z",
+      "updated_utc": "2026-11-20T05:25:00Z",
       "max_age_min": 20,
       "stale": false
     },
