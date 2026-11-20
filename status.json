@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T21:00:39Z",
+  "generated_utc": "2026-11-20T21:05:17Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -19,20 +19,20 @@
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T20:30:39Z",
+      "updated_utc": "2026-11-20T21:00:47Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 10.0 m/s · 0 mm next 24 h · AKVAN-26 1735 km",
+      "headline": "NE 10.5 m/s · 0 mm next 24 h · AKVAN-26 1735 km",
       "details": [
-        "Regime NE, 850 hPa wind 10.0 m/s",
+        "Regime NE, 850 hPa wind 10.5 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone AKVAN-26 1735 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T20:23:59Z",
+      "updated_utc": "2026-11-20T21:00:29Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying: 0 of 499 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T20:55:00Z",
+      "updated_utc": "2026-11-20T21:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
