@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T00:00:29Z",
+  "generated_utc": "2026-11-20T00:05:15Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -19,7 +19,7 @@
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T23:30:47Z",
+      "updated_utc": "2026-11-20T00:00:42Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -32,7 +32,7 @@
         "Nearest cyclone AKVAN-26 1735 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T23:00:32Z",
+      "updated_utc": "2026-11-20T00:00:27Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying: 0 of 489 stations wet, 0 heavy, status clear"
       ],
       "ok": true,
-      "updated_utc": "2026-11-19T23:55:00Z",
+      "updated_utc": "2026-11-20T00:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
