@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T23:30:27Z",
+  "generated_utc": "2026-11-20T23:35:25Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -9,17 +9,17 @@
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -31% drier · 4-dam 77% · 8/9 sources current",
+      "headline": "Monsoon -32% drier · 4-dam 77% · 8/9 sources current",
       "details": [
         "No data from: chao_phraya_tide",
-        "Bangkok-zone net teleconnection anomaly -30.6%",
-        "MJO phase 3 (amp 1.36)",
+        "Bangkok-zone net teleconnection anomaly -31.5%",
+        "MJO phase 3 (amp 1.26)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.6%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T23:00:50Z",
+      "updated_utc": "2026-11-20T23:30:36Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,7 +45,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T23:25:00Z",
+      "updated_utc": "2026-11-20T23:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
