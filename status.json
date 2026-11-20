@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T16:30:27Z",
+  "generated_utc": "2026-11-20T16:35:17Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -21,7 +21,7 @@
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T16:00:45Z",
+      "updated_utc": "2026-11-20T16:30:47Z",
       "max_age_min": 360,
       "stale": false
     },
