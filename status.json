@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T11:25:16Z",
+  "generated_utc": "2026-11-20T11:30:25Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -47,7 +47,7 @@
         "Outlying: 1 of 498 stations wet, 0 heavy, status receding"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T11:20:00Z",
+      "updated_utc": "2026-11-20T11:25:00Z",
       "max_age_min": 20,
       "stale": false
     },
