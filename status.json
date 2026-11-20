@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-20T06:00:35Z",
+  "generated_utc": "2026-11-20T06:05:19Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -19,33 +19,33 @@
         "Near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T05:30:44Z",
+      "updated_utc": "2026-11-20T06:00:41Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 10.4 m/s · 1 mm next 24 h · AKVAN-26 1735 km",
+      "headline": "E 10.3 m/s · 1 mm next 24 h · AKVAN-26 1735 km",
       "details": [
-        "Regime E, 850 hPa wind 10.4 m/s",
+        "Regime E, 850 hPa wind 10.3 m/s",
         "Model rain for Bangkok, next 24 h: 1 mm",
         "Nearest cyclone AKVAN-26 1735 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T05:00:27Z",
+      "updated_utc": "2026-11-20T06:00:28Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 118 gauges wet",
+      "headline": "0 of 117 gauges wet",
       "details": [
-        "118 of 123 gauges fresh",
+        "117 of 123 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
         "Outlying: 2 of 501 stations wet, 0 heavy, status steady"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T05:55:00Z",
+      "updated_utc": "2026-11-20T06:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -58,7 +58,7 @@
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-20T05:30:00Z",
+      "updated_utc": "2026-11-20T06:04:39Z",
       "max_age_min": 120,
       "stale": false
     },
