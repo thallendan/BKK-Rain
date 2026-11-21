@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-21T21:15:22Z",
+  "generated_utc": "2026-11-21T21:20:28Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -73,7 +75,7 @@
       "ok": true,
       "updated_utc": "2026-11-21T20:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
