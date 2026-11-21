@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-21T03:25:25Z",
+  "generated_utc": "2026-11-21T03:30:24Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -42,10 +44,10 @@
       "details": [
         "126 of 129 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
-        "Outlying: 1 of 473 stations wet, 0 heavy, status clear"
+        "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T03:20:00Z",
+      "updated_utc": "2026-11-21T03:25:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -58,7 +60,7 @@
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T03:25:00Z",
+      "updated_utc": "2026-11-21T03:04:39Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -70,9 +72,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T03:35:00Z",
+      "updated_utc": "2026-11-21T02:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
