@@ -110,6 +110,12 @@ ENDPOINTS = [
             "Referer": "https://www.thaiwater.net/",
             "Origin": "https://www.thaiwater.net",
         },
+    },
+    {
+        "key": "tide_prediction",
+        "name": "Predicted tide extremes (Royal Thai Navy N03 Fort Chula, via HII FEWS)",
+        "url": "https://fews2.hii.or.th/summary.txt",
+        "headers": {"Referer": "https://www.thaiwater.net/"},
     }
 ]
 
@@ -389,6 +395,7 @@ def parse_pacific_heat_content(body_text):
 
 TIDE_STATION_CODE = "GLF001"      # Fort Phrachulachomklao, Chao Phraya estuary (HII telemetry code)
 TIDE_MAX_AGE_HOURS = 6            # an older reading is reported as unavailable, never as "live"
+RIVER_STATION_CODES = ("C.2", "C.13", "CPY011")   # Nakhon Sawan, Chao Phraya Dam, Ayutthaya (HydroView nodes)
 
 
 def parse_thaiwater_tide(body_text):
@@ -433,13 +440,64 @@ def parse_thaiwater_tide(body_text):
         raise ValueError(f"latest {TIDE_STATION_CODE} reading ({stamp} ICT) is {age_h:.1f} h old")
 
     name = ((match.get("station") or {}).get("tele_station_name") or {}).get("en") or TIDE_STATION_CODE
+
+    # Other Chao Phraya stations HydroView shows (its own source for them times out).
+    river = {}
+    for row in rows:
+        st = row.get("station") or {}
+        code = str(st.get("tele_station_oldcode", ""))
+        if code not in RIVER_STATION_CODES:
+            continue
+        try:
+            rl = float(row.get("waterlevel_msl"))
+            obs = datetime.strptime(str(row.get("waterlevel_datetime")), "%Y-%m-%d %H:%M").strftime("%Y-%m-%dT%H:%M:00+07:00")
+        except (TypeError, ValueError):
+            continue
+        try:
+            flow = float(row.get("discharge"))
+        except (TypeError, ValueError):
+            flow = None
+        river[code] = {"name": (st.get("tele_station_name") or {}).get("en") or code,
+                       "level_msl": rl, "flow_cms": flow, "obs": obs,
+                       "situation_level": row.get("situation_level")}
+
     return {
+        "thaiwater_river_stations": {
+            "label": "Thaiwater river stations (for HydroView)",
+            "value": f"{len(river)} of {len(RIVER_STATION_CODES)}",
+            "unit": "stations", "period": str(stamp), "description": "River stations from the Thaiwater water-level API",
+            "stations": river
+        },
         "chao_phraya_estuary_realtime_level": {
             "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
             "value": f"{level_val:+.3f}",
             "unit": "m MSL",
-            "period": f"{stamp} ICT",
+            "period": str(stamp),          # plain "YYYY-MM-DD HH:MM" (Bangkok time): HydroView parses this
             "description": f"Live telemetry sea level at the Chao Phraya River mouth (HII station {TIDE_STATION_CODE}, {name})"
+        }
+    }
+
+
+def parse_navy_tide_summary(body_text):
+    """Today's predicted high/low tide at Fort Chula (Navy station N03) from the HII FEWS summary.txt (CSV)."""
+    import csv, io
+    today = datetime.now(timezone(timedelta(hours=7))).strftime("%Y-%m-%d")
+    rows = list(csv.DictReader(io.StringIO(body_text.lstrip("\ufeff"))))
+    if not rows or "code" not in rows[0]:
+        raise ValueError("summary.txt has no CSV header with a 'code' column")
+    row = next((r for r in rows if (r.get("code") or "").strip().upper() == "N03"), None)
+    if row is None:
+        raise ValueError(f"station N03 not found among {len(rows)} rows")
+    if (row.get("date") or "").strip() != today:
+        raise ValueError(f"N03 prediction is for {row.get('date')}, not today ({today})")
+    hi, lo = float(row["max_value"]), float(row["min_value"])
+    return {
+        "chao_phraya_estuary_predicted_tide": {
+            "label": "Chao Phraya Estuary Predicted Tide Extremes (Fort Chula, N03)",
+            "value": f"High {hi:+.2f} m @ {row['max_time'].strip()} | Low {lo:+.2f} m @ {row['min_time'].strip()}",
+            "unit": "m MSL (time, ICT)",
+            "period": today,
+            "description": "Royal Thai Navy predicted tide extremes for today (station N03)"
         }
     }
 
@@ -464,6 +522,8 @@ def extract_parameters(endpoint_key, content_type, body_text):
             return parse_dam_storage_bkk_region(body_text)
         elif endpoint_key == "chao_phraya_tide":
             return parse_thaiwater_tide(body_text)
+        elif endpoint_key == "tide_prediction":
+            return parse_navy_tide_summary(body_text)
     except Exception as e:
         return {"error": f"Parsing failed: {str(e)}"}
     return None
@@ -928,6 +988,8 @@ def main():
         print("ERROR: no source could be parsed. Leaving the existing data.json untouched.", file=sys.stderr)
         return 1
 
+    river_param = all_summary_parameters.pop("thaiwater_river_stations", None)
+    river_stations = (river_param or {}).get("stations") or {}
     carry_forward(prev, health, all_summary_parameters)
     usable_count = sum(1 for h in health.values() if h["parsed"] or h["carried"])
 
@@ -952,6 +1014,8 @@ def main():
         "usable_count": usable_count,
         "source_health": health,
         "dams_missing": [k for k in DAM_KEYS if f"dam_{k}" not in all_summary_parameters],
+        "river_stations": river_stations,
+        "river_stations_missing": [c for c in RIVER_STATION_CODES if c not in river_stations],
         "teleconnections": teleconnections,
         "dams": dams,
         "paknam_gauge": paknam_gauge,
