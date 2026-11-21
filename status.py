@@ -202,7 +202,8 @@ def build_macro(dj):
     near_full = [k for k in ("bhumibol", "sirikit", "kwai_noi", "pasak", "srinagarind", "vajiralongkorn")
                  if (num((dams.get(k) or {}).get("current_storage_pct")) or 0) >= 95]
     if near_full:
-        level = worst(level, "watch")
+        # Informational only: full reservoirs at the end of the wet season are normal, and without
+        # inflow or spill data they are not a hazard signal by themselves.
         details.append("Near full (95%+): " + ", ".join(near_full))
 
     # Pak Nam tide
@@ -306,8 +307,9 @@ def build_gauges(bma, outlying):
             details.append("Outlying rain data is stale")
         else:
             status = ap.get("status")
-            details.append(f"Outlying: {sm.get('wet')} of {sm.get('stations')} stations wet, "
-                           f"{sm.get('heavy')} heavy, status {status}")
+            details.append(f"Outlying rain: {sm.get('wet')} of {sm.get('stations')} stations wet, "
+                           f"{sm.get('heavy')} heavy"
+                           + (f", rain {status}" if status in ("approaching", "arrived") else ""))
             if status in ("approaching", "arrived"):
                 level = worst(level, "watch")
                 headline += " · rain " + ("at Bangkok edge" if status == "arrived" else "approaching")
@@ -434,8 +436,7 @@ def build_hydro(master, klong, dj):
         full = [k for k, v in dams.items() if isinstance(v, dict)
                 and (num(v.get("current_storage_pct")) or 0) >= 95]
         if full:
-            level = worst(level, "watch")
-            notes.append("Dams near full (95%+): " + ", ".join(full))
+            notes.append("Dams near full (95%+): " + ", ".join(full))   # informational, not a level
 
     # Chao Phraya river block (master file): report, no thresholds known here
     cp = ((master or {}).get("parsed_summary") or {}).get("chaophraya_full")

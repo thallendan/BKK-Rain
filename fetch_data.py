@@ -34,7 +34,7 @@ import time
 import re
 import urllib.request
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 OUTPUT_FILE = "data.json"
@@ -102,8 +102,14 @@ ENDPOINTS = [
     },
     {
         "key": "chao_phraya_tide",
-        "name": "Chao Phraya Estuary Sea Level & Tide (Fort Phrachulachomklao)",
-        "url": "https://tiwrmdev.hii.or.th/v3/sealevel"
+        "name": "Chao Phraya Estuary Sea Level (Fort Phrachulachomklao, GLF001) via Thaiwater API",
+        "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
+        # Same headers the thaiwater.net web app sends.
+        "headers": {
+            "Accept": "application/json, text/plain, */*",
+            "Referer": "https://www.thaiwater.net/",
+            "Origin": "https://www.thaiwater.net",
+        },
     }
 ]
 
@@ -381,6 +387,63 @@ def parse_pacific_heat_content(body_text):
     return None
 
 
+TIDE_STATION_CODE = "GLF001"      # Fort Phrachulachomklao, Chao Phraya estuary (HII telemetry code)
+TIDE_MAX_AGE_HOURS = 6            # an older reading is reported as unavailable, never as "live"
+
+
+def parse_thaiwater_tide(body_text):
+    """Live sea level at the Chao Phraya mouth from the Thaiwater water-level API (JSON).
+
+    Finds station GLF001 and emits the same parameter the old HTML parser did, so the rest of the
+    pipeline (paknam_gauge, macro page, status.py) is unchanged. The API has no predicted-tide
+    extremes, so "chao_phraya_estuary_predicted_tide" is no longer produced.
+    Returns None (with a reason via ValueError) when the station is missing or the reading is old.
+    """
+    doc = json.loads(body_text)
+    rows = ((doc.get("waterlevel_data") or {}).get("data")) or []
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("water-level API returned no station rows")
+
+    match = None
+    for row in rows:
+        st = row.get("station") or {}
+        if str(st.get("tele_station_oldcode", "")).upper() == TIDE_STATION_CODE:
+            match = row
+            break
+    if match is None:
+        near = []
+        for row in rows:
+            nm = ((row.get("station") or {}).get("tele_station_name") or {}).get("en") or ""
+            code = (row.get("station") or {}).get("tele_station_oldcode") or ""
+            if "chula" in nm.lower() or "pak nam" in nm.lower() or str(code).upper().startswith("GLF"):
+                near.append(f"{code} {nm}".strip())
+        raise ValueError(f"station {TIDE_STATION_CODE} not found among {len(rows)} stations; "
+                         f"similar: {', '.join(near[:6]) or 'none'}")
+
+    level = match.get("waterlevel_msl")
+    stamp = match.get("waterlevel_datetime")
+    if level in (None, ""):
+        raise ValueError(f"station {TIDE_STATION_CODE} has no current level (value is empty)")
+    level_val = float(level)
+    when = datetime.strptime(str(stamp), "%Y-%m-%d %H:%M").replace(tzinfo=timezone(timedelta(hours=7)))
+    age_h = (datetime.now(timezone.utc) - when).total_seconds() / 3600.0
+    if age_h < -0.5:
+        raise ValueError(f"reading time {stamp} is in the future; timezone assumption (ICT) may be wrong")
+    if age_h > TIDE_MAX_AGE_HOURS:
+        raise ValueError(f"latest {TIDE_STATION_CODE} reading ({stamp} ICT) is {age_h:.1f} h old")
+
+    name = ((match.get("station") or {}).get("tele_station_name") or {}).get("en") or TIDE_STATION_CODE
+    return {
+        "chao_phraya_estuary_realtime_level": {
+            "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
+            "value": f"{level_val:+.3f}",
+            "unit": "m MSL",
+            "period": f"{stamp} ICT",
+            "description": f"Live telemetry sea level at the Chao Phraya River mouth (HII station {TIDE_STATION_CODE}, {name})"
+        }
+    }
+
+
 def extract_parameters(endpoint_key, content_type, body_text):
     try:
         if endpoint_key == "enso":
@@ -400,7 +463,7 @@ def extract_parameters(endpoint_key, content_type, body_text):
         elif endpoint_key == "dam_storage":
             return parse_dam_storage_bkk_region(body_text)
         elif endpoint_key == "chao_phraya_tide":
-            return parse_chao_phraya_tide(body_text)
+            return parse_thaiwater_tide(body_text)
     except Exception as e:
         return {"error": f"Parsing failed: {str(e)}"}
     return None
@@ -432,6 +495,7 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
         )
     }
 
+    headers.update(endpoint.get("headers") or {})
     req = urllib.request.Request(url, headers=headers)
     ctx = ssl.create_default_context()
     host = (urlparse(url).hostname or "").lower()
