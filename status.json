@@ -1,12 +1,10 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-21T18:45:20Z",
+  "generated_utc": "2026-11-21T18:50:24Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "headline": "Warning: significant conditions",
+    "not_current": []
   },
   "sites": {
     "macro": {
@@ -73,9 +71,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T17:40:00Z",
+      "updated_utc": "2026-11-21T18:40:00Z",
       "max_age_min": 45,
-      "stale": true
+      "stale": false
     }
   }
 }
