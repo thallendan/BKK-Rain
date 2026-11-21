@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-21T04:15:18Z",
+  "generated_utc": "2026-11-21T04:20:24Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -45,7 +47,7 @@
         "Outlying: 1 of 475 stations wet, 0 heavy, status new"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T04:10:00Z",
+      "updated_utc": "2026-11-21T04:15:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -72,7 +74,7 @@
       "ok": true,
       "updated_utc": "2026-11-21T03:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
