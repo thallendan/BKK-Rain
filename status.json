@@ -1,27 +1,25 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-21T23:20:23Z",
+  "generated_utc": "2026-11-21T23:35:18Z",
   "overall": {
-    "level": "warning",
-    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "level": "critical",
+    "headline": "Critical: act on local alerts",
+    "not_current": []
   },
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -32% drier · 4-dam 76% · Pak Nam +0.84 m",
+      "headline": "Monsoon -29% drier · 4-dam 76% · Pak Nam +0.76 m",
       "details": [
-        "Bangkok-zone net teleconnection anomaly -31.5%",
-        "MJO phase 3 (amp 1.26)",
+        "Bangkok-zone net teleconnection anomaly -29.4%",
+        "MJO phase 4 (amp 1.49)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.5%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.840 m MSL, surge risk LOW"
+        "Pak Nam tide +0.760 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T23:00:35Z",
+      "updated_utc": "2026-11-21T23:30:31Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -44,24 +42,24 @@
       "details": [
         "126 of 129 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 12.0 mm",
-        "Outlying rain: 0 of 501 stations wet, 0 heavy"
+        "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T23:15:00Z",
+      "updated_utc": "2026-11-21T23:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
-      "level": "warning",
-      "headline": "0 critical · 1 warning · Pak Nam +0.84 m",
+      "level": "critical",
+      "headline": "1 critical · 0 warning · Pak Nam +0.76 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.840 m MSL, surge risk LOW",
+        "Pak Nam +0.760 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T23:04:38Z",
+      "updated_utc": "2026-11-21T23:30:31Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -73,9 +71,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-21T22:35:00Z",
+      "updated_utc": "2026-11-21T23:35:00Z",
       "max_age_min": 45,
-      "stale": true
+      "stale": false
     }
   }
 }
