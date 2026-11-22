@@ -153,13 +153,15 @@ def build_macro(dj):
 
     # Source health (written by fetch_data.py). Absent in older data.json files: then skip.
     health = dj.get("source_health") or {}
-    parsed_n, total_n = dj.get("parsed_count"), dj.get("total_endpoints")
+    parsed_n = dj.get("parsed_count")
+    total_n = dj.get("core_endpoints") or dj.get("total_endpoints")
     if parsed_n is not None and total_n:
         if parsed_n < 4:
             return site(headline=f"Only {parsed_n} of {total_n} climate sources parsed", key="macro",
                         updated=updated, details=[f"{k}: {v.get('error') or 'no values parsed'}"
                                                   for k, v in health.items() if not v.get("parsed")][:4])
-        missing = [k for k, v in health.items() if not v.get("parsed") and not v.get("carried")]
+        missing = [k for k, v in health.items()
+                   if not v.get("parsed") and not v.get("carried") and not v.get("optional")]
         carried = [k for k, v in health.items() if v.get("carried")]
         if missing:
             details.append("No data from: " + ", ".join(missing))
