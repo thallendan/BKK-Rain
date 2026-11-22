@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-22T06:15:26Z",
+  "generated_utc": "2026-11-22T06:20:19Z",
   "overall": {
     "level": "critical",
-    "headline": "Critical: act on local alerts",
-    "not_current": []
+    "headline": "Critical: act on local alerts (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -45,7 +47,7 @@
         "Outlying rain: 2 of 479 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-22T06:10:00Z",
+      "updated_utc": "2026-11-22T06:15:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -75,7 +77,7 @@
       "ok": true,
       "updated_utc": "2026-11-22T05:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
