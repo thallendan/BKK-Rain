@@ -57,6 +57,10 @@ CARRY_RULES = {
     "dam_storage": (72, ["chao_phraya_4dam_combined", "dam_"]),
 }
 
+# Sources that are nice to have. When one of these fails (for example the Navy tide table has not
+# rolled over to today yet) it does not count against "sources current" and is never a reason to fail.
+OPTIONAL_SOURCES = {"tide_prediction"}
+
 DAM_KEYS = ["bhumibol", "sirikit", "kwai_noi", "pasak", "srinagarind", "vajiralongkorn"]
 
 ENDPOINTS = [
@@ -970,6 +974,7 @@ def main():
             "fetched": bool(diag["success"]),
             # the tide only counts as parsed when the live level is present (not just the prediction)
             "parsed": bool(params) and (ep["key"] != "chao_phraya_tide" or "chao_phraya_estuary_realtime_level" in params),
+            "optional": ep["key"] in OPTIONAL_SOURCES,
             "carried": False,
             "carried_from_utc": None,
             "error": diag.get("error") or diag.get("parse_error"),
@@ -979,7 +984,8 @@ def main():
 
     successful = sum(1 for r in results if r["success"])
     failed = len(results) - successful
-    parsed_count = sum(1 for h in health.values() if h["parsed"])
+    core = [k for k in health if k not in OPTIONAL_SOURCES]
+    parsed_count = sum(1 for k in core if health[k]["parsed"])      # core sources only
 
     for key, h in health.items():
         print(f"    {key:18s} fetched={h['fetched']!s:5} parsed={h['parsed']!s:5} {h['error'] or ''}")
@@ -991,7 +997,7 @@ def main():
     river_param = all_summary_parameters.pop("thaiwater_river_stations", None)
     river_stations = (river_param or {}).get("stations") or {}
     carry_forward(prev, health, all_summary_parameters)
-    usable_count = sum(1 for h in health.values() if h["parsed"] or h["carried"])
+    usable_count = sum(1 for k in core if health[k]["parsed"] or health[k]["carried"])
 
     is_live = successful > 0
     status_code = "SUCCESS" if is_live else "FETCH_FAILED"
@@ -1010,6 +1016,7 @@ def main():
         "total_endpoints": len(ENDPOINTS),
         "successful_count": successful,
         "failed_count": failed,
+        "core_endpoints": len(core),
         "parsed_count": parsed_count,
         "usable_count": usable_count,
         "source_health": health,
@@ -1027,7 +1034,7 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(output_payload, f, indent=2, ensure_ascii=False)
 
-    print(f"Completed fetch. {parsed_count}/{len(ENDPOINTS)} sources parsed "
+    print(f"Completed fetch. {parsed_count}/{len(core)} core sources parsed "
           f"({usable_count} usable incl. carried forward). Saved to '{OUTPUT_FILE}'.")
     return 0
 
