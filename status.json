@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-22T06:20:19Z",
+  "generated_utc": "2026-11-22T06:25:17Z",
   "overall": {
     "level": "critical",
     "headline": "Critical: act on local alerts (1 feed stale or unavailable)",
@@ -47,7 +47,7 @@
         "Outlying rain: 2 of 479 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-22T06:15:00Z",
+      "updated_utc": "2026-11-22T06:20:00Z",
       "max_age_min": 20,
       "stale": false
     },
