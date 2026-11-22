@@ -364,7 +364,9 @@ def _classify(item):
         gates = 0
     kind = "pump" if (type_id == 2 or pump_count > 0) else ("gate" if (type_id == 3 or gates > 0) else "level")
     wid = item.get("water_id") or info.get("water_id")
-    return {"state": state, "wl_in": wl_in, "ts": _ms_stamp(wl.get("site_timestamp") or wl.get("dt") or item.get("dt")),
+    name = (item.get("station_name_en") or (item.get("water_station_name") or {}).get("en")
+            or (info.get("name") or {}).get("en") or item.get("station_name") or f"station {wid}")
+    return {"name": str(name), "warn": warn, "crit": crit, "state": state, "wl_in": wl_in, "ts": _ms_stamp(wl.get("site_timestamp") or wl.get("dt") or item.get("dt")),
             "active": active, "kind": kind, "lat": lat, "lng": lng,
             "wid": str(wid) if wid is not None else None}
 
@@ -388,10 +390,14 @@ def build_klongs(klong):
     updated = max(stamps) if stamps else None
 
     level = "critical" if crit else ("warning" if warn else "normal")
+    alerts = [r for r in rows if r["state"] != "normal"]
+    alerts.sort(key=lambda r: 0 if r["state"] == "critical" else 1)
+    alert_notes = [f"{r['state'].capitalize()}: {r['name']} at {r['wl_in']:.2f} m "
+                   f"(warning {r['warn']}, critical {r['crit']})" for r in alerts[:4]]
     headline = f"{len(rows)} stations · {crit} critical · {warn} warning"
     if pumps:
         headline += f" · {pumps} pumps on"
-    details = [f"{sum(r['kind']=='level' for r in rows)} level sensors, "
+    details = alert_notes + [f"{sum(r['kind']=='level' for r in rows)} level sensors, "
                f"{sum(r['kind']=='gate' for r in rows)} gates, {sum(r['kind']=='pump' for r in rows)} pump stations",
                f"{offline} level sensors reporting offline (-99)"]
     return site(level, headline, details, updated, "klongs", ok=True)
@@ -410,7 +416,14 @@ def build_hydro(master, klong, dj):
         warn = sum(r["state"] == "warning" for r in rows)
         off = sum(1 for r in rows if r["wl_in"] in (None, -99))
         stamps += [r["ts"] for r in rows if r["ts"] and r["wl_in"] not in (None, -99)]
-        parts.append(f"{crit} critical · {warn} warning" if (crit or warn) else "klong nodes normal")
+        alerts = [r for r in rows if r["state"] != "normal"]
+        alerts.sort(key=lambda r: 0 if r["state"] == "critical" else 1)
+        if crit or warn:
+            parts.append(f"{crit} critical · {warn} warning ({', '.join(r['name'] for r in alerts[:2])})")
+        else:
+            parts.append("klong nodes normal")
+        notes.extend(f"{r['state'].capitalize()}: {r['name']} at {r['wl_in']:.2f} m "
+                     f"(warning {r['warn']}, critical {r['crit']})" for r in alerts[:4])
         notes.append(f"{len(rows)} of {len(HYDRO_WATER_IDS)} klong nodes found, {off} offline")
         level = worst(level, "critical" if crit else ("warning" if warn else "normal"))
 
@@ -445,7 +458,10 @@ def build_hydro(master, klong, dj):
         mt = parse_iso(master.get("timestamp_utc"))
         if mt:
             stamps.append(mt)
-        if cp and not cp.get("parse_error"):
+        if cp and (cp.get("parse_error") or cp.get("success") is False):
+            notes.append("Chao Phraya river block unavailable in master file: "
+                         + str(cp.get("parse_error") or cp.get("error") or "fetch failed"))
+        elif cp and not cp.get("parse_error"):
             c2 = (cp.get("itc") or {}).get("C2") or {}
             if num(c2.get("level_msl")) is not None:
                 notes.append(f"C.2 Nakhon Sawan {num(c2['level_msl']):.2f} m MSL"
