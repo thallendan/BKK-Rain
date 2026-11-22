@@ -114,8 +114,8 @@ ENDPOINTS = [
     {
         "key": "tide_prediction",
         "name": "Predicted tide extremes (Royal Thai Navy N03 Fort Chula, via HII FEWS)",
-        "url": "https://fews2.hii.or.th/summary.txt",
-        "headers": {"Referer": "https://www.thaiwater.net/"},
+        "url": "https://fews2.hii.or.th/model-output/data_portal/tide_table/summary.txt",
+        "headers": {"Referer": "https://www.thaiwater.net/", "Origin": "https://www.thaiwater.net"},
     }
 ]
 
