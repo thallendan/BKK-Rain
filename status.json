@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-22T11:00:31Z",
+  "generated_utc": "2026-11-22T11:05:17Z",
   "overall": {
     "level": "critical",
     "headline": "Critical: act on local alerts",
@@ -9,30 +9,30 @@
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -29% drier · 4-dam 76% · Pak Nam +0.58 m",
+      "headline": "Monsoon -29% drier · 4-dam 76% · Pak Nam +0.37 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -29.4%",
         "MJO phase 4 (amp 1.49)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.4%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.580 m MSL, surge risk LOW"
+        "Pak Nam tide +0.370 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-22T10:30:33Z",
+      "updated_utc": "2026-11-22T11:00:38Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "E 6.3 m/s · 0 mm next 24 h · AKVAN-26 1735 km",
+      "headline": "E 6.9 m/s · 0 mm next 24 h · AKVAN-26 1735 km",
       "details": [
-        "Regime E, 850 hPa wind 6.3 m/s",
+        "Regime E, 850 hPa wind 6.9 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone AKVAN-26 1735 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-22T10:00:33Z",
+      "updated_utc": "2026-11-22T11:00:29Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -45,22 +45,22 @@
         "Outlying rain: 0 of 499 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-22T10:55:00Z",
+      "updated_utc": "2026-11-22T11:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "warning",
-      "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam +0.58 m",
+      "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam +0.37 m",
       "details": [
         "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.67 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.580 m MSL, surge risk LOW",
+        "Pak Nam +0.370 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-22T10:30:33Z",
+      "updated_utc": "2026-11-22T11:04:38Z",
       "max_age_min": 120,
       "stale": false
     },
