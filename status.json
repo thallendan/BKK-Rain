@@ -1,27 +1,25 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T01:30:25Z",
+  "generated_utc": "2026-11-23T01:35:18Z",
   "overall": {
     "level": "normal",
-    "headline": "All current feeds normal (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "headline": "All current feeds normal",
+    "not_current": []
   },
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -31% drier · 4-dam 76% · Pak Nam +0.73 m",
+      "headline": "Monsoon -31% drier · 4-dam 76% · Pak Nam +0.62 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -31.2%",
         "MJO phase 4 (amp 1.29)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.4%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.730 m MSL, surge risk LOW"
+        "Pak Nam tide +0.620 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T01:00:35Z",
+      "updated_utc": "2026-11-23T01:30:38Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -40,43 +38,42 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 125 gauges wet",
+      "headline": "0 of 126 gauges wet",
       "details": [
-        "125 of 129 gauges fresh",
+        "126 of 129 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T01:25:00Z",
+      "updated_utc": "2026-11-23T01:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "normal",
-      "headline": "klong nodes normal · Pak Nam +0.73 m",
+      "headline": "klong nodes normal · Pak Nam +0.62 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.730 m MSL, surge risk LOW",
+        "Pak Nam +0.620 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T01:04:38Z",
+      "updated_utc": "2026-11-23T01:30:38Z",
       "max_age_min": 120,
       "stale": false
     },
     "klongs": {
-      "level": "critical",
-      "headline": "42 stations · 1 critical · 0 warning",
+      "level": "normal",
+      "headline": "42 stations · 0 critical · 0 warning",
       "details": [
-        "Critical: Khlong Bang Nang Chin, Khlong Bang Nang Chin at 0.00 m (warning -0.5, critical -0.4)",
         "23 level sensors, 2 gates, 17 pump stations",
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T00:35:00Z",
+      "updated_utc": "2026-11-23T01:35:00Z",
       "max_age_min": 45,
-      "stale": true
+      "stale": false
     }
   }
 }
