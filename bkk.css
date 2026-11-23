@@ -1,0 +1,99 @@
+/* bkk.css: shared look for the Bangkok weather & water sites.
+ * Light/dark: follows the system by default; the nav bar's theme button sets
+ * <html data-theme="light|dark"> (saved in localStorage as "bkk-theme").
+ * Load: <link rel="stylesheet" href="https://thallendan.github.io/BKK-Rain/bkk.css">
+ * and add data-bkk-themed to <html> so the nav bar shows the theme button. */
+
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --card2:#eef2f7; --tx:#1b2430; --mu:#5b6676; --bd:#dde3ea;
+  --link:#1f6fc5; --accent:#1f6fc5; --on-accent:#ffffff;
+  --ok:#14825a; --watch:#a87c00; --warn:#c4620f; --crit:#c62f2f; --unk:#6b7686;
+  --bar:#dfe6ee; --shadow:0 1px 2px rgba(20,30,50,.06);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151c; --card:#1a212b; --card2:#222b37; --tx:#e6ebf1; --mu:#98a5b6; --bd:#2c3644;
+    --link:#5aa9ff; --accent:#4c9bf0; --on-accent:#08121f;
+    --ok:#34d399; --watch:#facc15; --warn:#fb923c; --crit:#f87171; --unk:#8794a6;
+    --bar:#2a3442; --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151c; --card:#1a212b; --card2:#222b37; --tx:#e6ebf1; --mu:#98a5b6; --bd:#2c3644;
+  --link:#5aa9ff; --accent:#4c9bf0; --on-accent:#08121f;
+  --ok:#34d399; --watch:#facc15; --warn:#fb923c; --crit:#f87171; --unk:#8794a6;
+  --bar:#2a3442; --shadow:none; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+main.wrap,.wrap{max-width:1100px;margin:0 auto;padding:12px}
+h1{font-size:1.3rem;margin:4px 0}
+h2{font-size:1rem;margin:0 0 8px}
+h3{font-size:.9rem;margin:12px 0 2px}
+a{color:var(--link)}
+.sub,.note{color:var(--mu);font-size:.82rem}
+.note{margin:10px 0}
+.lbl{font-size:.75rem;color:var(--mu)}
+.big{font-size:1.5rem;font-weight:700;line-height:1.2}
+.mono{font-variant-numeric:tabular-nums}
+.hidden{display:none !important}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
+.grid.wide{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow)}
+.card h2{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card.plain{border-left:4px solid var(--accent)}
+
+.top{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px}
+.actions{display:flex;align-items:center;gap:8px}
+.btn{font:inherit;font-size:.82rem;padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.spin{animation:bkkspin .8s linear infinite;display:inline-block}
+@keyframes bkkspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+.banner{border:1px solid var(--warn);border-left-width:5px;background:var(--card);border-radius:10px;padding:8px 12px;margin:10px 0;font-size:.88rem}
+
+.pill{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid currentColor;color:var(--unk);white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.watch{color:var(--watch)} .pill.warn{color:var(--warn)} .pill.crit{color:var(--crit)}
+.t-ok{color:var(--ok)} .t-watch{color:var(--watch)} .t-warn{color:var(--warn)} .t-crit{color:var(--crit)} .t-mu{color:var(--mu)}
+
+.bar{height:8px;border-radius:999px;background:var(--bar);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;border-radius:999px;background:var(--accent);transition:width .6s}
+.bar>i.ok{background:var(--ok)} .bar>i.watch{background:var(--watch)} .bar>i.warn{background:var(--warn)} .bar>i.crit{background:var(--crit)}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+
+details.ex{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin:10px 0;font-size:.88rem}
+details.ex>summary{cursor:pointer;font-weight:600;color:var(--link)}
+details.ex ul{margin:4px 0 4px 18px;padding:0} details.ex li{margin:2px 0}
+
+.seg{display:inline-flex;border:1px solid var(--bd);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:.8rem;padding:5px 10px;border:0;background:var(--card);color:var(--mu);cursor:pointer}
+.seg button+button{border-left:1px solid var(--bd)}
+.seg button.on{background:var(--accent);color:var(--on-accent);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:1000;transition:opacity .2s}
+.overlay.hidden{display:none !important}
+.overlay.fade{opacity:0}
+.dialog{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:12px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:16px;position:relative}
+.dialog .x{position:absolute;top:8px;right:8px}
+
+/* leaflet popups follow the theme */
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card) !important;color:var(--tx) !important;border:1px solid var(--bd)}
+.leaflet-container{font-family:inherit !important;background:var(--card2) !important}
+.pp h4{margin:0 0 2px;font-size:.9rem} .pp p{margin:2px 0;font-size:.78rem;color:var(--mu)}
+
+/* accent-coloured state (neutral emphasis) */
+.pill.ac{color:var(--accent)} .t-ac{color:var(--accent)}
+
+/* map tiles in dark mode (light OpenStreetMap tiles are inverted; image overlays are unaffected) */
+:root[data-theme="dark"] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}}
