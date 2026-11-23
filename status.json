@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T06:15:20Z",
+  "generated_utc": "2026-11-23T06:20:27Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -38,14 +40,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 123 gauges wet",
+      "headline": "0 of 122 gauges wet",
       "details": [
-        "123 of 128 gauges fresh",
+        "122 of 127 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
         "Outlying rain: 3 of 437 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T06:10:00Z",
+      "updated_utc": "2026-11-23T06:15:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -75,7 +77,7 @@
       "ok": true,
       "updated_utc": "2026-11-23T05:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
