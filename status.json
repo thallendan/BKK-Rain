@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T14:20:23Z",
+  "generated_utc": "2026-11-23T14:25:18Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -45,7 +47,7 @@
         "Outlying rain: 1 of 460 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T14:15:00Z",
+      "updated_utc": "2026-11-23T14:20:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -74,7 +76,7 @@
       "ok": true,
       "updated_utc": "2026-11-23T13:40:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
