@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T21:30:26Z",
+  "generated_utc": "2026-11-23T21:35:17Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal (1 feed stale or unavailable)",
@@ -21,7 +21,7 @@
         "Pak Nam tide +0.860 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T21:00:38Z",
+      "updated_utc": "2026-11-23T21:30:31Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -46,7 +46,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T21:25:00Z",
+      "updated_utc": "2026-11-23T21:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -60,7 +60,7 @@
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T21:04:37Z",
+      "updated_utc": "2026-11-23T21:30:31Z",
       "max_age_min": 120,
       "stale": false
     },
