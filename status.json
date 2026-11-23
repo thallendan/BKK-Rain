@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T22:00:31Z",
+  "generated_utc": "2026-11-23T22:05:19Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -19,19 +19,19 @@
         "Pak Nam tide +0.860 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T21:30:31Z",
+      "updated_utc": "2026-11-23T22:00:37Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 4.6 m/s · 0 mm next 24 h · no cyclone",
+      "headline": "NE 4.9 m/s · 0 mm next 24 h · no cyclone",
       "details": [
-        "Regime NE, 850 hPa wind 4.6 m/s",
+        "Regime NE, 850 hPa wind 4.9 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T21:00:27Z",
+      "updated_utc": "2026-11-23T22:00:27Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -44,7 +44,7 @@
         "Outlying rain: 0 of 454 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T21:55:00Z",
+      "updated_utc": "2026-11-23T22:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -58,7 +58,7 @@
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T21:30:31Z",
+      "updated_utc": "2026-11-23T22:04:30Z",
       "max_age_min": 120,
       "stale": false
     },
