@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T08:25:17Z",
+  "generated_utc": "2026-11-23T08:30:25Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -40,14 +40,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 121 gauges wet",
+      "headline": "0 of 123 gauges wet",
       "details": [
-        "121 of 127 gauges fresh",
+        "123 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
-        "Outlying rain: 1 of 463 stations wet, 0 heavy"
+        "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T08:20:00Z",
+      "updated_utc": "2026-11-23T08:25:00Z",
       "max_age_min": 20,
       "stale": false
     },
