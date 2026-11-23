@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T07:00:30Z",
+  "generated_utc": "2026-11-23T07:05:19Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -9,59 +9,59 @@
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -31% drier · 4-dam 76% · Pak Nam +0.91 m",
+      "headline": "Monsoon -31% drier · 4-dam 76% · Pak Nam +0.96 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -31.2%",
         "MJO phase 4 (amp 1.29)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.3%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.910 m MSL, surge risk LOW"
+        "Pak Nam tide +0.960 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T06:30:32Z",
+      "updated_utc": "2026-11-23T07:00:39Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 4.9 m/s · 0 mm next 24 h · AKVAN-26 1735 km",
+      "headline": "NE 4.4 m/s · 0 mm next 24 h · AKVAN-26 1735 km",
       "details": [
-        "Regime NE, 850 hPa wind 4.9 m/s",
+        "Regime NE, 850 hPa wind 4.4 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone AKVAN-26 1735 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T06:00:33Z",
+      "updated_utc": "2026-11-23T07:00:27Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 123 gauges wet · max 7 mm/h (Bangkok Yai)",
+      "headline": "0 of 121 gauges wet",
       "details": [
-        "123 of 127 gauges fresh",
-        "Heaviest 1 h: 7.0 mm; heaviest 24 h: 7.0 mm",
+        "121 of 126 gauges fresh",
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
         "Outlying rain: 2 of 460 stations wet, 1 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T06:55:00Z",
+      "updated_utc": "2026-11-23T07:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "warning",
-      "headline": "0 critical · 2 warning (Khlong Bang Phrom, Thanon Kanchanaphisek, Khlong Bangkok Yai, Khlong Mon) · Pak Nam +0.91 m",
+      "headline": "0 critical · 2 warning (Khlong Bang Phrom, Thanon Kanchanaphisek, Khlong Bangkok Yai, Khlong Mon) · Pak Nam +0.96 m",
       "details": [
         "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.62 m (warning 0.6, critical 0.7)",
         "Warning: Khlong Bangkok Yai, Khlong Mon at 0.63 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.910 m MSL, surge risk LOW",
+        "Pak Nam +0.960 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T06:30:32Z",
+      "updated_utc": "2026-11-23T07:04:40Z",
       "max_age_min": 120,
       "stale": false
     },
