@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T06:50:20Z",
+  "generated_utc": "2026-11-23T06:55:16Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -45,7 +45,7 @@
         "Outlying rain: 2 of 460 stations wet, 1 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T06:45:00Z",
+      "updated_utc": "2026-11-23T06:50:00Z",
       "max_age_min": 20,
       "stale": false
     },
