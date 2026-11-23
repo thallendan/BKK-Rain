@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T19:55:19Z",
+  "generated_utc": "2026-11-23T20:05:20Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -9,56 +9,56 @@
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -31% drier · 4-dam 76% · Pak Nam +0.39 m",
+      "headline": "Monsoon -31% drier · 4-dam 76% · Pak Nam +0.64 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -31.2%",
         "MJO phase 4 (amp 1.29)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.3%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.390 m MSL, surge risk LOW"
+        "Pak Nam tide +0.640 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T19:30:41Z",
+      "updated_utc": "2026-11-23T20:00:37Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 4.8 m/s · 0 mm next 24 h · no cyclone",
+      "headline": "NE 4.6 m/s · 0 mm next 24 h · no cyclone",
       "details": [
-        "Regime NE, 850 hPa wind 4.8 m/s",
+        "Regime NE, 850 hPa wind 4.6 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T19:00:28Z",
+      "updated_utc": "2026-11-23T20:00:30Z",
       "max_age_min": 360,
       "stale": false
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 123 gauges wet",
+      "headline": "0 of 122 gauges wet",
       "details": [
-        "123 of 128 gauges fresh",
+        "122 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
         "Outlying rain: 0 of 460 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T19:50:00Z",
+      "updated_utc": "2026-11-23T19:55:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "normal",
-      "headline": "klong nodes normal · Pak Nam +0.39 m",
+      "headline": "klong nodes normal · Pak Nam +0.64 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.390 m MSL, surge risk LOW",
+        "Pak Nam +0.640 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T19:30:41Z",
+      "updated_utc": "2026-11-23T20:04:37Z",
       "max_age_min": 120,
       "stale": false
     },
