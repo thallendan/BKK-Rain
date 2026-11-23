@@ -1,10 +1,12 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-23T07:45:22Z",
+  "generated_utc": "2026-11-23T07:50:22Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -40,20 +42,21 @@
       "level": "normal",
       "headline": "0 of 123 gauges wet",
       "details": [
-        "123 of 128 gauges fresh",
+        "123 of 127 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
         "Outlying rain: 1 of 465 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T07:40:00Z",
+      "updated_utc": "2026-11-23T07:45:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "warning",
-      "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam +1.04 m",
+      "headline": "0 critical · 2 warning (Khlong Bang Phrom, Thanon Kanchanaphisek, Khlong Bangkok Yai, Khlong Mon) · Pak Nam +1.04 m",
       "details": [
-        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.64 m (warning 0.6, critical 0.7)",
+        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.62 m (warning 0.6, critical 0.7)",
+        "Warning: Khlong Bangkok Yai, Khlong Mon at 0.63 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
         "Pak Nam +1.040 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
@@ -72,9 +75,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T07:40:00Z",
+      "updated_utc": "2026-11-23T06:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
