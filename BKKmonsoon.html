@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en" data-bkk-themed><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BKK Monsoon Winds</title>
+<script>try{var m=localStorage.getItem('bkk-theme');if(m==='light'||m==='dark')document.documentElement.setAttribute('data-theme',m)}catch(e){}</script>
+<link rel="stylesheet" href="https://thallendan.github.io/BKK-Rain/bkk.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#f5f7fa;--card:#fff;--tx:#1b2430;--mu:#667;--bd:#dde3ea}
-@media(prefers-color-scheme:dark){:root{--bg:#10151c;--card:#1a212b;--tx:#e6ebf1;--mu:#93a0b0;--bd:#2c3644}}
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--tx)}
 main{max-width:1100px;margin:auto;padding:12px}h1{font-size:1.3rem;margin:4px 0}h2{font-size:1rem;margin:0 0 8px}
-.nav a{color:#2a7fd4;margin-right:12px;font-size:.85rem}.sub{color:var(--mu);font-size:.8rem}
+.nav a{color:var(--link);margin-right:12px;font-size:.85rem}.sub{color:var(--mu);font-size:.8rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
 .big{font-size:1.5rem;font-weight:700}.lbl{font-size:.75rem;color:var(--mu)}
@@ -21,8 +21,8 @@ main{max-width:1100px;margin:auto;padding:12px}h1{font-size:1.3rem;margin:4px 0}
 .leg span{display:inline-block;margin-right:12px;font-size:.78rem}.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
 .note{font-size:.82rem;color:var(--mu)}
 details.ex{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin:10px 0;font-size:.88rem}
-details.ex summary{cursor:pointer;font-weight:600;color:#2a7fd4}details.ex h3{font-size:.9rem;margin:12px 0 2px}
-details.ex ul{margin:4px 0 4px 18px;padding:0}details.ex li{margin:2px 0}#plain{border-left:4px solid #2a7fd4;margin:10px 0}
+details.ex summary{cursor:pointer;font-weight:600;color:var(--link)}details.ex h3{font-size:.9rem;margin:12px 0 2px}
+details.ex ul{margin:4px 0 4px 18px;padding:0}details.ex li{margin:2px 0}#plain{border-left:4px solid var(--link);margin:10px 0}
 </style></head><body><main>
 <div id="bkk-nav"></div>
 <script src="https://thallendan.github.io/BKK-Rain/bkk-nav.js" defer></script>
@@ -58,7 +58,7 @@ details.ex ul{margin:4px 0 4px 18px;padding:0}details.ex li{margin:2px 0}#plain{
 <p class="note">Regimes use the 850 hPa wind direction (from): SW 200–290° = westerly monsoon from Andaman/Bay of Bengal; NE 20–90° = China/Siberian-high surge; E 90–200° = Pacific/typhoon-fed easterlies; N = continental northerlies; WEAK &lt;2.5 m/s. A bigger high–low pressure difference means a stronger NE surge. Data: Open-Meteo (GFS/ECMWF), GDACS, plus your data.json. Model output, not an official forecast.</p>
 </main>
 <script>
-const RC={SW:'#2a7fd4',NE:'#f4a261',E:'#2a9d8f',N:'#8e6bbf',WEAK:'#9aa5b1'};
+const RC={SW:'var(--link)',NE:'#f4a261',E:'#2a9d8f',N:'#8e6bbf',WEAK:'#9aa5b1'};
 const RN={SW:'Westerly / SW monsoon',NE:'NE monsoon (China high)',E:'Easterly / SE (Pacific)',N:'Northerly (continental)',WEAK:'Weak / variable'};
 const COMP=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
 const comp=d=>COMP[Math.round(d/22.5)%16];
@@ -103,7 +103,7 @@ function charts(){const s=D.series||{times:[]};const L=s.times.map(lab),n=D.now_
  const opt=(y)=>({responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{boxWidth:10}}},scales:Object.assign({x:{ticks:{maxTicksLimit:7}}},y)});
  if(D.series)new Chart($('c1'),{data:{labels:L,datasets:[
   {type:'bar',label:'BKK rain mm/h',data:s.bkk_rain_mm,backgroundColor:'#5aa9e6aa',yAxisID:'r'},
-  {type:'line',label:'u850 (+W / −E)',data:s.core_u850,borderColor:'#2a7fd4',pointRadius:0,yAxisID:'y'},
+  {type:'line',label:'u850 (+W / −E)',data:s.core_u850,borderColor:'var(--link)',pointRadius:0,yAxisID:'y'},
   {type:'line',label:'v850 (+S / −N)',data:s.core_v850,borderColor:'#e76f51',pointRadius:0,yAxisID:'y'}]},
   options:opt({y:{title:{display:true,text:'m/s'}},r:{position:'right',grid:{display:false},title:{display:true,text:'mm/h'}}}),plugins:[nowLine]});
  const pg=D.pressure_gradient;if(pg)new Chart($('c2'),{type:'line',data:{labels:pg.times.map(lab),datasets:[

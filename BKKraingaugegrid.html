@@ -194,9 +194,6 @@
                 </div>
 
                 <!-- Mobile Menu Button toggle for sidebar -->
-                <button id="mobile-toggle-btn" class="md:hidden p-2 text-slate-300 hover:text-white bg-slate-800 rounded-lg">
-                    <i class="fa-solid fa-list-ul"></i>
-                </button>
             </div>
 
             <!-- Controls: Timeframe Selector, Refresh, Scenario Simulator & Clock -->
@@ -335,48 +332,7 @@
     <!-- Main Dashboard Container -->
     <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-2 flex flex-col md:flex-row gap-4 mb-4 min-h-[580px]">
         
-        <!-- Left Sidebar: Station Leaderboard & Search -->
-        <aside id="sidebar-panel" class="w-full md:w-80 lg:w-96 flex flex-col glass-panel rounded-2xl overflow-hidden border border-slate-800/80 shadow-2xl transition-all duration-300">
-            
-            <!-- Sidebar Header & Search -->
-            <div class="p-3.5 border-b border-slate-800/80 bg-slate-900/80 space-y-2.5">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-list-ol text-blue-400"></i>
-                        Station Telemetry
-                    </h2>
-                    <span id="station-count-badge" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">0 Stations</span>
-                </div>
-
-                <!-- Search Input -->
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
-                    <input id="search-input" type="text" placeholder="Search station or district..." 
-                           class="w-full bg-slate-950/80 text-xs text-slate-200 placeholder-slate-500 pl-8 pr-8 py-2 rounded-xl border border-slate-800 focus:outline-none focus:border-blue-500 transition">
-                    <button id="clear-search-btn" class="hidden absolute right-3 top-2.5 text-slate-500 hover:text-slate-300 text-xs">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-
-                <!-- Quick Filter Tabs -->
-                <div class="flex items-center gap-1 bg-slate-950/50 p-1 rounded-xl border border-slate-800/60 text-xs">
-                    <button id="filter-all" class="filter-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-blue-400 transition">All</button>
-                    <button id="filter-raining" class="filter-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition">Raining</button>
-                    <button id="filter-heavy" class="filter-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition">Heavy (2mm+)</button>
-                </div>
-            </div>
-
-            <!-- Scrollable Station List -->
-            <div id="station-list" class="flex-1 overflow-y-auto p-2 space-y-1.5 max-h-[480px] md:max-h-none">
-                <!-- Station items rendered dynamically via JavaScript -->
-            </div>
-
-            <!-- Sidebar Footer -->
-            <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/90 text-center text-[11px] text-slate-500 flex items-center justify-between">
-                <span>Refreshes every 2 mins</span>
-                <span id="last-update-time">Updated: Just now</span>
-            </div>
-        </aside>
+        
 
         <!-- Right Main Content: Leaflet Static Map Workspace -->
         <section class="flex-1 flex flex-col glass-panel rounded-2xl overflow-hidden border border-slate-800/80 relative min-h-[420px]">
@@ -408,6 +364,11 @@
         </section>
 
     </main>
+
+    <div class="max-w-7xl mx-auto w-full px-4 pb-3 text-[11px] text-slate-500 flex items-center justify-between">
+        <span>Refreshes every 2 mins</span>
+        <span id="last-update-time">Updated: Just now</span>
+    </div>
 
     <!-- Station Detail Modal -->
     <div id="station-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md transition-all duration-300 opacity-0">
@@ -822,7 +783,6 @@
                 document.getElementById('kpi-max-rain').innerHTML = '-- <span class="text-xs font-normal">mm</span>';
                 document.getElementById('kpi-peak-district').innerText = 'No data';
                 document.getElementById('kpi-peak-district-th').innerText = 'Feed unavailable';
-                renderStationList();
                 renderMapMarkers();
                 renderLegend();
                 renderTrend();
@@ -850,69 +810,13 @@
                 document.getElementById('kpi-peak-district-th').innerText = "Dry Sky";
             }
 
-            renderStationList();
             renderMapMarkers();
             renderLegend();
             renderTrend();
             renderOutlying();
         }
 
-        function renderStationList() {
-            const container = document.getElementById('station-list');
-            const tf = APP_STATE.timeframe;
-            const query = APP_STATE.searchQuery.toLowerCase();
-            const thresholds = getRainThresholds(tf);
-
-            let list = APP_STATE.stations.filter(s => {
-                const matchSearch = s.en.toLowerCase().includes(query) || 
-                                    s.district_en.toLowerCase().includes(query) || 
-                                    s.district_th.includes(query);
-                
-                const val = getRainVal(s, tf);
-                if (APP_STATE.activeFilter === 'raining') return matchSearch && val > 0;
-                if (APP_STATE.activeFilter === 'heavy') return matchSearch && val >= thresholds.mod;
-                return matchSearch;
-            });
-
-            list.sort((a, b) => getRainVal(b, tf) - getRainVal(a, tf));
-
-            document.getElementById('station-count-badge').innerText = `${list.length} Stations`;
-
-            if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-slate-500 text-xs">
-                        <i class="fa-solid fa-cloud-sun text-2xl mb-2 text-slate-600 block"></i>
-                        ${APP_STATE.stations.length === 0 ? 'No data - live feed unavailable' : 'No stations match your criteria'}
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = list.map((st, rank) => {
-                const val = getRainVal(st, tf);
-                const color = getRainColor(val, tf);
-
-                return `
-                    <div onclick="selectStationFromList('${st.id}')" 
-                         class="glass-card hover:bg-slate-800/80 p-2.5 rounded-xl border border-slate-800/80 cursor-pointer transition flex items-center justify-between group">
-                        
-                        <div class="flex items-center gap-2.5 overflow-hidden">
-                            <span class="text-[11px] font-mono text-slate-500 w-4 text-center group-hover:text-blue-400 font-bold">${rank + 1}</span>
-                            <div class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${color}; shadow: 0 0 6px ${color}"></div>
-                            <div class="truncate">
-                                <h4 class="text-xs font-semibold text-slate-200 group-hover:text-blue-400 truncate transition">${st.en}</h4>
-                                <p class="text-[10px] text-slate-400 truncate">${st.district_en} (${st.district_th})</p>
-                            </div>
-                        </div>
-
-                        <div class="text-right shrink-0">
-                            <span class="text-xs font-bold ${val > 0 ? 'text-white' : 'text-slate-500'} font-mono">${val}</span>
-                            <span class="text-[10px] text-slate-400 block">mm</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
+        
 
         // ---- Rain trend panel (status, movement, sparkline, map arrow) ----
         const TREND_STYLE = {
@@ -1265,26 +1169,6 @@
                 loadStationData();
             });
 
-            document.getElementById('filter-all').addEventListener('click', (e) => switchFilter('all', e.target));
-            document.getElementById('filter-raining').addEventListener('click', (e) => switchFilter('raining', e.target));
-            document.getElementById('filter-heavy').addEventListener('click', (e) => switchFilter('heavy', e.target));
-
-            const searchInput = document.getElementById('search-input');
-            const clearBtn = document.getElementById('clear-search-btn');
-
-            searchInput.addEventListener('input', (e) => {
-                APP_STATE.searchQuery = e.target.value;
-                clearBtn.classList.toggle('hidden', !e.target.value);
-                renderStationList();
-            });
-
-            clearBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                APP_STATE.searchQuery = '';
-                clearBtn.classList.add('hidden');
-                renderStationList();
-            });
-
             document.getElementById('refresh-btn').addEventListener('click', () => {
                 APP_STATE.autoRefreshSeconds = 120;
                 loadStationData();
@@ -1302,10 +1186,6 @@
                 }
             });
 
-            document.getElementById('mobile-toggle-btn').addEventListener('click', () => {
-                const sidebar = document.getElementById('sidebar-panel');
-                sidebar.classList.toggle('hidden');
-            });
         }
 
         const TF_ON = 'tf-btn active px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold shadow-sm transition-all whitespace-nowrap';
@@ -1329,14 +1209,7 @@
             renderDashboard();
         }
 
-        function switchFilter(filter, tabElement) {
-            APP_STATE.activeFilter = filter;
-            document.querySelectorAll('.filter-tab').forEach(t => {
-                t.className = 'filter-tab flex-1 py-1 rounded-lg text-center font-medium text-slate-400 hover:text-slate-200 transition';
-            });
-            tabElement.className = 'filter-tab active flex-1 py-1 rounded-lg text-center font-medium bg-slate-800 text-blue-400 transition';
-            renderStationList();
-        }
+        
 
         function updateRefreshIcon(loading) {
             const icon = document.getElementById('refresh-icon');
