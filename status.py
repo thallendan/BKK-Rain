@@ -126,7 +126,7 @@ def fetch_json(url, timeout=20):
 
 
 def site(level="unknown", headline="No data", details=None, updated=None,
-         key=None, ok=False):
+         key=None, ok=False, metrics=None):
     """Standard site record."""
     lim = MAX_AGE_MIN.get(key, 60)
     a = age_min(updated)
@@ -138,6 +138,7 @@ def site(level="unknown", headline="No data", details=None, updated=None,
         "updated_utc": iso(updated) if updated else None,
         "max_age_min": lim,
         "stale": (a is None) or (a > lim),
+        "metrics": metrics or {},
     }
 
 
@@ -226,7 +227,8 @@ def build_macro(dj):
         return site(headline="Feed loaded but empty", key="macro", updated=updated)
     if parts_suffix:
         parts.append(parts_suffix)
-    return site(level, " · ".join(parts), details, updated, "macro", ok=True)
+    return site(level, " · ".join(parts), details, updated, "macro", ok=True,
+                metrics={"tide_msl": msl, "surge_risk": pk.get("surge_risk") if msl is not None else None})
 
 
 # --------------------------------------------------------------------------- monsoon
@@ -264,7 +266,7 @@ def build_monsoon(mj):
             level = worst(level, "warning" if str(cyc.get("alert", "")).lower() in ("orange", "red") else "watch")
 
     headline = f"{regime} {spd} m/s · {rain24:.0f} mm next 24 h · {cyc_txt}"
-    return site(level, headline, details, updated, "monsoon", ok=True)
+    return site(level, headline, details, updated, "monsoon", ok=True, metrics={"rain24": round(rain24, 1)})
 
 
 # --------------------------------------------------------------------------- gauges
@@ -315,7 +317,8 @@ def build_gauges(bma, outlying):
             if status in ("approaching", "arrived"):
                 level = worst(level, "watch")
                 headline += " · rain " + ("at Bangkok edge" if status == "arrived" else "approaching")
-    return site(level, headline, details, updated, "gauges", ok=True)
+    return site(level, headline, details, updated, "gauges", ok=True,
+                metrics={"max_1h": round(max1, 1), "wet": wet, "fresh": len(fresh)})
 
 
 # --------------------------------------------------------------------------- klongs / hydro
@@ -402,7 +405,8 @@ def build_klongs(klong):
     details = alert_notes + [f"{sum(r['kind']=='level' for r in rows)} level sensors, "
                f"{sum(r['kind']=='gate' for r in rows)} gates, {sum(r['kind']=='pump' for r in rows)} pump stations",
                f"{offline} level sensors reporting offline (-99)"]
-    return site(level, headline, details, updated, "klongs", ok=True)
+    return site(level, headline, details, updated, "klongs", ok=True,
+                metrics={"critical": crit, "warning": warn, "stations": len(rows)})
 
 
 def build_hydro(master, klong, dj):
@@ -460,7 +464,10 @@ def build_hydro(master, klong, dj):
         mt = parse_iso(master.get("timestamp_utc"))
         if mt:
             stamps.append(mt)
-        if cp and (cp.get("parse_error") or cp.get("success") is False):
+        have_rivers = bool((dj or {}).get("river_stations"))
+        if cp and (cp.get("parse_error") or cp.get("success") is False) and have_rivers:
+            pass    # river data comes from data.json (Thaiwater API); the master block is no longer needed
+        elif cp and (cp.get("parse_error") or cp.get("success") is False):
             notes.append("Chao Phraya river block unavailable in master file: "
                          + str(cp.get("parse_error") or cp.get("error") or "fetch failed"))
         elif cp and not cp.get("parse_error"):
@@ -471,6 +478,12 @@ def build_hydro(master, klong, dj):
         else:
             notes.append("Chao Phraya river block missing or unparsed in master file")
 
+    rs = ((dj or {}).get("river_stations")) or {}
+    c2 = rs.get("C.2") or {}
+    if num(c2.get("level_msl")) is not None:
+        notes.append(f"C.2 Nakhon Sawan {num(c2['level_msl']):.2f} m MSL"
+                     + (f", flow {num(c2['flow_cms']):.0f} m3/s" if num(c2.get("flow_cms")) is not None else ""))
+
     if not got_any:
         return site(headline="Basin feeds unavailable", key="hydro")
     updated = max(stamps) if stamps else None
@@ -478,6 +491,30 @@ def build_hydro(master, klong, dj):
 
 
 # --------------------------------------------------------------------------- main
+
+def build_highlights(sites):
+    """The few numbers worth seeing first. The hub greys a tile when its source site's data is stale."""
+    m = lambda k: (sites.get(k) or {}).get("metrics") or {}
+    g, mo, mc, kl = m("gauges"), m("monsoon"), m("macro"), m("klongs")
+    h = []
+    if g:
+        lv = "critical" if g["max_1h"] >= 60 else "warning" if g["max_1h"] >= 30 else "watch" if g["max_1h"] >= 10 else "normal"
+        h.append({"id": "rain_now", "site": "gauges", "label": "Rain now (heaviest, 1 h)", "value": f"{g['max_1h']:.0f} mm/h",
+                  "detail": f"{g['wet']} of {g['fresh']} gauges wet", "level": lv})
+    if mo:
+        r = mo["rain24"]
+        h.append({"id": "rain_24h", "site": "monsoon", "label": "Model rain, next 24 h", "value": f"{r:.0f} mm",
+                  "detail": "Bangkok, weather model", "level": "warning" if r >= 50 else "watch" if r >= 10 else "normal"})
+    if mc.get("tide_msl") is not None:
+        risk = mc.get("surge_risk")
+        h.append({"id": "tide", "site": "macro", "label": "Pak Nam tide", "value": f"{mc['tide_msl']:+.2f} m",
+                  "detail": f"surge risk {str(risk).lower()}", "level": {"HIGH": "warning", "MODERATE": "watch"}.get(risk, "normal")})
+    if kl:
+        c, w = kl["critical"], kl["warning"]
+        h.append({"id": "klongs", "site": "klongs", "label": "Klong alerts (Bangna)", "value": str(c + w),
+                  "detail": f"{c} critical, {w} warning", "level": "critical" if c else "warning" if w else "normal"})
+    return h
+
 
 def main():
     print("Building status.json ...")
@@ -507,8 +544,19 @@ def main():
     if not_current and live:
         headline += f" ({len(not_current)} feed{'s' if len(not_current) != 1 else ''} stale or unavailable)"
 
+    # "Level since": keep the old timestamp while a site stays at the same level.
+    try:
+        with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+            prev_sites = json.load(f).get("sites") or {}
+    except (OSError, ValueError):
+        prev_sites = {}
+    for k, v in sites.items():
+        p = prev_sites.get(k) or {}
+        v["level_since_utc"] = p.get("level_since_utc") if p.get("level") == v["level"] and p.get("level_since_utc") else iso(now_utc())
+
     out = {
-        "schema": 1,
+        "schema": 2,
+        "highlights": build_highlights(sites),
         "generated_utc": iso(now_utc()),
         "overall": {"level": lv, "headline": headline, "not_current": not_current},
         "sites": sites,
