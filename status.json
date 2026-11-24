@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-24T07:35:22Z",
+  "generated_utc": "2026-11-24T07:40:19Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal (1 feed stale or unavailable)",
@@ -39,14 +39,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 122 gauges wet · max 0 mm/h (Bangkok Noi)",
+      "headline": "1 of 120 gauges wet · max 0 mm/h (Bangkok Noi)",
       "details": [
-        "122 of 126 gauges fresh",
+        "120 of 124 gauges fresh",
         "Heaviest 1 h: 0.5 mm; heaviest 24 h: 0.5 mm",
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T07:25:00Z",
+      "updated_utc": "2026-11-24T07:35:00Z",
       "max_age_min": 20,
       "stale": false
     },
