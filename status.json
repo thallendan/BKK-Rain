@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-24T06:10:22Z",
+  "generated_utc": "2026-11-24T06:15:21Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -37,14 +37,14 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 119 gauges wet",
+      "headline": "1 of 120 gauges wet · max 8 mm/h (Prawet)",
       "details": [
-        "119 of 124 gauges fresh",
-        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
-        "Outlying rain: 2 of 505 stations wet, 0 heavy"
+        "120 of 127 gauges fresh",
+        "Heaviest 1 h: 8.0 mm; heaviest 24 h: 8.0 mm",
+        "Outlying rain: 2 of 476 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T06:05:00Z",
+      "updated_utc": "2026-11-24T06:10:00Z",
       "max_age_min": 20,
       "stale": false
     },
