@@ -23,6 +23,13 @@
   .overall[data-level=warning]{border-left-color:var(--warning)} .overall[data-level=critical]{border-left-color:var(--critical)}
   .overall .big{font-weight:700;font-size:1.05rem}
   .overall .meta{color:var(--mute);font-size:.82rem;margin-left:auto}
+  .strip{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:0 0 18px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--unknown);border-radius:12px;padding:10px 12px}
+  .tile[data-level=normal]{border-left-color:var(--normal)} .tile[data-level=watch]{border-left-color:var(--watch)}
+  .tile[data-level=warning]{border-left-color:var(--warning)} .tile[data-level=critical]{border-left-color:var(--critical)}
+  .tile .l{color:var(--mute);font-size:.75rem} .tile .v{font-size:1.5rem;font-weight:700;line-height:1.25} .tile .d{color:var(--dim);font-size:.75rem}
+  .tile[data-stale=true]{opacity:.55}
+  .since{color:var(--dim);font-size:.75rem;margin-top:-4px}
   .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;
         border-top:4px solid var(--unknown)}
@@ -61,6 +68,8 @@
     <span class="big" id="overall-text">Loading status…</span>
     <span class="meta" id="overall-meta"></span>
   </section>
+
+  <section class="strip" id="strip" aria-label="Right now"></section>
 
   <main class="grid" id="grid"></main>
 
@@ -103,13 +112,33 @@
     return { level: stale ? 'unknown' : (s.level || 'unknown'), stale: stale, age: a };
   }
 
+  function dur(m) { return m < 90 ? Math.round(m) + ' min' : m < 60 * 36 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' days'; }
+
+  function renderStrip(status) {
+    var box = $('strip'); box.textContent = '';
+    ((status && status.highlights) || []).forEach(function (h) {
+      var e = effective(status.sites && status.sites[h.site]);
+      var tile = el('div', 'tile');
+      tile.setAttribute('data-level', e.stale ? 'unknown' : h.level); tile.setAttribute('data-stale', String(e.stale));
+      tile.appendChild(el('div', 'l', h.label));
+      tile.appendChild(el('div', 'v', e.stale ? '—' : h.value));
+      tile.appendChild(el('div', 'd', e.stale ? 'No current data' : h.detail));
+      box.appendChild(tile);
+    });
+  }
+
   function render(status) {
     var grid = $('grid'); grid.textContent = '';
     var worst = 'unknown', anyCurrent = false, notCurrent = 0;
 
-    SITES.forEach(function (site) {
+    var ORDER = { critical: 0, warning: 1, watch: 2, normal: 3, unknown: 4 };
+    var rows = SITES.map(function (site, i) {
       var s = status && status.sites ? status.sites[site.id] : null;
-      var e = effective(s);
+      return { site: site, s: s, e: effective(s), i: i };
+    }).sort(function (a, b) { return (ORDER[a.e.level] - ORDER[b.e.level]) || (a.i - b.i); });   // worst first
+
+    rows.forEach(function (row) {
+      var site = row.site, s = row.s, e = row.e;
       if (!e.stale) { anyCurrent = true; if (RANK[e.level] > RANK[worst]) worst = e.level; } else notCurrent++;
 
       var card = el('article', 'card');
@@ -122,6 +151,9 @@
 
       var head = s && s.ok ? s.headline : (s ? s.headline : 'Status unavailable');
       card.appendChild(el('div', 'headline', head || '—'));
+      var sinceMin = s && s.level_since_utc ? ageMin(s.level_since_utc) : null;
+      if (!e.stale && sinceMin !== null)
+        card.appendChild(el('div', 'since', sinceMin < 10 ? 'Just changed to ' + LABEL[e.level] : LABEL[e.level] + ' for ' + dur(sinceMin)));
 
       var ul = el('ul', 'details');
       ((s && s.details) || []).slice(0, 3).forEach(function (d) { ul.appendChild(el('li', null, d)); });
@@ -136,6 +168,7 @@
       grid.appendChild(card);
     });
 
+    renderStrip(status);
     var ov = $('overall');
     ov.setAttribute('data-level', anyCurrent ? worst : 'unknown');
     var text = !status ? 'Status feed unavailable. The site links below still work.'
