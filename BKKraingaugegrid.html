@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark" data-bkk-themed>
 <head>
+<script>try{var m=localStorage.getItem('bkk-theme');if(m==='light'||m==='dark')document.documentElement.setAttribute('data-theme',m)}catch(e){}</script>
+<link rel="stylesheet" href="https://thallendan.github.io/BKK-Rain/bkk-tokens.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bangkok Real-Time Rain Gauge & Telemetry Dashboard</title>
@@ -165,6 +168,57 @@
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
         }
     </style>
+<style id="bkk-theme-layer">
+/* Light mode for this dark-designed page. Dark mode is the original look, untouched. */
+@media (prefers-color-scheme:light){
+:root:not([data-theme="dark"]) body{background:var(--bg)!important;color:var(--tx)!important}
+:root:not([data-theme="dark"]) .glass-panel,:root:not([data-theme="dark"]) .glass-card{background:var(--card)!important;border-color:var(--bd)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+:root:not([data-theme="dark"]) [class*="bg-slate-950"],:root:not([data-theme="dark"]) [class*="bg-slate-900"]{background-color:var(--card)!important}
+:root:not([data-theme="dark"]) [class*="bg-slate-800"],:root:not([data-theme="dark"]) [class*="bg-slate-700"]{background-color:var(--card2)!important}
+:root:not([data-theme="dark"]) [class*="border-slate-"]{border-color:var(--bd)!important}
+:root:not([data-theme="dark"]) .text-white:not([class*="bg-"]):not([class*="from-"]){color:var(--tx)!important}
+:root:not([data-theme="dark"]) [class*="text-slate-100"],:root:not([data-theme="dark"]) [class*="text-slate-200"],:root:not([data-theme="dark"]) [class*="text-slate-300"]{color:var(--tx)!important}
+:root:not([data-theme="dark"]) [class*="text-slate-400"],:root:not([data-theme="dark"]) [class*="text-slate-500"]{color:var(--mu)!important}
+:root:not([data-theme="dark"]) [class*="text-blue-400"]{color:#1f6fc5!important}
+:root:not([data-theme="dark"]) [class*="text-sky-400"]{color:#0b78a3!important}
+:root:not([data-theme="dark"]) [class*="text-indigo-400"]{color:#4a45d6!important}
+:root:not([data-theme="dark"]) [class*="text-emerald-400"]{color:var(--ok)!important}
+:root:not([data-theme="dark"]) [class*="text-amber-400"]{color:var(--watch)!important}
+:root:not([data-theme="dark"]) [class*="text-red-400"]{color:var(--crit)!important}
+:root:not([data-theme="dark"]) [class*="bg-sky-950"]{background-color:#e3f2fa!important}
+:root:not([data-theme="dark"]) [class*="bg-indigo-950"]{background-color:#ebeafc!important}
+:root:not([data-theme="dark"]) [class*="bg-emerald-950"]{background-color:#e2f5ec!important}
+:root:not([data-theme="dark"]) [class*="bg-blue-500/10"],:root:not([data-theme="dark"]) [class*="bg-blue-600/20"]{background-color:#e6f0fb!important}
+:root:not([data-theme="dark"]) [class*="border-sky-800"],:root:not([data-theme="dark"]) [class*="border-indigo-800"],:root:not([data-theme="dark"]) [class*="border-emerald-800"],:root:not([data-theme="dark"]) [class*="border-blue-500/"]{border-color:var(--bd)!important}
+:root:not([data-theme="dark"]) .leaflet-container{background:var(--card2)!important}
+:root:not([data-theme="dark"]) .leaflet-popup-content-wrapper,:root:not([data-theme="dark"]) .leaflet-popup-tip{background:var(--card)!important;color:var(--tx)!important}
+:root:not([data-theme="dark"]) ::-webkit-scrollbar-track{background:var(--card2)!important}
+:root:not([data-theme="dark"]) ::-webkit-scrollbar-thumb{background:var(--bd)!important}
+}
+:root[data-theme="light"] body{background:var(--bg)!important;color:var(--tx)!important}
+:root[data-theme="light"] .glass-panel,:root[data-theme="light"] .glass-card{background:var(--card)!important;border-color:var(--bd)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+:root[data-theme="light"] [class*="bg-slate-950"],:root[data-theme="light"] [class*="bg-slate-900"]{background-color:var(--card)!important}
+:root[data-theme="light"] [class*="bg-slate-800"],:root[data-theme="light"] [class*="bg-slate-700"]{background-color:var(--card2)!important}
+:root[data-theme="light"] [class*="border-slate-"]{border-color:var(--bd)!important}
+:root[data-theme="light"] .text-white:not([class*="bg-"]):not([class*="from-"]){color:var(--tx)!important}
+:root[data-theme="light"] [class*="text-slate-100"],:root[data-theme="light"] [class*="text-slate-200"],:root[data-theme="light"] [class*="text-slate-300"]{color:var(--tx)!important}
+:root[data-theme="light"] [class*="text-slate-400"],:root[data-theme="light"] [class*="text-slate-500"]{color:var(--mu)!important}
+:root[data-theme="light"] [class*="text-blue-400"]{color:#1f6fc5!important}
+:root[data-theme="light"] [class*="text-sky-400"]{color:#0b78a3!important}
+:root[data-theme="light"] [class*="text-indigo-400"]{color:#4a45d6!important}
+:root[data-theme="light"] [class*="text-emerald-400"]{color:var(--ok)!important}
+:root[data-theme="light"] [class*="text-amber-400"]{color:var(--watch)!important}
+:root[data-theme="light"] [class*="text-red-400"]{color:var(--crit)!important}
+:root[data-theme="light"] [class*="bg-sky-950"]{background-color:#e3f2fa!important}
+:root[data-theme="light"] [class*="bg-indigo-950"]{background-color:#ebeafc!important}
+:root[data-theme="light"] [class*="bg-emerald-950"]{background-color:#e2f5ec!important}
+:root[data-theme="light"] [class*="bg-blue-500/10"],:root[data-theme="light"] [class*="bg-blue-600/20"]{background-color:#e6f0fb!important}
+:root[data-theme="light"] [class*="border-sky-800"],:root[data-theme="light"] [class*="border-indigo-800"],:root[data-theme="light"] [class*="border-emerald-800"],:root[data-theme="light"] [class*="border-blue-500/"]{border-color:var(--bd)!important}
+:root[data-theme="light"] .leaflet-container{background:var(--card2)!important}
+:root[data-theme="light"] .leaflet-popup-content-wrapper,:root[data-theme="light"] .leaflet-popup-tip{background:var(--card)!important;color:var(--tx)!important}
+:root[data-theme="light"] ::-webkit-scrollbar-track{background:var(--card2)!important}
+:root[data-theme="light"] ::-webkit-scrollbar-thumb{background:var(--bd)!important}
+</style>
 </head>
 <body class="min-h-screen flex flex-col">
 
