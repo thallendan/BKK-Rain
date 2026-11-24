@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-24T06:00:30Z",
+  "generated_utc": "2026-11-24T06:05:16Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -9,29 +9,29 @@
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +0.83 m",
+      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +0.88 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -32.7%",
         "MJO phase 4 (amp 1.13)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.2%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.830 m MSL, surge risk LOW"
+        "Pak Nam tide +0.880 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T05:30:31Z",
+      "updated_utc": "2026-11-24T06:00:39Z",
       "max_age_min": 360,
       "stale": false
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 5.6 m/s · 0 mm next 24 h · no cyclone",
+      "headline": "NE 5.4 m/s · 0 mm next 24 h · no cyclone",
       "details": [
-        "Regime NE, 850 hPa wind 5.6 m/s",
+        "Regime NE, 850 hPa wind 5.4 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T03:00:35Z",
+      "updated_utc": "2026-11-24T06:00:30Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -44,21 +44,21 @@
         "Outlying rain: 2 of 505 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T05:55:00Z",
+      "updated_utc": "2026-11-24T06:00:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "normal",
-      "headline": "klong nodes normal · Pak Nam +0.83 m",
+      "headline": "klong nodes normal · Pak Nam +0.88 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.830 m MSL, surge risk LOW",
+        "Pak Nam +0.880 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T05:30:31Z",
+      "updated_utc": "2026-11-24T06:00:39Z",
       "max_age_min": 120,
       "stale": false
     },
