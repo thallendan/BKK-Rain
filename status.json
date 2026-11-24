@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-24T00:20:21Z",
+  "generated_utc": "2026-11-24T00:25:18Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -37,14 +37,14 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "0 of 122 gauges wet · rain at Bangkok edge",
+      "headline": "0 of 124 gauges wet · rain at Bangkok edge",
       "details": [
-        "122 of 128 gauges fresh",
+        "124 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
         "Outlying rain: 1 of 436 stations wet, 0 heavy, rain arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T00:15:00Z",
+      "updated_utc": "2026-11-24T00:20:00Z",
       "max_age_min": 20,
       "stale": false
     },
@@ -58,7 +58,7 @@
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T00:04:37Z",
+      "updated_utc": "2026-11-24T00:25:00Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -70,7 +70,7 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-23T23:40:00Z",
+      "updated_utc": "2026-11-24T00:35:00Z",
       "max_age_min": 45,
       "stale": false
     }
