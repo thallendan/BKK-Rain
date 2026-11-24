@@ -21,7 +21,7 @@
       "id": "tide",
       "site": "macro",
       "label": "Pak Nam tide",
-      "value": "+1.28 m",
+      "value": "+1.39 m",
       "detail": "surge risk moderate",
       "level": "watch"
     },
@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-24T22:15:27Z",
+  "generated_utc": "2026-11-24T22:20:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -45,21 +45,21 @@
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.28 m",
+      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.39 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -32.7%",
         "MJO phase 4 (amp 1.13)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.2%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +1.280 m MSL, surge risk MODERATE"
+        "Pak Nam tide +1.390 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T22:00:36Z",
+      "updated_utc": "2026-11-24T22:17:58Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "tide_msl": 1.28,
+        "tide_msl": 1.39,
         "surge_risk": "MODERATE"
       },
       "level_since_utc": "2026-11-24T21:35:19Z"
@@ -102,16 +102,16 @@
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam +1.28 m",
+      "headline": "klong nodes normal · Pak Nam +1.39 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +1.280 m MSL, surge risk MODERATE",
+        "Pak Nam +1.390 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file",
         "C.2 Nakhon Sawan 17.58 m MSL, flow 402 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T22:04:37Z",
+      "updated_utc": "2026-11-24T22:17:58Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
