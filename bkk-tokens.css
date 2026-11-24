@@ -1,0 +1,27 @@
+/* bkk-tokens.css (colour variables and light/dark switching; loaded by bkk.css, and on its own by pages that keep their own layout): shared look for the Bangkok weather & water sites.
+ * Light/dark: follows the system by default; the nav bar's theme button sets
+ * <html data-theme="light|dark"> (saved in localStorage as "bkk-theme").
+ * Load: <link rel="stylesheet" href="https://thallendan.github.io/BKK-Rain/bkk.css">
+ * and add data-bkk-themed to <html> so the nav bar shows the theme button. */
+
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --card2:#eef2f7; --tx:#1b2430; --mu:#5b6676; --bd:#dde3ea;
+  --link:#1f6fc5; --accent:#1f6fc5; --on-accent:#ffffff;
+  --ok:#14825a; --watch:#a87c00; --warn:#c4620f; --crit:#c62f2f; --unk:#6b7686;
+  --bar:#dfe6ee; --shadow:0 1px 2px rgba(20,30,50,.06);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151c; --card:#1a212b; --card2:#222b37; --tx:#e6ebf1; --mu:#98a5b6; --bd:#2c3644;
+    --link:#5aa9ff; --accent:#4c9bf0; --on-accent:#08121f;
+    --ok:#34d399; --watch:#facc15; --warn:#fb923c; --crit:#f87171; --unk:#8794a6;
+    --bar:#2a3442; --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151c; --card:#1a212b; --card2:#222b37; --tx:#e6ebf1; --mu:#98a5b6; --bd:#2c3644;
+  --link:#5aa9ff; --accent:#4c9bf0; --on-accent:#08121f;
+  --ok:#34d399; --watch:#facc15; --warn:#fb923c; --crit:#f87171; --unk:#8794a6;
+  --bar:#2a3442; --shadow:none; color-scheme:dark;
+}
