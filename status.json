@@ -1,25 +1,27 @@
 {
   "schema": 1,
-  "generated_utc": "2026-11-24T01:30:26Z",
+  "generated_utc": "2026-11-24T01:35:18Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions",
-    "not_current": []
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.28 m",
+      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.16 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -32.7%",
         "MJO phase 4 (amp 1.13)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.3%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +1.280 m MSL, surge risk MODERATE"
+        "Pak Nam tide +1.160 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T01:00:35Z",
+      "updated_utc": "2026-11-24T01:30:32Z",
       "max_age_min": 360,
       "stale": false
     },
@@ -44,21 +46,21 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T01:25:00Z",
+      "updated_utc": "2026-11-24T01:30:00Z",
       "max_age_min": 20,
       "stale": false
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam +1.28 m",
+      "headline": "klong nodes normal · Pak Nam +1.16 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +1.280 m MSL, surge risk MODERATE",
+        "Pak Nam +1.160 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "Chao Phraya river block missing or unparsed in master file"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T01:25:00Z",
+      "updated_utc": "2026-11-24T01:30:32Z",
       "max_age_min": 120,
       "stale": false
     },
@@ -70,9 +72,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T01:35:00Z",
+      "updated_utc": "2026-11-24T00:35:00Z",
       "max_age_min": 45,
-      "stale": false
+      "stale": true
     }
   }
 }
