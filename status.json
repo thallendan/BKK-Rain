@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-24T17:50:23Z",
+  "generated_utc": "2026-11-24T17:55:16Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -88,7 +88,7 @@
         "Outlying rain: 0 of 499 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-24T17:45:00Z",
+      "updated_utc": "2026-11-24T17:50:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
