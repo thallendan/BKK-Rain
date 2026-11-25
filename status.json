@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T01:45:20Z",
+  "generated_utc": "2026-11-25T01:50:22Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -88,7 +88,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T01:40:00Z",
+      "updated_utc": "2026-11-25T01:45:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
