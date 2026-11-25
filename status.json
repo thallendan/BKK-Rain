@@ -26,13 +26,11 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T17:45:22Z",
+  "generated_utc": "2026-11-25T17:50:22Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "headline": "Warning: significant conditions",
+    "not_current": []
   },
   "sites": {
     "macro": {
@@ -82,7 +80,7 @@
         "Outlying rain: 0 of 503 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T17:40:00Z",
+      "updated_utc": "2026-11-25T17:45:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -96,12 +94,12 @@
       "level": "warning",
       "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek)",
       "details": [
-        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.67 m (warning 0.6, critical 0.7)",
+        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.65 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T17:04:17Z",
+      "updated_utc": "2026-11-25T17:20:00Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
@@ -115,9 +113,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T16:20:00Z",
+      "updated_utc": "2026-11-25T17:20:00Z",
       "max_age_min": 45,
-      "stale": true,
+      "stale": false,
       "metrics": {
         "critical": 0,
         "warning": 0,
