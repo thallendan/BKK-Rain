@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T12:55:18Z",
+  "generated_utc": "2026-11-25T13:00:32Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -81,18 +81,18 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 125 gauges wet · max 0 mm/h (Nong Khaem)",
+      "headline": "0 of 125 gauges wet",
       "details": [
         "125 of 128 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 11.5 mm",
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 11.5 mm",
         "Outlying rain: 0 of 496 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T12:50:00Z",
+      "updated_utc": "2026-11-25T12:55:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 0.5,
+        "max_1h": 0.0,
         "wet": 0,
         "fresh": 125
       },
