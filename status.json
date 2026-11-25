@@ -5,9 +5,9 @@
       "id": "rain_now",
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
-      "value": "8 mm/h",
+      "value": "20 mm/h",
       "detail": "1 of 124 gauges wet",
-      "level": "normal"
+      "level": "watch"
     },
     {
       "id": "rain_24h",
@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T03:50:21Z",
+  "generated_utc": "2026-11-25T04:00:31Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -80,23 +80,23 @@
       "level_since_utc": "2026-11-24T14:15:22Z"
     },
     "gauges": {
-      "level": "normal",
-      "headline": "1 of 124 gauges wet · max 8 mm/h (Lak Si)",
+      "level": "watch",
+      "headline": "1 of 124 gauges wet · max 20 mm/h (Lak Si)",
       "details": [
         "124 of 127 gauges fresh",
-        "Heaviest 1 h: 8.5 mm; heaviest 24 h: 8.5 mm",
+        "Heaviest 1 h: 20.0 mm; heaviest 24 h: 20.0 mm",
         "Outlying rain: 0 of 482 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T03:45:00Z",
+      "updated_utc": "2026-11-25T03:55:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 8.5,
+        "max_1h": 20.0,
         "wet": 1,
         "fresh": 124
       },
-      "level_since_utc": "2026-11-24T14:15:22Z"
+      "level_since_utc": "2026-11-25T04:00:31Z"
     },
     "hydro": {
       "level": "warning",
