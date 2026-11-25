@@ -5,9 +5,9 @@
       "id": "rain_now",
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
-      "value": "10 mm/h",
-      "detail": "0 of 125 gauges wet",
-      "level": "watch"
+      "value": "8 mm/h",
+      "detail": "0 of 124 gauges wet",
+      "level": "normal"
     },
     {
       "id": "rain_24h",
@@ -34,11 +34,13 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T10:35:17Z",
+  "generated_utc": "2026-11-25T10:40:20Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -80,29 +82,29 @@
       "level_since_utc": "2026-11-24T14:15:22Z"
     },
     "gauges": {
-      "level": "watch",
-      "headline": "0 of 125 gauges wet · max 10 mm/h (Bang Bon)",
+      "level": "normal",
+      "headline": "0 of 124 gauges wet · max 8 mm/h (Bang Bon)",
       "details": [
-        "125 of 128 gauges fresh",
-        "Heaviest 1 h: 10.5 mm; heaviest 24 h: 11.5 mm",
+        "124 of 128 gauges fresh",
+        "Heaviest 1 h: 8.0 mm; heaviest 24 h: 11.5 mm",
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T10:30:00Z",
+      "updated_utc": "2026-11-25T10:35:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 10.5,
+        "max_1h": 8.0,
         "wet": 0,
-        "fresh": 125
+        "fresh": 124
       },
-      "level_since_utc": "2026-11-25T09:45:21Z"
+      "level_since_utc": "2026-11-25T10:40:20Z"
     },
     "hydro": {
       "level": "warning",
       "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam +0.94 m",
       "details": [
-        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.65 m (warning 0.6, critical 0.7)",
+        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.64 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
         "Pak Nam +0.940 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
@@ -124,9 +126,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T10:20:00Z",
+      "updated_utc": "2026-11-25T09:20:00Z",
       "max_age_min": 45,
-      "stale": false,
+      "stale": true,
       "metrics": {
         "critical": 0,
         "warning": 0,
