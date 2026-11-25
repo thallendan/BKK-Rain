@@ -5,9 +5,9 @@
       "id": "rain_now",
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
-      "value": "8 mm/h",
-      "detail": "3 of 124 gauges wet",
-      "level": "normal"
+      "value": "10 mm/h",
+      "detail": "3 of 123 gauges wet",
+      "level": "watch"
     },
     {
       "id": "rain_24h",
@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T09:45:21Z",
+  "generated_utc": "2026-11-25T09:47:09Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -81,20 +81,20 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "3 of 124 gauges wet · max 8 mm/h (Bang Bon) · rain at Bangkok edge",
+      "headline": "3 of 123 gauges wet · max 10 mm/h (Nong Khaem) · rain at Bangkok edge",
       "details": [
-        "124 of 127 gauges fresh",
-        "Heaviest 1 h: 8.0 mm; heaviest 24 h: 8.0 mm",
+        "123 of 127 gauges fresh",
+        "Heaviest 1 h: 10.5 mm; heaviest 24 h: 10.5 mm",
         "Outlying rain: 2 of 500 stations wet, 0 heavy, rain arrived"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T09:40:00Z",
+      "updated_utc": "2026-11-25T09:45:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 8.0,
+        "max_1h": 10.5,
         "wet": 3,
-        "fresh": 124
+        "fresh": 123
       },
       "level_since_utc": "2026-11-25T09:45:21Z"
     },
