@@ -21,7 +21,7 @@
       "id": "tide",
       "site": "macro",
       "label": "Pak Nam tide",
-      "value": "+1.23 m",
+      "value": "+1.42 m",
       "detail": "surge risk moderate",
       "level": "watch"
     },
@@ -34,44 +34,46 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T23:00:32Z",
+  "generated_utc": "2026-11-25T23:05:17Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions",
-    "not_current": []
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.23 m",
+      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.42 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -32.6%",
         "MJO phase 4 (amp 1.14)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.1%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +1.230 m MSL, surge risk MODERATE"
+        "Pak Nam tide +1.420 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T22:30:45Z",
+      "updated_utc": "2026-11-25T23:00:41Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "tide_msl": 1.23,
+        "tide_msl": 1.42,
         "surge_risk": "MODERATE"
       },
       "level_since_utc": "2026-11-25T22:35:17Z"
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 3.6 m/s · 0 mm next 24 h · 03-20262027-27 3550 km",
+      "headline": "NE 3.9 m/s · 0 mm next 24 h · 03-20262027-27 3550 km",
       "details": [
-        "Regime NE, 850 hPa wind 3.6 m/s",
+        "Regime NE, 850 hPa wind 3.9 m/s",
         "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone 03-20262027-27 3550 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T22:00:27Z",
+      "updated_utc": "2026-11-25T23:00:28Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
@@ -88,7 +90,7 @@
         "Outlying rain: 0 of 502 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T22:55:00Z",
+      "updated_utc": "2026-11-25T23:00:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -100,15 +102,15 @@
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam +1.23 m",
+      "headline": "klong nodes normal · Pak Nam +1.42 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +1.230 m MSL, surge risk MODERATE",
+        "Pak Nam +1.420 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 17.55 m MSL, flow 396 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T22:30:45Z",
+      "updated_utc": "2026-11-25T23:04:17Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
@@ -124,7 +126,7 @@
       "ok": true,
       "updated_utc": "2026-11-25T22:20:00Z",
       "max_age_min": 45,
-      "stale": false,
+      "stale": true,
       "metrics": {
         "critical": 0,
         "warning": 0,
