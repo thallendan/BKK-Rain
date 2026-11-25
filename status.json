@@ -34,11 +34,13 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T01:04:00Z",
+  "generated_utc": "2026-11-25T01:05:17Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -125,7 +127,7 @@
       "ok": true,
       "updated_utc": "2026-11-25T00:20:00Z",
       "max_age_min": 45,
-      "stale": false,
+      "stale": true,
       "metrics": {
         "critical": 0,
         "warning": 0,
