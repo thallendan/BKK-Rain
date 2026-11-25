@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T21:55:18Z",
+  "generated_utc": "2026-11-25T22:00:30Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -88,7 +88,7 @@
         "Outlying rain: 0 of 495 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T21:50:00Z",
+      "updated_utc": "2026-11-25T21:55:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
