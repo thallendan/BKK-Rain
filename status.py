@@ -475,8 +475,7 @@ def build_hydro(master, klong, dj):
             if num(c2.get("level_msl")) is not None:
                 notes.append(f"C.2 Nakhon Sawan {num(c2['level_msl']):.2f} m MSL"
                              + (f", flow {num(c2['flow_cms']):.0f} m3/s" if num(c2.get("flow_cms")) is not None else ""))
-        else:
-            notes.append("Chao Phraya river block missing or unparsed in master file")
+        # no else: the master file no longer carries the Chao Phraya block (river data comes from data.json)
 
     rs = ((dj or {}).get("river_stations")) or {}
     c2 = rs.get("C.2") or {}
