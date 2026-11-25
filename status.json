@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T13:15:21Z",
+  "generated_utc": "2026-11-25T13:20:22Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -108,7 +108,6 @@
         "15 of 15 klong nodes found, 0 offline",
         "Pak Nam -0.140 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Chao Phraya river block missing or unparsed in master file",
         "C.2 Nakhon Sawan 17.55 m MSL, flow 396 m3/s"
       ],
       "ok": true,
