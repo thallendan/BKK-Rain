@@ -6,7 +6,7 @@
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
       "value": "0 mm/h",
-      "detail": "0 of 124 gauges wet",
+      "detail": "0 of 125 gauges wet",
       "level": "normal"
     },
     {
@@ -34,11 +34,13 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T18:25:27Z",
+  "generated_utc": "2026-11-25T18:30:27Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -81,20 +83,20 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 124 gauges wet",
+      "headline": "0 of 125 gauges wet",
       "details": [
-        "124 of 128 gauges fresh",
+        "125 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 11.5 mm",
-        "Outlying rain: 0 of 477 stations wet, 0 heavy"
+        "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T18:20:00Z",
+      "updated_utc": "2026-11-25T18:25:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
         "max_1h": 0.0,
         "wet": 0,
-        "fresh": 124
+        "fresh": 125
       },
       "level_since_utc": "2026-11-25T10:40:20Z"
     },
@@ -102,14 +104,14 @@
       "level": "warning",
       "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam -1.48 m",
       "details": [
-        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.63 m (warning 0.6, critical 0.7)",
+        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.65 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
         "Pak Nam -1.480 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 17.55 m MSL, flow 396 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T18:20:00Z",
+      "updated_utc": "2026-11-25T18:04:17Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
@@ -123,9 +125,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T18:20:00Z",
+      "updated_utc": "2026-11-25T17:20:00Z",
       "max_age_min": 45,
-      "stale": false,
+      "stale": true,
       "metrics": {
         "critical": 0,
         "warning": 0,
