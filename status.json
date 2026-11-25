@@ -5,7 +5,7 @@
       "id": "rain_now",
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
-      "value": "4 mm/h",
+      "value": "6 mm/h",
       "detail": "1 of 124 gauges wet",
       "level": "normal"
     },
@@ -34,11 +34,13 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T09:00:29Z",
+  "generated_utc": "2026-11-25T09:05:17Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -53,7 +55,7 @@
         "Pak Nam tide +1.170 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T08:30:32Z",
+      "updated_utc": "2026-11-25T09:00:34Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
@@ -64,35 +66,35 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 5.1 m/s · 2 mm next 24 h · 03-20262027-27 3550 km",
+      "headline": "NE 5.0 m/s · 2 mm next 24 h · 03-20262027-27 3550 km",
       "details": [
-        "Regime NE, 850 hPa wind 5.1 m/s",
+        "Regime NE, 850 hPa wind 5.0 m/s",
         "Model rain for Bangkok, next 24 h: 2 mm",
         "Nearest cyclone 03-20262027-27 3550 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T08:00:26Z",
+      "updated_utc": "2026-11-25T09:00:27Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "rain24": 2.0
+        "rain24": 2.4
       },
       "level_since_utc": "2026-11-24T14:15:22Z"
     },
     "gauges": {
       "level": "normal",
-      "headline": "1 of 124 gauges wet · max 4 mm/h (Bang Khun Thian)",
+      "headline": "1 of 124 gauges wet · max 6 mm/h (Bang Khun Thian)",
       "details": [
         "124 of 127 gauges fresh",
-        "Heaviest 1 h: 4.5 mm; heaviest 24 h: 4.5 mm",
+        "Heaviest 1 h: 6.0 mm; heaviest 24 h: 6.0 mm",
         "Outlying rain: 1 of 508 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T08:55:00Z",
+      "updated_utc": "2026-11-25T09:00:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 4.5,
+        "max_1h": 6.0,
         "wet": 1,
         "fresh": 124
       },
@@ -110,7 +112,7 @@
         "C.2 Nakhon Sawan 17.55 m MSL, flow 396 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T08:30:32Z",
+      "updated_utc": "2026-11-25T09:00:34Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
@@ -126,7 +128,7 @@
       "ok": true,
       "updated_utc": "2026-11-25T08:20:00Z",
       "max_age_min": 45,
-      "stale": false,
+      "stale": true,
       "metrics": {
         "critical": 0,
         "warning": 0,
