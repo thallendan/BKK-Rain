@@ -50,11 +50,14 @@ predicted tide (`fews2.hii.or.th/.../tide_table/summary.txt`) is optional. Each 
 there first when a number is missing. Slow sources (indices, dams) keep their last good value for a limited time,
 marked `carried_from_utc`. The live tide is never carried over.
 
-## The `chaophraya_full` source
+## The master Lambda (`aws/lambda_fetch_master_water_level.py`)
 
-One of the sources inside the AWS `fetch_master_water_level` Lambda (not GitHub). It fetches
-`tiwrm.hii.or.th/.../chaopraya.php`, which times out from AWS. HydroView now takes the river stations from
-`data.json`, so this source can be removed from the Lambda's endpoint list.
+Writes `master_water_level_data.json`: key ThaiWater stations (tide gauge `GLF001`, river `C.2`, `C.13`, `CPY011`),
+watergate counts, and the BMA roadside flood sensors that are wet. Sources run in parallel, and a source that fails
+3 times in a row is skipped for 30 min, then 2 h, 6 h, 24 h, and retried by itself (state is in `source_health` in the
+file). Dead sources were removed; `retired_sources` in the file says why (the old `chaophraya_full` page timed out,
+the dam and tide pages returned nothing usable or "Request Rejected", and three BMA endpoints were 404). Dams and the
+Pak Nam tide come from `data.json`. The code is kept here as a copy; the Lambda itself is deployed in AWS.
 
 ## Deploying changes
 
