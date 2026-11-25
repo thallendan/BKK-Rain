@@ -13,7 +13,7 @@
       "id": "rain_24h",
       "site": "monsoon",
       "label": "Model rain, next 24 h",
-      "value": "1 mm",
+      "value": "0 mm",
       "detail": "Bangkok, weather model",
       "level": "normal"
     },
@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-25T19:15:19Z",
+  "generated_utc": "2026-11-25T19:20:21Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -66,18 +66,18 @@
     },
     "monsoon": {
       "level": "normal",
-      "headline": "NE 4.6 m/s · 1 mm next 24 h · 03-20262027-27 3550 km",
+      "headline": "NE 4.6 m/s · 0 mm next 24 h · 03-20262027-27 3550 km",
       "details": [
         "Regime NE, 850 hPa wind 4.6 m/s",
-        "Model rain for Bangkok, next 24 h: 1 mm",
+        "Model rain for Bangkok, next 24 h: 0 mm",
         "Nearest cyclone 03-20262027-27 3550 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T19:00:28Z",
+      "updated_utc": "2026-11-25T19:19:11Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "rain24": 1.4
+        "rain24": 0
       },
       "level_since_utc": "2026-11-24T14:15:22Z"
     },
@@ -90,7 +90,7 @@
         "Outlying rain: 0 of 477 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-25T19:10:00Z",
+      "updated_utc": "2026-11-25T19:15:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
