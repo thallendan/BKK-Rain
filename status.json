@@ -34,13 +34,11 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T16:40:27Z",
+  "generated_utc": "2026-11-26T16:45:28Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "headline": "Warning: significant conditions",
+    "not_current": []
   },
   "sites": {
     "macro": {
@@ -87,10 +85,10 @@
       "details": [
         "125 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 3.5 mm",
-        "Outlying rain data is stale"
+        "Outlying rain: 1 of 498 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T16:35:00Z",
+      "updated_utc": "2026-11-26T16:40:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -125,9 +123,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T15:20:00Z",
+      "updated_utc": "2026-11-26T16:20:00Z",
       "max_age_min": 45,
-      "stale": true,
+      "stale": false,
       "metrics": {
         "critical": 0,
         "warning": 0,
