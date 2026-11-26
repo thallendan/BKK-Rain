@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T01:05:23Z",
+  "generated_utc": "2026-11-26T01:10:26Z",
   "overall": {
     "level": "critical",
     "headline": "Critical: act on local alerts (1 feed stale or unavailable)",
@@ -90,7 +90,7 @@
         "Outlying rain: 1 of 496 stations wet, 1 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T01:00:00Z",
+      "updated_utc": "2026-11-26T01:05:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -110,7 +110,7 @@
         "C.2 Nakhon Sawan 17.59 m MSL, flow 404 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T01:00:35Z",
+      "updated_utc": "2026-11-26T01:04:17Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
