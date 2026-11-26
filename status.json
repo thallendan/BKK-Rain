@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T01:35:16Z",
+  "generated_utc": "2026-11-26T01:40:20Z",
   "overall": {
     "level": "critical",
     "headline": "Critical: act on local alerts",
@@ -88,7 +88,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T01:30:00Z",
+      "updated_utc": "2026-11-26T01:35:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
