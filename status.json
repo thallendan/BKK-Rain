@@ -34,11 +34,13 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T07:35:18Z",
+  "generated_utc": "2026-11-26T07:40:20Z",
   "overall": {
-    "level": "warning",
-    "headline": "Warning: significant conditions",
-    "not_current": []
+    "level": "watch",
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -83,12 +85,12 @@
       "level": "normal",
       "headline": "0 of 123 gauges wet",
       "details": [
-        "123 of 127 gauges fresh",
+        "123 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 12.0 mm",
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T07:30:00Z",
+      "updated_utc": "2026-11-26T07:35:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -99,10 +101,9 @@
       "level_since_utc": "2026-11-26T06:30:33Z"
     },
     "hydro": {
-      "level": "warning",
-      "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam +1.02 m",
+      "level": "watch",
+      "headline": "klong nodes normal · Pak Nam +1.02 m",
       "details": [
-        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.60 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
         "Pak Nam +1.020 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
@@ -113,7 +114,7 @@
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
-      "level_since_utc": "2026-11-26T07:25:19Z"
+      "level_since_utc": "2026-11-26T07:40:20Z"
     },
     "klongs": {
       "level": "normal",
@@ -123,9 +124,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T07:20:00Z",
+      "updated_utc": "2026-11-26T06:20:00Z",
       "max_age_min": 45,
-      "stale": false,
+      "stale": true,
       "metrics": {
         "critical": 0,
         "warning": 0,
