@@ -5,8 +5,8 @@
       "id": "rain_now",
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
-      "value": "0 mm/h",
-      "detail": "0 of 125 gauges wet",
+      "value": "3 mm/h",
+      "detail": "1 of 124 gauges wet",
       "level": "normal"
     },
     {
@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T08:10:23Z",
+  "generated_utc": "2026-11-26T08:15:20Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -83,20 +83,20 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 125 gauges wet",
+      "headline": "1 of 124 gauges wet · max 3 mm/h (Bang Khun Thian)",
       "details": [
-        "125 of 128 gauges fresh",
-        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 12.0 mm",
-        "Outlying rain: 2 of 505 stations wet, 1 heavy"
+        "124 of 128 gauges fresh",
+        "Heaviest 1 h: 3.0 mm; heaviest 24 h: 12.0 mm",
+        "Outlying rain: 2 of 503 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T08:05:00Z",
+      "updated_utc": "2026-11-26T08:10:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 0.0,
-        "wet": 0,
-        "fresh": 125
+        "max_1h": 3.0,
+        "wet": 1,
+        "fresh": 124
       },
       "level_since_utc": "2026-11-26T06:30:33Z"
     },
