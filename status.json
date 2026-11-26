@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T09:15:22Z",
+  "generated_utc": "2026-11-26T09:20:21Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -83,18 +83,18 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 124 gauges wet · max 0 mm/h (Bang Khun Thian)",
+      "headline": "0 of 124 gauges wet",
       "details": [
         "124 of 128 gauges fresh",
-        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 12.0 mm",
+        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 12.0 mm",
         "Outlying rain: 1 of 478 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T09:10:00Z",
+      "updated_utc": "2026-11-26T09:15:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 0.5,
+        "max_1h": 0.0,
         "wet": 0,
         "fresh": 124
       },
