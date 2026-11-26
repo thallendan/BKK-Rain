@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T01:40:20Z",
+  "generated_utc": "2026-11-26T01:45:22Z",
   "overall": {
     "level": "critical",
     "headline": "Critical: act on local alerts",
@@ -85,10 +85,10 @@
       "details": [
         "124 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 11.5 mm",
-        "Outlying rain data is stale"
+        "Outlying rain: 1 of 505 stations wet, 1 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T01:35:00Z",
+      "updated_utc": "2026-11-26T01:40:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
