@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T16:55:24Z",
+  "generated_utc": "2026-11-26T17:00:32Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -71,7 +71,7 @@
         "Nearest cyclone 03-20262027-27 3550 km, alert Green"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T16:00:27Z",
+      "updated_utc": "2026-11-26T16:56:20Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
@@ -88,7 +88,7 @@
         "Outlying rain: 1 of 498 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T16:50:00Z",
+      "updated_utc": "2026-11-26T16:55:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
