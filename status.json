@@ -21,7 +21,7 @@
       "id": "tide",
       "site": "macro",
       "label": "Pak Nam tide",
-      "value": "-1.58 m",
+      "value": "-1.54 m",
       "detail": "surge risk low",
       "level": "normal"
     },
@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T19:30:31Z",
+  "generated_utc": "2026-11-26T19:35:17Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -45,21 +45,21 @@
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam -1.58 m",
+      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam -1.54 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -32.6%",
         "MJO phase 3 (amp 1.14)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.0%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide -1.580 m MSL, surge risk LOW"
+        "Pak Nam tide -1.540 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T19:00:41Z",
+      "updated_utc": "2026-11-26T19:30:32Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "tide_msl": -1.58,
+        "tide_msl": -1.54,
         "surge_risk": "LOW"
       },
       "level_since_utc": "2026-11-26T11:05:18Z"
@@ -102,16 +102,16 @@
     },
     "hydro": {
       "level": "warning",
-      "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam -1.58 m",
+      "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam -1.54 m",
       "details": [
         "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.61 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam -1.580 m MSL, surge risk LOW",
+        "Pak Nam -1.540 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 17.63 m MSL, flow 413 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T19:04:17Z",
+      "updated_utc": "2026-11-26T19:30:32Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
