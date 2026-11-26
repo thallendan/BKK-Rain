@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T21:30:33Z",
+  "generated_utc": "2026-11-26T21:35:18Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -53,7 +53,7 @@
         "Pak Nam tide -0.200 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T21:22:21Z",
+      "updated_utc": "2026-11-26T21:30:36Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
@@ -88,7 +88,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T21:25:00Z",
+      "updated_utc": "2026-11-26T21:30:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -108,7 +108,7 @@
         "C.2 Nakhon Sawan 17.63 m MSL, flow 413 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T21:22:21Z",
+      "updated_utc": "2026-11-26T21:30:36Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
