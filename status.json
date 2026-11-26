@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T06:30:33Z",
+  "generated_utc": "2026-11-26T06:35:16Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -55,7 +55,7 @@
         "Pak Nam tide +1.010 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T06:00:37Z",
+      "updated_utc": "2026-11-26T06:30:33Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
@@ -90,7 +90,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T06:25:00Z",
+      "updated_utc": "2026-11-26T06:30:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -110,7 +110,7 @@
         "C.2 Nakhon Sawan 17.61 m MSL, flow 409 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T06:04:17Z",
+      "updated_utc": "2026-11-26T06:30:33Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
