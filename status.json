@@ -21,7 +21,7 @@
       "id": "tide",
       "site": "macro",
       "label": "Pak Nam tide",
-      "value": "+1.38 m",
+      "value": "+1.26 m",
       "detail": "surge risk moderate",
       "level": "watch"
     },
@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-26T04:30:26Z",
+  "generated_utc": "2026-11-26T04:35:15Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -45,21 +45,21 @@
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.38 m",
+      "headline": "Monsoon -33% drier · 4-dam 76% · Pak Nam +1.26 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -32.6%",
         "MJO phase 3 (amp 1.14)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 76.0%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +1.380 m MSL, surge risk MODERATE"
+        "Pak Nam tide +1.260 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T04:00:35Z",
+      "updated_utc": "2026-11-26T04:30:33Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "tide_msl": 1.38,
+        "tide_msl": 1.26,
         "surge_risk": "MODERATE"
       },
       "level_since_utc": "2026-11-26T03:35:21Z"
@@ -90,7 +90,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T04:20:00Z",
+      "updated_utc": "2026-11-26T04:30:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -102,15 +102,15 @@
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam +1.38 m",
+      "headline": "klong nodes normal · Pak Nam +1.26 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +1.380 m MSL, surge risk MODERATE",
+        "Pak Nam +1.260 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 17.60 m MSL, flow 407 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-26T04:04:17Z",
+      "updated_utc": "2026-11-26T04:30:33Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
