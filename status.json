@@ -21,7 +21,7 @@
       "id": "tide",
       "site": "macro",
       "label": "Pak Nam tide",
-      "value": "+0.96 m",
+      "value": "+0.99 m",
       "detail": "surge risk low",
       "level": "normal"
     },
@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T08:30:25Z",
+  "generated_utc": "2026-11-27T08:35:24Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -53,21 +53,21 @@
   "sites": {
     "macro": {
       "level": "normal",
-      "headline": "Monsoon -32% drier · 4-dam 76% · Pak Nam +0.96 m",
+      "headline": "Monsoon -32% drier · 4-dam 76% · Pak Nam +0.99 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -31.8%",
         "MJO phase 3 (amp 1.23)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 75.8%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +0.960 m MSL, surge risk LOW"
+        "Pak Nam tide +0.990 m MSL, surge risk LOW"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T08:03:53Z",
+      "updated_utc": "2026-11-27T08:30:35Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "tide_msl": 0.96,
+        "tide_msl": 0.99,
         "surge_risk": "LOW"
       },
       "level_since_utc": "2026-11-27T06:35:17Z"
@@ -98,7 +98,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T08:25:00Z",
+      "updated_utc": "2026-11-27T08:30:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -110,15 +110,15 @@
     },
     "hydro": {
       "level": "normal",
-      "headline": "klong nodes normal · Pak Nam +0.96 m",
+      "headline": "klong nodes normal · Pak Nam +0.99 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +0.960 m MSL, surge risk LOW",
+        "Pak Nam +0.990 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 17.65 m MSL, flow 417 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T08:20:00Z",
+      "updated_utc": "2026-11-27T08:30:35Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
