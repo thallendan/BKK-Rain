@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T08:40:20Z",
+  "generated_utc": "2026-11-27T08:45:27Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -95,10 +95,10 @@
       "details": [
         "122 of 125 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.5 mm",
-        "Outlying rain data is stale"
+        "Outlying rain: 0 of 501 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T08:35:00Z",
+      "updated_utc": "2026-11-27T08:40:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
