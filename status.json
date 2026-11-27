@@ -6,7 +6,7 @@
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
       "value": "0 mm/h",
-      "detail": "0 of 122 gauges wet",
+      "detail": "1 of 122 gauges wet",
       "level": "normal"
     },
     {
@@ -38,13 +38,13 @@
       "site": null,
       "label": "Flooded road sensors (BMA)",
       "value": "0",
-      "detail": "of 242 active sensors",
+      "detail": "of 243 active sensors",
       "level": "normal",
-      "updated_utc": "2026-11-27T05:00:00Z",
+      "updated_utc": "2026-11-27T06:00:00Z",
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T06:05:22Z",
+  "generated_utc": "2026-11-27T06:10:29Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -93,19 +93,19 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 122 gauges wet",
+      "headline": "1 of 122 gauges wet · max 0 mm/h (Bangkok Noi)",
       "details": [
         "122 of 125 gauges fresh",
-        "Heaviest 1 h: 0.0 mm; heaviest 24 h: 3.5 mm",
+        "Heaviest 1 h: 0.5 mm; heaviest 24 h: 3.5 mm",
         "Outlying rain: 1 of 502 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T06:00:00Z",
+      "updated_utc": "2026-11-27T06:05:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
-        "max_1h": 0.0,
-        "wet": 0,
+        "max_1h": 0.5,
+        "wet": 1,
         "fresh": 122
       },
       "level_since_utc": "2026-11-27T05:30:26Z"
@@ -120,7 +120,7 @@
         "C.2 Nakhon Sawan 17.65 m MSL, flow 417 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T06:00:41Z",
+      "updated_utc": "2026-11-27T06:04:18Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
