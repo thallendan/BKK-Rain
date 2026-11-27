@@ -117,7 +117,9 @@
   function renderStrip(status) {
     var box = $('strip'); box.textContent = '';
     ((status && status.highlights) || []).forEach(function (h) {
-      var e = effective(status.sites && status.sites[h.site]);
+      var src = h.updated_utc ? { ok: true, level: h.level, updated_utc: h.updated_utc, max_age_min: h.max_age_min || 60 }
+                              : (status.sites && status.sites[h.site]);
+      var e = effective(src);
       var tile = el('div', 'tile');
       tile.setAttribute('data-level', e.stale ? 'unknown' : h.level); tile.setAttribute('data-stale', String(e.stale));
       tile.appendChild(el('div', 'l', h.label));
