@@ -44,11 +44,13 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T09:35:28Z",
+  "generated_utc": "2026-11-27T09:40:22Z",
   "overall": {
     "level": "watch",
-    "headline": "Watch: elevated conditions",
-    "not_current": []
+    "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
+    "not_current": [
+      "klongs"
+    ]
   },
   "sites": {
     "macro": {
@@ -98,7 +100,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T09:25:00Z",
+      "updated_utc": "2026-11-27T09:30:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -132,9 +134,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T09:20:00Z",
+      "updated_utc": "2026-11-27T08:20:00Z",
       "max_age_min": 45,
-      "stale": false,
+      "stale": true,
       "metrics": {
         "critical": 0,
         "warning": 0,
