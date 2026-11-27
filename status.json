@@ -26,13 +26,11 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-27T03:40:20Z",
+  "generated_utc": "2026-11-27T03:45:20Z",
   "overall": {
     "level": "normal",
-    "headline": "All current feeds normal (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "headline": "All current feeds normal",
+    "not_current": []
   },
   "sites": {
     "macro": {
@@ -101,7 +99,7 @@
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T03:04:17Z",
+      "updated_utc": "2026-11-27T03:20:00Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
@@ -115,9 +113,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T02:20:00Z",
+      "updated_utc": "2026-11-27T03:20:00Z",
       "max_age_min": 45,
-      "stale": true,
+      "stale": false,
       "metrics": {
         "critical": 0,
         "warning": 0,
