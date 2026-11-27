@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T12:35:19Z",
+  "generated_utc": "2026-11-27T12:40:22Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -98,7 +98,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T12:30:00Z",
+      "updated_utc": "2026-11-27T12:35:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
