@@ -34,7 +34,7 @@
       "level": "normal"
     }
   ],
-  "generated_utc": "2026-11-27T04:05:17Z",
+  "generated_utc": "2026-11-27T04:10:20Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -90,7 +90,7 @@
         "Outlying rain: 1 of 477 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T04:00:00Z",
+      "updated_utc": "2026-11-27T04:05:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
