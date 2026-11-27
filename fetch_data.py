@@ -516,63 +516,97 @@ def parse_navy_tide_summary(body_text):
 DAM_NAME_HINTS = {
     "bhumibol": ("BHUMIBOL", "ภูมิพล"),
     "sirikit": ("SIRIKIT", "สิริกิติ์"),
-    "kwai_noi": ("KWAI NOI", "KHWAE NOI", "แควน้อย"),
-    "pasak": ("PASAK", "ป่าสัก"),
+    "kwai_noi": ("KWAI NOI", "KHWAE NOI", "KWAE NOI", "BAMRUNG DAEN", "แควน้อย"),
+    "pasak": ("PASAK", "PA SAK", "ป่าสัก"),
     "srinagarind": ("SRINAGARIND", "SRINAKARIN", "ศรีนครินทร์"),
-    "vajiralongkorn": ("VAJIRALONGKORN", "WACHIRALONGKORN", "วชิราลงกรณ"),
+    "vajiralongkorn": ("VAJIRALONGKORN", "WACHIRALONGKORN", "KHAO LAEM", "วชิราลงกรณ"),
 }
 DAM_CAPACITY_MCM = {"bhumibol": 13462.0, "sirikit": 9510.0, "kwai_noi": 939.0, "pasak": 872.0,
                     "srinagarind": 17745.0, "vajiralongkorn": 8860.0}
 DAM_FLOW_MAX_AGE_HOURS = 72
 
 
-def parse_dam_flows(body_text):
-    """Inflow, release, spill, level and storage for our dams from the ThaiWater analyst/dam API.
+def _dam_key(row):
+    names = " ".join(str(x) for x in ((row.get("dam") or {}).get("dam_name") or {}).values()).upper()
+    for key, hints in DAM_NAME_HINTS.items():
+        if any(h.upper() in names for h in hints):
+            return key
+    return None
 
-    The API lists every dam (several agencies, old rows from past years included), so for each of our
-    dams the NEWEST row is used and rows older than DAM_FLOW_MAX_AGE_HOURS are ignored. Its own
-    "dam_storage_percent" is 0 for the large dams, so percentages are NOT taken from here (the HII
-    report remains the source for them). Units of inflow/release are as reported by the API.
+
+def _dam_row_date(row):
+    s = str(row.get("dam_date") or "")
+    for fmt, n in (("%Y-%m-%d %H:%M", 16), ("%Y-%m-%d", 10)):
+        try:
+            return datetime.strptime(s[:n], fmt)
+        except ValueError:
+            pass
+    return None
+
+
+def _fnum(row, key):
+    try:
+        return float(row[key]) if row.get(key) not in (None, "") else None
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_dam_flows(body_text):
+    """Daily dam balance from the ThaiWater analyst/dam API (the data behind waterchart.thaiwater.net).
+
+    "dam_daily" rows (RID, one per dam per day) give storage, % full, inflow, release and spill. Inflow and
+    release are million m3 PER DAY (checked against the chart: Bhumibol 8.42 in / 21 out on 2026-11-26).
+    The hourly rows' inflow/release fields mean something else and are NOT used; only their water level is.
+    The newest row per dam is used and anything older than DAM_FLOW_MAX_AGE_HOURS is ignored.
     """
     doc = json.loads(body_text)
     data = doc.get("data") if isinstance(doc, dict) else None
     if not isinstance(data, dict):
         raise ValueError("unexpected response shape (no 'data' object)")
-    rows = [r for v in data.values() if isinstance(v, list) for r in v if isinstance(r, dict)]
-    if not rows:
-        raise ValueError("no dam rows in response")
-    now_ict = (datetime.now(timezone.utc) + timedelta(hours=7)).replace(tzinfo=None)   # naive Bangkok time
-    best = {}
-    for r in rows:
-        names = " ".join(str(x) for x in ((r.get("dam") or {}).get("dam_name") or {}).values()).upper()
-        stamp = str(r.get("dam_date") or "")
-        for key, hints in DAM_NAME_HINTS.items():
-            if any(h.upper() in names for h in hints):
-                if key not in best or stamp > best[key]["dam_date"]:
-                    best[key] = {"dam_date": stamp, "row": r}
+    daily, hourly = data.get("dam_daily") or [], data.get("dam_hourly") or []
+    if not daily and not hourly:
+        raise ValueError("no dam_daily or dam_hourly rows in response")
+    now_ict = (datetime.now(timezone.utc) + timedelta(hours=7)).replace(tzinfo=None)
+
+    def newest(rows):
+        best = {}
+        for r in rows:
+            if not isinstance(r, dict):
+                continue
+            key, d = _dam_key(r), _dam_row_date(r)
+            if key and d and (now_ict - d).total_seconds() / 3600.0 <= DAM_FLOW_MAX_AGE_HOURS:
+                if key not in best or d > best[key][0]:
+                    best[key] = (d, r)
+        return best
+
+    bd, bh = newest(daily), newest(hourly)
     params = {}
-    for key, rec in best.items():
-        stamp, r = rec["dam_date"], rec["row"]
-        try:
-            when = datetime.strptime(stamp[:16], "%Y-%m-%d %H:%M" if len(stamp) >= 16 else "%Y-%m-%d")
-        except ValueError:
+    for key in DAM_NAME_HINTS:
+        if key not in bd and key not in bh:
             continue
-        if (now_ict - when).total_seconds() / 3600.0 > DAM_FLOW_MAX_AGE_HOURS:
-            continue                                    # an old row (e.g. 2020) is not a current reading
-        num = lambda k: (float(r[k]) if r.get(k) not in (None, "") else None)
-        inflow, released, spilled = num("dam_inflow"), num("dam_released"), num("dam_spilled")
-        storage, level = num("dam_storage"), num("dam_level")
+        rec = {"inflow": None, "released": None, "spilled": None, "storage_mcm": None, "storage_pct": None,
+               "usable_mcm": None, "level_m": None, "as_of": None, "level_as_of": None}
+        if key in bd:
+            d, r = bd[key]
+            rec.update(inflow=_fnum(r, "dam_inflow"), released=_fnum(r, "dam_released"), spilled=_fnum(r, "dam_spilled"),
+                       storage_mcm=_fnum(r, "dam_storage"), storage_pct=_fnum(r, "dam_storage_percent"),
+                       usable_mcm=_fnum(r, "dam_uses_water"), as_of=str(r.get("dam_date")))
+        if key in bh:
+            d, r = bh[key]
+            rec.update(level_m=_fnum(r, "dam_level"), level_as_of=str(r.get("dam_date")))
+            if rec["storage_mcm"] is None:
+                rec["storage_mcm"] = _fnum(r, "dam_storage")
         cap = DAM_CAPACITY_MCM.get(key)
-        params[f"dam_flow_{key}"] = {
-            "label": f"{key} flow", "value": f"in {inflow if inflow is not None else '-'} / out {released if released is not None else '-'}",
-            "unit": "as reported by API", "period": stamp, "description": "ThaiWater analyst/dam",
-            "inflow": inflow, "released": released, "spilled": spilled, "level_m": level, "storage_mcm": storage,
-            "storage_pct_calc": round(storage / cap * 100.0, 1) if storage is not None and cap else None,
-            "as_of": stamp,
-        }
+        if rec["storage_pct"] in (None, 0.0) and rec["storage_mcm"] is not None and cap:
+            rec["storage_pct"] = round(rec["storage_mcm"] / cap * 100.0, 1)
+        if rec["inflow"] is not None and rec["released"] is not None:
+            rec["net_mcm_day"] = round(rec["inflow"] - rec["released"], 2)
+        params[f"dam_flow_{key}"] = dict(
+            rec, label=f"{key} daily balance",
+            value=f"in {rec['inflow']} / out {rec['released']} MCM/day", unit="million m3 per day",
+            period=rec["as_of"] or rec["level_as_of"], description="ThaiWater analyst/dam (dam_daily)")
     if not params:
-        raise ValueError(f"none of our dams found with a reading newer than {DAM_FLOW_MAX_AGE_HOURS} h "
-                         f"({len(rows)} rows, {len(best)} name matches)")
+        raise ValueError(f"none of our dams found with a reading newer than {DAM_FLOW_MAX_AGE_HOURS} h")
     return params
 
 
@@ -817,13 +851,25 @@ def extract_dams_data(summary_parameters):
             except (ValueError, KeyError):
                 pass
 
-    # Optional flow details (inflow, release, spill, level) from the ThaiWater analyst API.
-    for target_key in dams:
+    # Daily balance (inflow, release, spill, level) from the ThaiWater analyst API, when available.
+    FLOW_FIELDS = ("inflow", "released", "spilled", "net_mcm_day", "storage_mcm", "storage_pct", "usable_mcm",
+                   "level_m", "as_of", "level_as_of")
+    for target_key in list(dams):
         if isinstance(dams[target_key], dict):
             fp = summary_parameters.get(f"dam_flow_{target_key}")
             if isinstance(fp, dict):
-                dams[target_key]["flow"] = {k: fp.get(k) for k in
-                                            ("inflow", "released", "spilled", "level_m", "storage_mcm", "storage_pct_calc", "as_of")}
+                dams[target_key]["flow"] = {k: fp.get(k) for k in FLOW_FIELDS}
+                # Percent-full fallback when the HII report did not give one.
+                if dams[target_key].get("current_storage_pct") is None and fp.get("storage_pct") is not None:
+                    dams[target_key]["current_storage_pct"] = fp["storage_pct"]
+                    dams[target_key]["status"] = f"{fp['storage_pct']:.1f}%"
+
+    # 4-dam combined storage fallback (all four must have a storage figure).
+    if dams.get("combined_chao_phraya_storage_pct") is None:
+        four = ("bhumibol", "sirikit", "kwai_noi", "pasak")
+        stor = [(dams[k].get("flow") or {}).get("storage_mcm") for k in four]
+        if all(s is not None for s in stor):
+            dams["combined_chao_phraya_storage_pct"] = round(sum(stor) / sum(DAM_CAPACITY_MCM[k] for k in four) * 100.0, 1)
 
     return dams
 
