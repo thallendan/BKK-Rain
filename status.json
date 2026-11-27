@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T21:50:22Z",
+  "generated_utc": "2026-11-27T22:00:32Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal",
@@ -98,7 +98,7 @@
         "Outlying rain: 0 of 473 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T21:45:00Z",
+      "updated_utc": "2026-11-27T21:55:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
