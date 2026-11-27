@@ -6,7 +6,7 @@
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
       "value": "0 mm/h",
-      "detail": "0 of 124 gauges wet",
+      "detail": "0 of 123 gauges wet",
       "level": "normal"
     },
     {
@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T05:15:29Z",
+  "generated_utc": "2026-11-27T05:20:20Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -93,20 +93,20 @@
     },
     "gauges": {
       "level": "watch",
-      "headline": "0 of 124 gauges wet · rain approaching",
+      "headline": "0 of 123 gauges wet · rain approaching",
       "details": [
-        "124 of 127 gauges fresh",
+        "123 of 127 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 3.5 mm",
         "Outlying rain: 3 of 502 stations wet, 0 heavy, rain approaching"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T05:10:00Z",
+      "updated_utc": "2026-11-27T05:15:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
         "max_1h": 0.0,
         "wet": 0,
-        "fresh": 124
+        "fresh": 123
       },
       "level_since_utc": "2026-11-27T04:45:21Z"
     },
