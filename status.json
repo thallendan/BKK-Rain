@@ -6,7 +6,7 @@
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
       "value": "0 mm/h",
-      "detail": "0 of 124 gauges wet",
+      "detail": "0 of 123 gauges wet",
       "level": "normal"
     },
     {
@@ -32,9 +32,19 @@
       "value": "0",
       "detail": "0 critical, 0 warning",
       "level": "normal"
+    },
+    {
+      "id": "roads",
+      "site": null,
+      "label": "Flooded road sensors (BMA)",
+      "value": "0",
+      "detail": "of 242 active sensors",
+      "level": "normal",
+      "updated_utc": "2026-11-27T04:40:00Z",
+      "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T04:40:20Z",
+  "generated_utc": "2026-11-27T04:45:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -80,23 +90,23 @@
       "level_since_utc": "2026-11-24T14:15:22Z"
     },
     "gauges": {
-      "level": "normal",
-      "headline": "0 of 124 gauges wet",
+      "level": "watch",
+      "headline": "0 of 123 gauges wet · rain approaching",
       "details": [
-        "124 of 127 gauges fresh",
+        "123 of 127 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 3.5 mm",
-        "Outlying rain data is stale"
+        "Outlying rain: 3 of 502 stations wet, 0 heavy, rain approaching"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T04:35:00Z",
+      "updated_utc": "2026-11-27T04:40:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
         "max_1h": 0.0,
         "wet": 0,
-        "fresh": 124
+        "fresh": 123
       },
-      "level_since_utc": "2026-11-26T11:30:27Z"
+      "level_since_utc": "2026-11-27T04:45:21Z"
     },
     "hydro": {
       "level": "watch",
@@ -108,7 +118,7 @@
         "C.2 Nakhon Sawan 17.65 m MSL, flow 417 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T04:30:37Z",
+      "updated_utc": "2026-11-27T04:42:20Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
