@@ -491,7 +491,7 @@ def build_hydro(master, klong, dj):
 
 # --------------------------------------------------------------------------- main
 
-def build_highlights(sites):
+def build_highlights(sites, master=None):
     """The few numbers worth seeing first. The hub greys a tile when its source site's data is stale."""
     m = lambda k: (sites.get(k) or {}).get("metrics") or {}
     g, mo, mc, kl = m("gauges"), m("monsoon"), m("macro"), m("klongs")
@@ -512,6 +512,16 @@ def build_highlights(sites):
         c, w = kl["critical"], kl["warning"]
         h.append({"id": "klongs", "site": "klongs", "label": "Klong alerts (Bangna)", "value": str(c + w),
                   "detail": f"{c} critical, {w} warning", "level": "critical" if c else "warning" if w else "normal"})
+    rf = ((master or {}).get("parsed_summary") or {}).get("bma_roadside_flood")
+    if rf and rf.get("sensor_count"):
+        wet, act = rf.get("flooded_count") or 0, rf.get("active_count") or 0
+        top = (rf.get("flooded") or [{}])[0]
+        # Levels are a first guess (depth units from BMA are not documented): any wet sensor = watch, 5+ = warning.
+        h.append({"id": "roads", "site": None, "label": "Flooded road sensors (BMA)", "value": str(wet),
+                  "detail": (f"worst: {top.get('name_en')}, {top.get('depth')}" if wet and top else f"of {act} active sensors"),
+                  "level": "warning" if wet >= 5 else "watch" if wet else "normal",
+                  "updated_utc": iso(parse_iso(rf.get("newest_obs"))) if parse_iso(rf.get("newest_obs")) else None,
+                  "max_age_min": 45})
     return h
 
 
@@ -555,7 +565,7 @@ def main():
 
     out = {
         "schema": 2,
-        "highlights": build_highlights(sites),
+        "highlights": build_highlights(sites, master),
         "generated_utc": iso(now_utc()),
         "overall": {"level": lv, "headline": headline, "not_current": not_current},
         "sites": sites,
