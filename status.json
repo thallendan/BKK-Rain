@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T22:35:18Z",
+  "generated_utc": "2026-11-27T22:40:22Z",
   "overall": {
     "level": "normal",
     "headline": "All current feeds normal (1 feed stale or unavailable)",
@@ -100,7 +100,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-27T22:30:00Z",
+      "updated_utc": "2026-11-27T22:35:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
