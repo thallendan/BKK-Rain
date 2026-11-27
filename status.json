@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-27T16:40:25Z",
+  "generated_utc": "2026-11-27T16:45:20Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions",
@@ -95,7 +95,7 @@
       "details": [
         "125 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.5 mm",
-        "Outlying rain data is stale"
+        "Outlying rain: 0 of 495 stations wet, 0 heavy"
       ],
       "ok": true,
       "updated_utc": "2026-11-27T16:35:00Z",
