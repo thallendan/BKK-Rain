@@ -11,6 +11,7 @@
     { id: 'macro',   label: 'Macro',       href: BASE + 'macro.html',            file: ['macro.html'] },
     { id: 'monsoon', label: 'Monsoon',     href: BASE + 'BKKmonsoon.html',       file: ['BKKmonsoon.html'] },
     { id: 'gauges',  label: 'Rain gauges', href: BASE + 'BKKraingaugegrid.html', file: ['BKKraingaugegrid.html'] },
+    { id: 'roads',   label: 'Roads',       href: BASE + 'roads.html',            file: ['roads.html'] },
     { id: 'hydro',   label: 'HydroView',   href: CANAL + 'HydroView.html',       file: ['HydroView.html'] },
     { id: 'klongs',  label: 'Klongs',      href: CANAL + 'localKlongsV.html',    file: ['localKlongsV.html'] }
   ];
