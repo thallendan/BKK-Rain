@@ -82,31 +82,37 @@
           <div class="row"><div><b>Bhumibol Dam</b><div class="lbl">Ping River (Tak Province)</div></div><span class="pill" id="dam-bhumibol-status">--%</span></div>
           <div class="bar" style="margin:8px 0 4px"><i id="dam-bhumibol-bar"></i></div>
           <div class="row lbl"><span id="dam-bhumibol-unit">Cap: 13,462 MCM</span><span id="dam-bhumibol-val">--% Storage</span></div>
+          <div class="lbl" id="dam-bhumibol-flow"></div>
         </div>
         <div class="dam">
           <div class="row"><div><b>Sirikit Dam</b><div class="lbl">Nan River (Uttaradit Province)</div></div><span class="pill" id="dam-sirikit-status">--%</span></div>
           <div class="bar" style="margin:8px 0 4px"><i id="dam-sirikit-bar"></i></div>
           <div class="row lbl"><span id="dam-sirikit-unit">Cap: 9,510 MCM</span><span id="dam-sirikit-val">--% Storage</span></div>
+          <div class="lbl" id="dam-sirikit-flow"></div>
         </div>
         <div class="dam">
           <div class="row"><div><b>Kwai Noi Bamrung Dan Dam</b><div class="lbl">Kwai Noi River (Phitsanulok)</div></div><span class="pill" id="dam-kwai_noi-status">--%</span></div>
           <div class="bar" style="margin:8px 0 4px"><i id="dam-kwai_noi-bar"></i></div>
           <div class="row lbl"><span id="dam-kwai_noi-unit">Cap: 939 MCM</span><span id="dam-kwai_noi-val">--% Storage</span></div>
+          <div class="lbl" id="dam-kwai_noi-flow"></div>
         </div>
         <div class="dam">
           <div class="row"><div><b>Pasak Jolasid Dam</b><div class="lbl">Pasak River (Lopburi / Eastern BKK)</div></div><span class="pill" id="dam-pasak-status">--%</span></div>
           <div class="bar" style="margin:8px 0 4px"><i id="dam-pasak-bar"></i></div>
           <div class="row lbl"><span id="dam-pasak-unit">Cap: 872 MCM</span><span id="dam-pasak-val">--% Storage</span></div>
+          <div class="lbl" id="dam-pasak-flow"></div>
         </div>
         <div class="dam">
           <div class="row"><div><b>Srinagarind Dam</b><div class="lbl">Mae Klong Basin (Kanchanaburi)</div></div><span class="pill" id="dam-srinagarind-status">--%</span></div>
           <div class="bar" style="margin:8px 0 4px"><i id="dam-srinagarind-bar"></i></div>
           <div class="row lbl"><span id="dam-srinagarind-unit">Cap: 17,745 MCM</span><span id="dam-srinagarind-val">--% Storage</span></div>
+          <div class="lbl" id="dam-srinagarind-flow"></div>
         </div>
         <div class="dam">
           <div class="row"><div><b>Vajiralongkorn Dam</b><div class="lbl">Mae Klong Basin (Kanchanaburi)</div></div><span class="pill" id="dam-vajiralongkorn-status">--%</span></div>
           <div class="bar" style="margin:8px 0 4px"><i id="dam-vajiralongkorn-bar"></i></div>
           <div class="row lbl"><span id="dam-vajiralongkorn-unit">Cap: 8,860 MCM</span><span id="dam-vajiralongkorn-val">--% Storage</span></div>
+          <div class="lbl" id="dam-vajiralongkorn-flow"></div>
         </div>
       </div>
     </div>
@@ -390,6 +396,15 @@
                         if (dams[k] && dams[k].current_storage_pct !== null && dams[k].current_storage_pct !== undefined) {
                             const pct = dams[k].current_storage_pct;
                             if (valEl) valEl.innerText = `${pct.toFixed(1)}% Storage`;
+                            const fl = dams[k].flow, flEl = document.getElementById(`dam-${k}-flow`);
+                            if (flEl) {
+                                const ok = fl && typeof fl.inflow === 'number' && typeof fl.released === 'number';
+                                const net = ok ? (typeof fl.net_mcm_day === 'number' ? fl.net_mcm_day : fl.inflow - fl.released) : null;
+                                flEl.textContent = ok
+                                    ? `Daily (${fl.as_of}): in ${fl.inflow} / out ${fl.released} million m³ · net ${net > 0 ? '+' : ''}${net.toFixed(1)} ${net < 0 ? '▼ falling' : net > 0 ? '▲ rising' : '■ steady'}`
+                                      + (typeof fl.level_m === 'number' && fl.level_m > 0 ? ` · level ${fl.level_m.toFixed(2)} m` : '')
+                                    : '';
+                            }
                             if (statusEl) statusEl.innerText = dams[k].status || `${pct.toFixed(1)}%`;
                             if (barEl) barEl.style.width = `${Math.min(100, Math.max(0, pct))}%`;
 
