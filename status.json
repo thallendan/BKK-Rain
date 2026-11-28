@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-28T01:10:20Z",
+  "generated_utc": "2026-11-28T01:15:21Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions (1 feed stale or unavailable)",
@@ -97,7 +97,7 @@
       "details": [
         "125 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.5 mm",
-        "Outlying rain: 0 of 472 stations wet, 0 heavy"
+        "Outlying rain: 0 of 471 stations wet, 0 heavy"
       ],
       "ok": true,
       "updated_utc": "2026-11-28T01:05:00Z",
