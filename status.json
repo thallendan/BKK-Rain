@@ -44,13 +44,11 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-28T04:25:17Z",
+  "generated_utc": "2026-11-28T04:30:26Z",
   "overall": {
     "level": "warning",
-    "headline": "Warning: significant conditions (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "headline": "Warning: significant conditions",
+    "not_current": []
   },
   "sites": {
     "macro": {
@@ -92,12 +90,12 @@
       "level_since_utc": "2026-11-24T14:15:22Z"
     },
     "gauges": {
-      "level": "watch",
-      "headline": "0 of 125 gauges wet · rain at Bangkok edge",
+      "level": "normal",
+      "headline": "0 of 125 gauges wet",
       "details": [
         "125 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 0.0 mm",
-        "Outlying rain: 1 of 468 stations wet, 0 heavy, rain arrived"
+        "Outlying rain data is stale"
       ],
       "ok": true,
       "updated_utc": "2026-11-28T04:20:00Z",
@@ -108,7 +106,7 @@
         "wet": 0,
         "fresh": 125
       },
-      "level_since_utc": "2026-11-28T03:45:21Z"
+      "level_since_utc": "2026-11-28T04:30:26Z"
     },
     "hydro": {
       "level": "warning",
@@ -120,7 +118,7 @@
         "C.2 Nakhon Sawan 17.64 m MSL, flow 415 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T04:04:17Z",
+      "updated_utc": "2026-11-28T04:20:00Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
@@ -134,9 +132,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T03:20:00Z",
+      "updated_utc": "2026-11-28T04:20:00Z",
       "max_age_min": 45,
-      "stale": true,
+      "stale": false,
       "metrics": {
         "critical": 0,
         "warning": 0,
