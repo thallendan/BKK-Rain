@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-28T00:45:27Z",
+  "generated_utc": "2026-11-28T00:50:22Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -98,7 +98,7 @@
         "Outlying rain: 0 of 472 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T00:40:00Z",
+      "updated_utc": "2026-11-28T00:45:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
