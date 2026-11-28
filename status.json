@@ -21,7 +21,7 @@
       "id": "tide",
       "site": "macro",
       "label": "Pak Nam tide",
-      "value": "+1.03 m",
+      "value": "+1.05 m",
       "detail": "surge risk moderate",
       "level": "watch"
     },
@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-28T09:30:27Z",
+  "generated_utc": "2026-11-28T09:35:18Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -53,21 +53,21 @@
   "sites": {
     "macro": {
       "level": "watch",
-      "headline": "Monsoon -32% drier · 4-dam 76% · Pak Nam +1.03 m",
+      "headline": "Monsoon -32% drier · 4-dam 76% · Pak Nam +1.05 m",
       "details": [
         "Bangkok-zone net teleconnection anomaly -31.9%",
         "MJO phase 3 (amp 1.22)",
         "Nino 3.4 +3.25 C",
         "Chao Phraya 4-dam storage 75.6%",
         "Near full (95%+): pasak, srinagarind, vajiralongkorn",
-        "Pak Nam tide +1.030 m MSL, surge risk MODERATE"
+        "Pak Nam tide +1.050 m MSL, surge risk MODERATE"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T09:00:39Z",
+      "updated_utc": "2026-11-28T09:30:36Z",
       "max_age_min": 360,
       "stale": false,
       "metrics": {
-        "tide_msl": 1.03,
+        "tide_msl": 1.05,
         "surge_risk": "MODERATE"
       },
       "level_since_utc": "2026-11-28T05:05:17Z"
@@ -97,7 +97,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T09:25:00Z",
+      "updated_utc": "2026-11-28T09:30:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
@@ -109,15 +109,15 @@
     },
     "hydro": {
       "level": "watch",
-      "headline": "klong nodes normal · Pak Nam +1.03 m",
+      "headline": "klong nodes normal · Pak Nam +1.05 m",
       "details": [
         "15 of 15 klong nodes found, 0 offline",
-        "Pak Nam +1.030 m MSL, surge risk MODERATE",
+        "Pak Nam +1.050 m MSL, surge risk MODERATE",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 17.70 m MSL, flow 428 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T09:20:00Z",
+      "updated_utc": "2026-11-28T09:30:36Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
