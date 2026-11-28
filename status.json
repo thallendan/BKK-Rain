@@ -6,7 +6,7 @@
       "site": "gauges",
       "label": "Rain now (heaviest, 1 h)",
       "value": "0 mm/h",
-      "detail": "0 of 125 gauges wet",
+      "detail": "0 of 124 gauges wet",
       "level": "normal"
     },
     {
@@ -44,13 +44,11 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-28T13:20:22Z",
+  "generated_utc": "2026-11-28T13:25:19Z",
   "overall": {
-    "level": "normal",
-    "headline": "All current feeds normal (1 feed stale or unavailable)",
-    "not_current": [
-      "klongs"
-    ]
+    "level": "warning",
+    "headline": "Warning: significant conditions",
+    "not_current": []
   },
   "sites": {
     "macro": {
@@ -92,38 +90,39 @@
     },
     "gauges": {
       "level": "normal",
-      "headline": "0 of 125 gauges wet",
+      "headline": "0 of 124 gauges wet",
       "details": [
-        "125 of 128 gauges fresh",
+        "124 of 128 gauges fresh",
         "Heaviest 1 h: 0.0 mm; heaviest 24 h: 2.0 mm",
         "Outlying rain: 0 of 466 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T13:15:00Z",
+      "updated_utc": "2026-11-28T13:20:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
         "max_1h": 0.0,
         "wet": 0,
-        "fresh": 125
+        "fresh": 124
       },
       "level_since_utc": "2026-11-28T04:30:26Z"
     },
     "hydro": {
-      "level": "normal",
-      "headline": "klong nodes normal · Pak Nam +0.71 m",
+      "level": "warning",
+      "headline": "0 critical · 1 warning (Khlong Bang Phrom, Thanon Kanchanaphisek) · Pak Nam +0.71 m",
       "details": [
+        "Warning: Khlong Bang Phrom, Thanon Kanchanaphisek at 0.60 m (warning 0.6, critical 0.7)",
         "15 of 15 klong nodes found, 0 offline",
         "Pak Nam +0.710 m MSL, surge risk LOW",
         "Dams near full (95%+): pasak, srinagarind, vajiralongkorn",
         "C.2 Nakhon Sawan 17.71 m MSL, flow 430 m3/s"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T13:04:17Z",
+      "updated_utc": "2026-11-28T13:20:00Z",
       "max_age_min": 120,
       "stale": false,
       "metrics": {},
-      "level_since_utc": "2026-11-28T12:05:23Z"
+      "level_since_utc": "2026-11-28T13:25:19Z"
     },
     "klongs": {
       "level": "normal",
@@ -133,9 +132,9 @@
         "0 level sensors reporting offline (-99)"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T12:20:00Z",
+      "updated_utc": "2026-11-28T13:20:00Z",
       "max_age_min": 45,
-      "stale": true,
+      "stale": false,
       "metrics": {
         "critical": 0,
         "warning": 0,
