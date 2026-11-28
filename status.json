@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-28T03:17:50Z",
+  "generated_utc": "2026-11-28T03:25:16Z",
   "overall": {
     "level": "warning",
     "headline": "Warning: significant conditions (1 feed stale or unavailable)",
@@ -100,7 +100,7 @@
         "Outlying rain: 0 of 470 stations wet, 0 heavy"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T03:15:00Z",
+      "updated_utc": "2026-11-28T03:20:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
