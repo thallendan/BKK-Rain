@@ -23,6 +23,7 @@ Shared by all pages (BKK-Rain): `bkk-nav.js` (nav bar and light/dark button), `b
 | `monsoon.json` | `fetch_monsoon.py`, workflow `monsoon.yml` ("Update monsoon data") | hourly (cron-job.org), backup every 3 h |
 | `status.json` | `status.py`, workflow `status.yml` ("Build status.json") | every 5 min (cron-job.org), backup GitHub cron |
 | `bma-rain-latest.json`, `bma-rain-history.json` | AWS Lambda for BMA rain gauges | EventBridge, every 5 min |
+| `road-flood-latest.json` | Same master Lambda: every BMA roadside flood sensor with coordinates and depth | every master run |
 | `outlying-rain-latest.json` | AWS Lambda for outlying rain | EventBridge, every 10 min |
 | `klongmap-latest.json` | AWS Lambda for the klong map | check its EventBridge rule |
 | `master_water_level_data.json` | AWS Lambda `fetch_master_water_level` | check its EventBridge rule |
@@ -46,7 +47,10 @@ the hub ignores it in the overall banner. Staleness limits and thresholds are at
 
 NOAA CPC (ENSO, SOI, OLR, CPAC850, Pacific heat content), Australian BoM (MJO), NOAA PSL (IOD), HII/RID dam report,
 and the Thaiwater water-level API (`GLF001` Pak Nam tide, plus river stations `C.2`, `C.13`, `CPY011`). The Navy
-predicted tide (`fews2.hii.or.th/.../tide_table/summary.txt`) is optional. Each run writes `source_health`; look
+predicted tide (`fews2.hii.or.th/.../tide_table/summary.txt`) is optional, and so is the ThaiWater `analyst/dam` API (the data behind waterchart.thaiwater.net). Its `dam_daily` rows give
+each dam's daily inflow and release in **million m3 per day**, storage, % full and spill, saved under `dams.<dam>.flow`
+(plus `net_mcm_day` = inflow minus release, and the water level from the hourly rows). HII's report stays the first source
+for % full; the API fills in when HII has nothing. Each run writes `source_health`; look
 there first when a number is missing. Slow sources (indices, dams) keep their last good value for a limited time,
 marked `carried_from_utc`. The live tide is never carried over.
 
