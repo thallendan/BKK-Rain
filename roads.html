@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-bkk-themed>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bangkok Road Flooding</title>
+<script>try{var m=localStorage.getItem('bkk-theme');if(m==='light'||m==='dark')document.documentElement.setAttribute('data-theme',m)}catch(e){}</script>
+<link rel="stylesheet" href="https://thallendan.github.io/BKK-Rain/bkk.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+#map{height:460px;border-radius:10px;border:1px solid var(--bd)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--bd)}
+th{color:var(--mu);font-weight:600} .n{text-align:right}
+.sel{font:inherit;padding:6px 8px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+.wet{color:var(--crit);font-weight:700} .scroll{max-height:360px;overflow:auto}
+</style>
+</head>
+<body>
+<div id="bkk-nav"></div>
+<script src="https://thallendan.github.io/BKK-Rain/bkk-nav.js" defer></script>
+<main class="wrap">
+  <div class="top">
+    <div><h1>Bangkok Road Flooding</h1><p class="sub" id="upd">Loading…</p></div>
+    <div class="actions"><select id="dist" class="sel" aria-label="Filter by district"></select><button class="btn" id="sync">Refresh</button></div>
+  </div>
+  <div id="banner" class="banner hidden" role="status"></div>
+  <div class="card"><h2>In plain English</h2><p id="plain">Loading…</p></div>
+  <div class="grid" id="kpis"></div>
+  <div class="card">
+    <h2>Sensor map</h2>
+    <div id="map" role="img" aria-label="Map of Bangkok roadside flood sensors"></div>
+    <p class="lbl"><span style="color:var(--crit)">●</span> water reported &nbsp; <span style="color:var(--ok)">●</span> dry &nbsp; <span style="color:var(--unk)">○</span> sensor offline</p>
+  </div>
+  <div class="card"><h2>Sensors reporting water</h2><div class="scroll" id="wetList"></div></div>
+  <details class="ex card"><summary>All districts</summary><div class="scroll" id="distTable"></div></details>
+  <p class="note">Data: BMA roadside flood sensors, collected every few minutes. Depth is shown as BMA reports it (probably centimetres). A dry or offline sensor does not guarantee a dry road. For official warnings, see the BMA and the Thai Meteorological Department.</p>
+</main>
+<script>
+(function () {
+  var URL_ROADS = 'https://d2jyi6rznjny0r.cloudfront.net/road-flood-latest.json', MAX_AGE_MIN = 45;
+  var $ = function (id) { return document.getElementById(id); };
+  var data = null, map, layer, fitted = '';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function ageMin(iso) { var t = Date.parse(iso); return isNaN(t) ? null : Math.max(0, (Date.now() - t) / 60000); }
+  function ago(m) { return m === null ? 'unknown time' : m < 2 ? 'just now' : m < 90 ? Math.round(m) + ' min ago' : m < 2160 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; }
+  function when(iso) { var d = new Date(iso); return isNaN(d) ? '?' : d.toLocaleString('en-GB', { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); }
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#888'; }
+  function card(label, big, sub) { return '<div class="card"><div class="lbl">' + label + '</div><div class="big">' + big + '</div><div class="lbl">' + sub + '</div></div>'; }
+
+  function initMap() {
+    map = L.map('map', { scrollWheelZoom: false }).setView([13.75, 100.56], 11);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '© OpenStreetMap contributors' }).addTo(map);
+    layer = L.layerGroup().addTo(map);
+  }
+
+  function render() {
+    if (!data) return;
+    var all = data.sensors || [], dsel = $('dist'), cur = dsel.value;
+    var names = Array.from(new Set(all.map(function (s) { return s.district_en; }).filter(Boolean))).sort();
+    if (dsel.options.length !== names.length + 1) {
+      dsel.innerHTML = '<option value="">All districts</option>' + names.map(function (n) { return '<option>' + esc(n) + '</option>'; }).join('');
+      dsel.value = cur;
+    }
+    var sel = cur ? all.filter(function (s) { return s.district_en === cur; }) : all;
+    var wet = sel.filter(function (s) { return s.depth > 0; }).sort(function (a, b) { return b.depth - a.depth; });
+    var active = sel.filter(function (s) { return s.status === 1; }).length;
+    var dws = Array.from(new Set(wet.map(function (s) { return s.district_en; })));
+    var age = ageMin(data.newest_obs || data.generated_utc);
+
+    $('upd').textContent = 'Latest sensor reading ' + when(data.newest_obs || data.generated_utc) + ' Bangkok time (' + ago(age) + ')';
+    var b = $('banner');
+    if (age === null || age > MAX_AGE_MIN) { b.classList.remove('hidden'); b.textContent = 'Data is ' + ago(age).replace(' ago', '') + ' old. Treat the readings below as out of date.'; }
+    else b.classList.add('hidden');
+
+    $('plain').textContent = wet.length === 0
+      ? 'No road sensors report flooding right now: ' + active + ' of ' + sel.length + ' sensors are active' + (cur ? ' in ' + cur : ' across Bangkok') + '.'
+      : wet.length + ' of ' + active + ' active road sensors report water' + (cur ? ' in ' + cur : ', in ' + dws.length + ' district' + (dws.length > 1 ? 's' : '')) +
+        '. The deepest reading is ' + wet[0].depth + ' at ' + (wet[0].name_en || wet[0].code) + ' (' + wet[0].district_en + ').';
+    $('kpis').innerHTML = card('Sensors reporting water', wet.length, 'of ' + active + ' active') +
+      card('Deepest reading', wet.length ? wet[0].depth : '–', 'BMA units, probably cm') +
+      card('Districts affected', dws.length, cur ? 'selected district' : 'of ' + names.length) +
+      card('Sensors offline', sel.length - active, 'not reporting');
+
+    layer.clearLayers();
+    var colWet = css('--crit'), colOk = css('--ok'), colOff = css('--unk'), pts = [], wetPts = [];
+    sel.forEach(function (s) {
+      if (!s.lat || !s.lng) return;
+      var isWet = s.depth > 0, off = s.status !== 1;
+      var m = L.circleMarker([s.lat, s.lng], isWet
+        ? { radius: 7 + Math.min(9, Math.sqrt(s.depth) * 1.5), color: colWet, fillColor: colWet, fillOpacity: .6, weight: 2 }
+        : off ? { radius: 4, color: colOff, fillOpacity: 0, weight: 1.5 } : { radius: 3, color: colOk, fillColor: colOk, fillOpacity: .55, weight: 1 });
+      m.bindPopup('<b>' + esc(s.name_en || s.code) + '</b><br>' + esc(s.road_en || '') + '<br>' + esc(s.district_en) + '<br>Depth: ' + s.depth + (off ? ' (sensor offline)' : '') + '<br>' + when(s.obs));
+      m.addTo(layer); pts.push([s.lat, s.lng]); if (isWet) wetPts.push([s.lat, s.lng]);
+    });
+    var key = cur + '|' + (wetPts.length ? 'w' : 'a');
+    if (key !== fitted && pts.length) { fitted = key; map.fitBounds(wetPts.length ? wetPts : pts, { padding: [30, 30], maxZoom: 15 }); }
+
+    $('wetList').innerHTML = wet.length
+      ? '<table><tr><th>Location</th><th>District</th><th class="n">Depth</th><th>Reading</th></tr>' + wet.map(function (s) {
+          return '<tr><td>' + esc(s.name_en || s.code) + '</td><td>' + esc(s.district_en) + '</td><td class="n wet">' + s.depth + '</td><td>' + when(s.obs) + '</td></tr>'; }).join('') + '</table>'
+      : '<p class="lbl">None right now.</p>';
+
+    var by = {};
+    sel.forEach(function (s) { var d = by[s.district_en] || (by[s.district_en] = { n: 0, a: 0, w: 0, m: 0 }); d.n++; if (s.status === 1) d.a++; if (s.depth > 0) { d.w++; d.m = Math.max(d.m, s.depth); } });
+    $('distTable').innerHTML = '<table><tr><th>District</th><th class="n">Sensors</th><th class="n">Active</th><th class="n">With water</th><th class="n">Deepest</th></tr>' +
+      Object.keys(by).sort(function (a, c) { return (by[c].w - by[a].w) || a.localeCompare(c); }).map(function (k) {
+        var d = by[k]; return '<tr><td>' + esc(k) + '</td><td class="n">' + d.n + '</td><td class="n">' + d.a + '</td><td class="n' + (d.w ? ' wet' : '') + '">' + d.w + '</td><td class="n">' + (d.w ? d.m : '–') + '</td></tr>'; }).join('') + '</table>';
+  }
+
+  function load() {
+    fetch(URL_ROADS + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { data = j; render(); })
+      .catch(function () {
+        var b = $('banner'); b.classList.remove('hidden');
+        b.textContent = data ? 'Could not refresh. Showing the last data loaded.' : 'Road sensor data is unavailable right now.';
+        if (!data) { $('plain').textContent = 'No data.'; $('upd').textContent = 'Unavailable'; }
+      });
+  }
+
+  initMap(); load();
+  $('dist').addEventListener('change', render); $('sync').addEventListener('click', load);
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  setInterval(load, 180000);
+})();
+</script>
+</body>
+</html>
