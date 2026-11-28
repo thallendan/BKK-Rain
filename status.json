@@ -44,7 +44,7 @@
       "max_age_min": 45
     }
   ],
-  "generated_utc": "2026-11-28T01:35:20Z",
+  "generated_utc": "2026-11-28T01:40:20Z",
   "overall": {
     "level": "watch",
     "headline": "Watch: elevated conditions",
@@ -98,7 +98,7 @@
         "Outlying rain data is stale"
       ],
       "ok": true,
-      "updated_utc": "2026-11-28T01:30:00Z",
+      "updated_utc": "2026-11-28T01:35:00Z",
       "max_age_min": 20,
       "stale": false,
       "metrics": {
